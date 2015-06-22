@@ -1,0 +1,24 @@
+<tale>
+    <title>Toto's awesome adventure</title>
+
+    <entry-scene>intro</entry-scene>
+
+    <scenes>
+        <scene id="intro" sound="intro.mp3">
+            <action keys="oui" next-scene="step1"></action>
+            <action keys="non" next-scene="step2"></action>
+        </scene>
+
+        <scene id="step1" sound="step1.mp3">
+            <action keys="oui" next-scene="end"></action>
+        </scene>
+
+        <scene id="step2" sound="step2.mp3">
+            <action keys="oui" next-scene="end"></action>
+        </scene>
+
+        <scene id="end" sound="end.mp3" end="true">
+        </scene>
+    </scenes>
+
+</tale>
