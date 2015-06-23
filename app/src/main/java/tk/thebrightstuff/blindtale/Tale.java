@@ -86,6 +86,8 @@ public class Tale implements Serializable {
                     else
                         throw new Exception("Action points to unknown scene: "+a.nextSceneId);
                 }
+                if(s.title==null)
+                    s.title = title;
             }
 
         }catch(Exception e){
@@ -120,6 +122,7 @@ public class Tale implements Serializable {
 
         scene.tale = this;
         scene.id = parser.getAttributeValue(null, "id");
+        scene.title = parser.getAttributeValue(null, "title");
         scene.soundPath = parser.getAttributeValue(null, "sound");
 
         if(scene.id==null || scene.soundPath==null)

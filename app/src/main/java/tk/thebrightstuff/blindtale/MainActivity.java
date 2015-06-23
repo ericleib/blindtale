@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
+import android.widget.Toast;
 
 import tk.thebrightstuff.blindtale.tk.thebrightstuff.blindtale.utils.AssetCopier;
 
@@ -63,8 +64,12 @@ public class MainActivity extends Activity {
         Tale tale = getSelectedTale();
         b.putSerializable(TALE, tale);
         intent.putExtras(b);
-        Log.v(TAG, "Starting tale "+tale.toString());
+        Log.v(TAG, "Starting tale " + tale.toString());
         startActivity(intent);
+    }
+
+    public void download(View view){
+        Toast.makeText(this, getResources().getString(R.string.download_soon), Toast.LENGTH_LONG).show();
     }
 
     private Tale getSelectedTale(){

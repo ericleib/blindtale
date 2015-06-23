@@ -4,7 +4,7 @@
     <entry-scene>intro</entry-scene>
 
     <scenes>
-        <scene id="intro" sound="intro.mp3">
+        <scene id="intro" sound="intro.mp3" title="Introduction">
             <action keys="oui" next-scene="step1"></action>
             <action keys="non" next-scene="step2"></action>
         </scene>

@@ -3,7 +3,19 @@
 
     <string name="play">Play</string>
     <string name="download">Download Tales</string>
+    <string name="download_soon">Available soon!</string>
     <string name="exit">Exit</string>
     <string name="title_activity_scene">Scene</string>
+
+    <string name="speech_start">Starting speech recognition</string>
+    <string name="speech_ready">Speak now!</string>
+    <string name="speech_listening">Listening...</string>
+    <string name="speech_end">Processing...</string>
+
+    <string name="pause">pause</string>
+    <string name="resume">resume</string>
+    <string name="skip">skip</string>
+    <string name="repeat">repeat</string>
+    <string name="quit">quit</string>
 
 </resources>

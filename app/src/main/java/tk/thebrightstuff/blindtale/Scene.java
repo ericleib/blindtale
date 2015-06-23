@@ -14,6 +14,7 @@ public class Scene implements Serializable {
 
     public Tale tale;
     public String id;
+    public String title;
     public String soundPath;
     public List<Action> actions = new ArrayList<Action>();
 

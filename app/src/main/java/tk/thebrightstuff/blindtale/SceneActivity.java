@@ -2,6 +2,7 @@ package tk.thebrightstuff.blindtale;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -12,12 +13,16 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class SceneActivity extends Activity implements MediaPlayer.OnCompletionListener, RecognitionListener {
@@ -25,11 +30,13 @@ public class SceneActivity extends Activity implements MediaPlayer.OnCompletionL
     private final static LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 
+    private final Map<String,Button> buttonMap = new HashMap<>();
+
     private final static String TAG = "SceneActivity";
 
     private MediaPlayer player;
     private SpeechRecognizer speech;
-    private Intent SPEECH_INTENT;
+    private Intent speechIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,24 +46,31 @@ public class SceneActivity extends Activity implements MediaPlayer.OnCompletionL
         Tale t = (Tale) intent.getExtras().getSerializable(MainActivity.TALE);
         Scene s = t.getScene();
 
+        AudioManager m_amAudioManager = (AudioManager)getSystemService(AUDIO_SERVICE);
+        m_amAudioManager.setMode(AudioManager.STREAM_MUSIC);
+        m_amAudioManager.setSpeakerphoneOn(true);
+
         newScene(s);
     }
 
 
     private void newScene(Scene s){
 
-        speech = SpeechRecognizer.createSpeechRecognizer(this);
-        speech.setRecognitionListener(this);
-        SPEECH_INTENT = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        SPEECH_INTENT.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, "fr-FR");
-        SPEECH_INTENT.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, "fr");
-        SPEECH_INTENT.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, getPackageName());
-        //SPEECH_INTENT.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 3);
-
+        if( SpeechRecognizer.isRecognitionAvailable(this) ){
+            speech = SpeechRecognizer.createSpeechRecognizer(this);
+            speech.setRecognitionListener(this);
+            speechIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+            speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, "fr-FR");
+            speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, "fr");
+            speechIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, getPackageName());
+            //SPEECH_INTENT.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 3);
+        }else{
+            Toast.makeText(this, "Speech recognition is unavailable!!", Toast.LENGTH_LONG).show();
+        }
 
         Log.v(TAG, "New scene: " + s.id);
         TextView tv = (TextView) findViewById(R.id.scene_title);
-        tv.setText(s.id);
+        tv.setText(s.title);
 
         LinearLayout lm = (LinearLayout) findViewById(R.id.container);
         lm.removeAllViews();
@@ -67,7 +81,7 @@ public class SceneActivity extends Activity implements MediaPlayer.OnCompletionL
         addStandardButtons(lm, i, s.actions.size() > 0);
 
         File soundFile = s.getSoundFile();
-        Log.v(TAG, "Playing sound: "+soundFile.getAbsolutePath());
+        Log.v(TAG, "Playing sound: " + soundFile.getAbsolutePath());
         if(!soundFile.exists())
             Log.e(TAG, "Sound file does not exist: "+soundFile.getAbsolutePath());
         //player = MediaPlayer.create(this, Uri.fromFile(soundFile));
@@ -88,45 +102,84 @@ public class SceneActivity extends Activity implements MediaPlayer.OnCompletionL
             Toast.makeText(this, "Oops... There's a problem with that scene!", Toast.LENGTH_LONG).show();
         }
 
+    }
 
+    private void endScene(Scene nextScene){
+        player.stop();
+        if(speech!=null){
+            speech.cancel();
+            speech.stopListening();
+            findViewById(R.id.progress_bar).setVisibility(View.INVISIBLE);
+            ((TextView)findViewById(R.id.scene_speech_text)).setText("");
+        }
+        if(nextScene!=null)
+            newScene(nextScene);
     }
 
     private void addActionButton(LinearLayout lm, final Action a, int id) {
         Button btn = addButton(lm, a.keys.get(0), id);
+        btn.setTypeface(null, Typeface.BOLD);
         btn.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
-                newScene(a.nextScene);
+                endScene(a.nextScene);
             }
         });
+        for(String key : a.keys)
+            buttonMap.put(key, btn);
     }
 
     private void addStandardButtons(LinearLayout lm, int id, boolean end) {
-        Button repeat = addButton(lm, "Repeat", id++);
-        repeat.setOnClickListener(new Button.OnClickListener() {
+        buttonMap.put(getResources().getString(R.string.repeat), addButton(lm, getResources().getString(R.string.repeat), id++));
+        buttonMap.get(getResources().getString(R.string.repeat)).setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
-                player.start();
-            }
-        });
-
-        Button pause = addButton(lm, "Pause", id++);
-        pause.setOnClickListener(new Button.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(player.isPlaying())
-                    player.pause();
-                else
+                player.stop();
+                try {
+                    player.prepare();
+                    player.seekTo(0);
                     player.start();
+                    buttonMap.get(getResources().getString(R.string.pause)).setText(capitalize(getResources().getString(R.string.pause)));
+                    buttonMap.get(getResources().getString(R.string.pause)).setEnabled(true);
+                    buttonMap.get(getResources().getString(R.string.skip)).setEnabled(true);
+                } catch (IOException e) {
+                    Log.e(TAG, "Error preparing data after repeat...", e);
+                }
             }
         });
 
-        Button quit = addButton(lm, "Quit", id++);
-        quit.setOnClickListener(new Button.OnClickListener() {
+        buttonMap.put(getResources().getString(R.string.pause), addButton(lm, getResources().getString(R.string.pause), id++));
+        buttonMap.get(getResources().getString(R.string.pause)).setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(player.isPlaying())
+                if (player.isPlaying()) {
+                    player.pause();
+                    buttonMap.get(getResources().getString(R.string.pause)).setText(capitalize(getResources().getString(R.string.resume)));
+                } else {
+                    player.start();
+                    buttonMap.get(getResources().getString(R.string.pause)).setText(capitalize(getResources().getString(R.string.pause)));
+                }
+            }
+        });
+
+        buttonMap.put(getResources().getString(R.string.skip), addButton(lm, getResources().getString(R.string.skip), id++));
+        buttonMap.get(getResources().getString(R.string.skip)).setOnClickListener(new Button.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                player.seekTo(player.getDuration());
+            }
+        });
+
+        buttonMap.put(getResources().getString(R.string.quit), addButton(lm, getResources().getString(R.string.quit), id++));
+        buttonMap.get(getResources().getString(R.string.quit)).setOnClickListener(new Button.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (player.isPlaying())
                     player.stop();
+                if (speech != null) {
+                    speech.cancel();
+                    speech.stopListening();
+                }
                 finish();
             }
         });
@@ -135,12 +188,17 @@ public class SceneActivity extends Activity implements MediaPlayer.OnCompletionL
     private Button addButton(LinearLayout lm, String text, int id){
         Log.v(TAG, "Adding button: " + text);
         Button btn = new Button(this);
-        btn.setText(text);
+        btn.setText(capitalize(text));
         btn.setId(id);
         btn.setLayoutParams(params);
         lm.addView(btn);
         return btn;
     }
+
+    private static String capitalize(String input) {
+        return input.substring(0, 1).toUpperCase() + input.substring(1);
+    }
+
 
     /**
      * Called when sound is finished playing
@@ -148,7 +206,24 @@ public class SceneActivity extends Activity implements MediaPlayer.OnCompletionL
      */
     @Override
     public void onCompletion(MediaPlayer mp) {
-        speech.startListening(SPEECH_INTENT);
+        startSpeechRecognition();
+        buttonMap.get(getResources().getString(R.string.pause)).setEnabled(false);
+        buttonMap.get(getResources().getString(R.string.skip)).setEnabled(false);
+    }
+
+    private void startSpeechRecognition() {
+        if(speech!=null){
+            speech.startListening(speechIntent);
+            findViewById(R.id.progress_bar).setVisibility(View.VISIBLE);
+            ((TextView)findViewById(R.id.scene_speech_text)).setText(R.string.speech_start);
+        }
+    }
+
+    private void checkSpeechRecognitionResults(Bundle results) {
+
+        ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+        Toast.makeText(this, "You said: "+matches.get(0), Toast.LENGTH_SHORT).show();
+        // process results
     }
 
 
@@ -158,6 +233,8 @@ public class SceneActivity extends Activity implements MediaPlayer.OnCompletionL
     @Override
     public void onReadyForSpeech(Bundle params) {
         Log.i(TAG, "onReadyForSpeech");
+        ((TextView)findViewById(R.id.scene_speech_text)).setText(R.string.speech_ready);
+        ((ProgressBar)findViewById(R.id.progress_bar)).setIndeterminate(true);
     }
 
     /**
@@ -166,7 +243,7 @@ public class SceneActivity extends Activity implements MediaPlayer.OnCompletionL
     @Override
     public void onBeginningOfSpeech() {
         Log.i(TAG, "onBeginningOfSpeech");
-        // Init progress bar?
+        ((TextView)findViewById(R.id.scene_speech_text)).setText(R.string.speech_listening);
     }
 
     @Override
@@ -186,6 +263,7 @@ public class SceneActivity extends Activity implements MediaPlayer.OnCompletionL
     @Override
     public void onEndOfSpeech() {
         Log.i(TAG, "onEndOfSpeech");
+        ((TextView)findViewById(R.id.scene_speech_text)).setText(R.string.speech_end);
         // Called after onResult or not?
     }
 
@@ -193,22 +271,21 @@ public class SceneActivity extends Activity implements MediaPlayer.OnCompletionL
     public void onError(int error) {
         String errorMessage = getErrorText(error);
         Log.e(TAG, "FAILED " + errorMessage);
+        ((TextView)findViewById(R.id.scene_speech_text)).setText(errorMessage);
         // process error
+        // Reset?
     }
 
     @Override
     public void onResults(Bundle results) {
         Log.i(TAG, "onResults");
-        speech.stopListening();
-
-        ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-        Toast.makeText(this, "You said: "+matches.get(0), Toast.LENGTH_SHORT).show();
-        // process results
+        checkSpeechRecognitionResults(results);
     }
 
     @Override
     public void onPartialResults(Bundle partialResults) {
         Log.i(TAG, "onPartialResults");
+        checkSpeechRecognitionResults(partialResults);
     }
 
     @Override
