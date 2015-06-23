@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">BlindTale</string>
 
+    <string name="play">Play</string>
+    <string name="download">Download Tales</string>
+    <string name="exit">Exit</string>
     <string name="title_activity_scene">Scene</string>
 
 </resources>

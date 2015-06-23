@@ -2,20 +2,25 @@ package tk.thebrightstuff.blindtale;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Bundle;
+import android.speech.RecognitionListener;
+import android.speech.RecognizerIntent;
+import android.speech.SpeechRecognizer;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.ArrayList;
 
 
-public class SceneActivity extends Activity implements MediaPlayer.OnCompletionListener {
+public class SceneActivity extends Activity implements MediaPlayer.OnCompletionListener, RecognitionListener {
 
     private final static LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -23,6 +28,8 @@ public class SceneActivity extends Activity implements MediaPlayer.OnCompletionL
     private final static String TAG = "SceneActivity";
 
     private MediaPlayer player;
+    private SpeechRecognizer speech;
+    private Intent SPEECH_INTENT;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,11 +38,21 @@ public class SceneActivity extends Activity implements MediaPlayer.OnCompletionL
         Intent intent = getIntent();
         Tale t = (Tale) intent.getExtras().getSerializable(MainActivity.TALE);
         Scene s = t.getScene();
+
         newScene(s);
     }
 
 
     private void newScene(Scene s){
+
+        speech = SpeechRecognizer.createSpeechRecognizer(this);
+        speech.setRecognitionListener(this);
+        SPEECH_INTENT = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        SPEECH_INTENT.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, "fr-FR");
+        SPEECH_INTENT.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, "fr");
+        SPEECH_INTENT.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, getPackageName());
+        //SPEECH_INTENT.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 3);
+
 
         Log.v(TAG, "New scene: " + s.id);
         TextView tv = (TextView) findViewById(R.id.scene_title);
@@ -56,6 +73,7 @@ public class SceneActivity extends Activity implements MediaPlayer.OnCompletionL
         //player = MediaPlayer.create(this, Uri.fromFile(soundFile));
         try{
             player = new MediaPlayer();
+            player.setAudioStreamType(AudioManager.STREAM_MUSIC);
             player.setOnCompletionListener(this);
             player.setDataSource(new FileInputStream(soundFile).getFD());
             player.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
@@ -67,7 +85,10 @@ public class SceneActivity extends Activity implements MediaPlayer.OnCompletionL
             player.prepareAsync();
         }catch(Exception e){
             Log.e(TAG, "Error playing sound: "+soundFile.getAbsolutePath(), e);
+            Toast.makeText(this, "Oops... There's a problem with that scene!", Toast.LENGTH_LONG).show();
         }
+
+
     }
 
     private void addActionButton(LinearLayout lm, final Action a, int id) {
@@ -116,13 +137,120 @@ public class SceneActivity extends Activity implements MediaPlayer.OnCompletionL
         Button btn = new Button(this);
         btn.setText(text);
         btn.setId(id);
-        btn.setTextColor(getResources().getColor(R.color.text));
         btn.setLayoutParams(params);
         lm.addView(btn);
         return btn;
     }
 
+    /**
+     * Called when sound is finished playing
+     * @param mp media player
+     */
     @Override
     public void onCompletion(MediaPlayer mp) {
+        speech.startListening(SPEECH_INTENT);
     }
+
+
+    // Speech recognition interface implementation //
+    //=============================================//
+
+    @Override
+    public void onReadyForSpeech(Bundle params) {
+        Log.i(TAG, "onReadyForSpeech");
+    }
+
+    /**
+     * User starts to speak
+     */
+    @Override
+    public void onBeginningOfSpeech() {
+        Log.i(TAG, "onBeginningOfSpeech");
+        // Init progress bar?
+    }
+
+    @Override
+    public void onRmsChanged(float rmsdB) {
+        // Log.i(TAG, "onRmsChanged: " + rmsdB);
+        // Sound level changed (update progress bar ?)
+    }
+
+    @Override
+    public void onBufferReceived(byte[] buffer) {
+        // Log.i(TAG, "onBufferReceived: " + buffer);
+    }
+
+    /**
+     * User stopped speaking
+     */
+    @Override
+    public void onEndOfSpeech() {
+        Log.i(TAG, "onEndOfSpeech");
+        // Called after onResult or not?
+    }
+
+    @Override
+    public void onError(int error) {
+        String errorMessage = getErrorText(error);
+        Log.e(TAG, "FAILED " + errorMessage);
+        // process error
+    }
+
+    @Override
+    public void onResults(Bundle results) {
+        Log.i(TAG, "onResults");
+        speech.stopListening();
+
+        ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+        Toast.makeText(this, "You said: "+matches.get(0), Toast.LENGTH_SHORT).show();
+        // process results
+    }
+
+    @Override
+    public void onPartialResults(Bundle partialResults) {
+        Log.i(TAG, "onPartialResults");
+    }
+
+    @Override
+    public void onEvent(int eventType, Bundle params) {
+        Log.i(TAG, "onEvent");
+    }
+
+    public static String getErrorText(int errorCode) {
+        String message;
+        switch (errorCode) {
+            case SpeechRecognizer.ERROR_AUDIO:
+                message = "Audio recording error";
+                break;
+            case SpeechRecognizer.ERROR_CLIENT:
+                message = "Client side error";
+                break;
+            case SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS:
+                message = "Insufficient permissions";
+                break;
+            case SpeechRecognizer.ERROR_NETWORK:
+                message = "Network error";
+                break;
+            case SpeechRecognizer.ERROR_NETWORK_TIMEOUT:
+                message = "Network timeout";
+                break;
+            case SpeechRecognizer.ERROR_NO_MATCH:
+                message = "No match";
+                break;
+            case SpeechRecognizer.ERROR_RECOGNIZER_BUSY:
+                message = "RecognitionService busy";
+                break;
+            case SpeechRecognizer.ERROR_SERVER:
+                message = "error from server";
+                break;
+            case SpeechRecognizer.ERROR_SPEECH_TIMEOUT:
+                message = "No speech input";
+                break;
+            default:
+                message = "Didn't understand, please try again.";
+                break;
+        }
+        return message;
+    }
+
 }
