@@ -1,7 +1,8 @@
 <resources>
-    <string name="app_name">BlindTale</string>
+    <string name="app_name">Blind Tale</string>
 
     <string name="play">Play</string>
+    <string name="cont">Continue</string>
     <string name="download">Download Tales</string>
     <string name="download_soon">Available soon!</string>
     <string name="exit">Exit</string>

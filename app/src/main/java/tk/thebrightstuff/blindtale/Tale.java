@@ -12,15 +12,18 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Created by niluje on 17/06/15.
+ *
  */
 public class Tale implements Serializable {
 
     private final static String DESCRIPTOR = "descriptor.xml";
+    private final static String SAVE_FILE = "save.txt";
     private final static String TAG = "Tale";
 
     private File folder;
@@ -28,6 +31,7 @@ public class Tale implements Serializable {
     private String title;
 
     private Scene scene;
+    private Map<String,Scene> scenes = new HashMap<>();
 
     public String toString() {
         return title;
@@ -37,17 +41,25 @@ public class Tale implements Serializable {
         return scene;
     }
 
+    public Map<String,Scene> getScenes() { return scenes; }
+
     public File getTaleFolder(){
         return folder;
     }
 
+    public File getSaveFile() {
+        if(!new File(folder, "save").exists())
+            new File(folder, "save").mkdir();
+        return new File(new File(folder, "save"), SAVE_FILE);
+    }
+
     /**
      * Parse the provided descriptor file using XmlPullParser
-     * @param descriptor
+     * @param descriptor Descriptor XML file
      * @throws IOException
      */
     public void readFromXML(File descriptor) throws IOException {
-        Log.v(TAG, "Reading descriptor :"+descriptor.getAbsolutePath());
+        Log.v(TAG, "Reading descriptor :" + descriptor.getAbsolutePath());
         InputStream in = new FileInputStream(descriptor);
         try {
             XmlPullParser parser = Xml.newPullParser();
@@ -56,7 +68,6 @@ public class Tale implements Serializable {
             parser.nextTag();
             parser.require(XmlPullParser.START_TAG, null, "tale");
             String entryScene = null;
-            Map<String,Scene> scenes = new HashMap<String,Scene>();
             while (parser.next() != XmlPullParser.END_TAG) {
                 if (parser.getEventType() != XmlPullParser.START_TAG) {
                     continue;
@@ -66,7 +77,7 @@ public class Tale implements Serializable {
                 switch (name) {
                     case "title": this.title = readTxtTag(parser, name); break;
                     case "entry-scene" : entryScene = readTxtTag(parser, name); break;
-                    case "scenes": readScenesTag(parser, scenes, name); break;
+                    case "scenes": readScenesTag(parser, name); break;
                     default: throw new Exception("Unexpected tag in descriptor: "+name);
                 }
             }
@@ -93,12 +104,11 @@ public class Tale implements Serializable {
         }catch(Exception e){
             Log.e(TAG, "Could not properly read descriptor: "+descriptor.getAbsolutePath(), e);
         } finally {
-            if(in!=null)
-                in.close();
+            in.close();
         }
     }
 
-    private void readScenesTag(XmlPullParser parser, Map<String, Scene> scenes, String tag) throws Exception {
+    private void readScenesTag(XmlPullParser parser, String tag) throws Exception {
         parser.require(XmlPullParser.START_TAG, null, tag);
 
         while (parser.next() != XmlPullParser.END_TAG) {
@@ -150,8 +160,7 @@ public class Tale implements Serializable {
         Action action = new Action();
 
         String[] keys = parser.getAttributeValue(null, "keys").split(",");
-        for(String key : keys)
-            action.keys.add(key);
+        action.keys.addAll(Arrays.asList(keys));
 
         if(action.keys.size()==0)
             throw new Exception("Action must have at least one key");
@@ -183,8 +192,8 @@ public class Tale implements Serializable {
 
     /**
      * Static method to read all tales from internal storage
-     * @param rootDir
-     * @return
+     * @param rootDir Directory in which tales are stored
+     * @return array of tales
      */
     public static Tale[] getAvailableTales(File rootDir){
         Log.v(TAG, "Scanning app folder to look for tales... "+rootDir.getAbsolutePath());

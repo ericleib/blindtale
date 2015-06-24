@@ -2,6 +2,7 @@ package tk.thebrightstuff.blindtale;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -17,12 +18,16 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import tk.thebrightstuff.blindtale.tk.thebrightstuff.blindtale.utils.StringUtils;
 
 
 public class SceneActivity extends Activity implements MediaPlayer.OnCompletionListener, RecognitionListener {
@@ -38,23 +43,27 @@ public class SceneActivity extends Activity implements MediaPlayer.OnCompletionL
     private SpeechRecognizer speech;
     private Intent speechIntent;
 
+    private Map<String,String> state;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scene);
         Intent intent = getIntent();
-        Tale t = (Tale) intent.getExtras().getSerializable(MainActivity.TALE);
-        Scene s = t.getScene();
+        Scene scene = (Scene) intent.getExtras().getSerializable(MainActivity.SCENE);
+        Map state = (Map) intent.getExtras().getSerializable(MainActivity.STATE);
 
         AudioManager m_amAudioManager = (AudioManager)getSystemService(AUDIO_SERVICE);
         m_amAudioManager.setMode(AudioManager.STREAM_MUSIC);
         m_amAudioManager.setSpeakerphoneOn(true);
 
-        newScene(s);
+        newScene(scene, state);
     }
 
 
-    private void newScene(Scene s){
+    private void newScene(Scene s, Map<String,String> state){
+
+        this.state = state;
 
         if( SpeechRecognizer.isRecognitionAvailable(this) ){
             speech = SpeechRecognizer.createSpeechRecognizer(this);
@@ -102,6 +111,7 @@ public class SceneActivity extends Activity implements MediaPlayer.OnCompletionL
             Toast.makeText(this, "Oops... There's a problem with that scene!", Toast.LENGTH_LONG).show();
         }
 
+        saveProgress(s);
     }
 
     private void endScene(Scene nextScene){
@@ -113,12 +123,13 @@ public class SceneActivity extends Activity implements MediaPlayer.OnCompletionL
             ((TextView)findViewById(R.id.scene_speech_text)).setText("");
         }
         if(nextScene!=null)
-            newScene(nextScene);
+            newScene(nextScene, state);
     }
 
     private void addActionButton(LinearLayout lm, final Action a, int id) {
         Button btn = addButton(lm, a.keys.get(0), id);
         btn.setTypeface(null, Typeface.BOLD);
+        btn.getBackground().setColorFilter(getResources().getColor(R.color.play_bg), PorterDuff.Mode.MULTIPLY);
         btn.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -126,12 +137,12 @@ public class SceneActivity extends Activity implements MediaPlayer.OnCompletionL
             }
         });
         for(String key : a.keys)
-            buttonMap.put(key, btn);
+            buttonMap.put(StringUtils.removeAccents(key), btn);
     }
 
     private void addStandardButtons(LinearLayout lm, int id, boolean end) {
-        buttonMap.put(getResources().getString(R.string.repeat), addButton(lm, getResources().getString(R.string.repeat), id++));
-        buttonMap.get(getResources().getString(R.string.repeat)).setOnClickListener(new Button.OnClickListener() {
+        buttonMap.put(getNString(R.string.repeat), addButton(lm, getResources().getString(R.string.repeat), id++));
+        buttonMap.get(getNString(R.string.repeat)).setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
                 player.stop();
@@ -139,39 +150,39 @@ public class SceneActivity extends Activity implements MediaPlayer.OnCompletionL
                     player.prepare();
                     player.seekTo(0);
                     player.start();
-                    buttonMap.get(getResources().getString(R.string.pause)).setText(capitalize(getResources().getString(R.string.pause)));
-                    buttonMap.get(getResources().getString(R.string.pause)).setEnabled(true);
-                    buttonMap.get(getResources().getString(R.string.skip)).setEnabled(true);
+                    buttonMap.get(getNString(R.string.pause)).setText(StringUtils.capitalize(getResources().getString(R.string.pause)));
+                    buttonMap.get(getNString(R.string.pause)).setEnabled(true);
+                    buttonMap.get(getNString(R.string.skip)).setEnabled(true);
                 } catch (IOException e) {
                     Log.e(TAG, "Error preparing data after repeat...", e);
                 }
             }
         });
 
-        buttonMap.put(getResources().getString(R.string.pause), addButton(lm, getResources().getString(R.string.pause), id++));
-        buttonMap.get(getResources().getString(R.string.pause)).setOnClickListener(new Button.OnClickListener() {
+        buttonMap.put(getNString(R.string.pause), addButton(lm, getResources().getString(R.string.pause), id++));
+        buttonMap.get(getNString(R.string.pause)).setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (player.isPlaying()) {
                     player.pause();
-                    buttonMap.get(getResources().getString(R.string.pause)).setText(capitalize(getResources().getString(R.string.resume)));
+                    buttonMap.get(getNString(R.string.pause)).setText(StringUtils.capitalize(getResources().getString(R.string.resume)));
                 } else {
                     player.start();
-                    buttonMap.get(getResources().getString(R.string.pause)).setText(capitalize(getResources().getString(R.string.pause)));
+                    buttonMap.get(getNString(R.string.pause)).setText(StringUtils.capitalize(getResources().getString(R.string.pause)));
                 }
             }
         });
 
-        buttonMap.put(getResources().getString(R.string.skip), addButton(lm, getResources().getString(R.string.skip), id++));
-        buttonMap.get(getResources().getString(R.string.skip)).setOnClickListener(new Button.OnClickListener() {
+        buttonMap.put(getNString(R.string.skip), addButton(lm, getResources().getString(R.string.skip), id++));
+        buttonMap.get(getNString(R.string.skip)).setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
                 player.seekTo(player.getDuration());
             }
         });
 
-        buttonMap.put(getResources().getString(R.string.quit), addButton(lm, getResources().getString(R.string.quit), id++));
-        buttonMap.get(getResources().getString(R.string.quit)).setOnClickListener(new Button.OnClickListener() {
+        buttonMap.put(getNString(R.string.quit), addButton(lm, getResources().getString(R.string.quit), id++));
+        buttonMap.get(getNString(R.string.quit)).setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (player.isPlaying())
@@ -188,17 +199,12 @@ public class SceneActivity extends Activity implements MediaPlayer.OnCompletionL
     private Button addButton(LinearLayout lm, String text, int id){
         Log.v(TAG, "Adding button: " + text);
         Button btn = new Button(this);
-        btn.setText(capitalize(text));
+        btn.setText(StringUtils.capitalize(text));
         btn.setId(id);
         btn.setLayoutParams(params);
         lm.addView(btn);
         return btn;
     }
-
-    private static String capitalize(String input) {
-        return input.substring(0, 1).toUpperCase() + input.substring(1);
-    }
-
 
     /**
      * Called when sound is finished playing
@@ -207,8 +213,8 @@ public class SceneActivity extends Activity implements MediaPlayer.OnCompletionL
     @Override
     public void onCompletion(MediaPlayer mp) {
         startSpeechRecognition();
-        buttonMap.get(getResources().getString(R.string.pause)).setEnabled(false);
-        buttonMap.get(getResources().getString(R.string.skip)).setEnabled(false);
+        buttonMap.get(getNString(R.string.pause)).setEnabled(false);
+        buttonMap.get(getNString(R.string.skip)).setEnabled(false);
     }
 
     private void startSpeechRecognition() {
@@ -224,6 +230,16 @@ public class SceneActivity extends Activity implements MediaPlayer.OnCompletionL
         ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
         Toast.makeText(this, "You said: "+matches.get(0), Toast.LENGTH_SHORT).show();
         // process results
+        for(String match : matches){
+            for(String word : match.split(" ")){
+                word = StringUtils.removeAccents(word);
+                if(buttonMap.containsKey(word)){
+                    Button btn = buttonMap.get(word);
+                    if(btn.isEnabled())
+                        btn.performClick();
+                }
+            }
+        }
     }
 
 
@@ -330,4 +346,22 @@ public class SceneActivity extends Activity implements MediaPlayer.OnCompletionL
         return message;
     }
 
+
+    private void saveProgress(Scene scene){
+        File saveFile = scene.tale.getSaveFile();
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(saveFile));
+            bw.write("scene = " + scene.id + "\n");
+            for(Map.Entry<String,String> e : state.entrySet())
+                bw.write(e.getKey()+ " = "+e.getValue() + "\n");
+            bw.close();
+        } catch (IOException e) {
+            Log.e(TAG, "Could not save progress to save file: " + saveFile.getAbsolutePath(), e);
+            Toast.makeText(this, "Could not save progress...", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private String getNString(int id){
+        return StringUtils.removeAccents(getResources().getString(id));
+    }
 }

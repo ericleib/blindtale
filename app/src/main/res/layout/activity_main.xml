@@ -12,6 +12,7 @@
         android:src="@mipmap/title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:contentDescription="@string/app_name"
         />
 
     <Spinner
@@ -28,15 +29,22 @@
         android:text="@string/play"
         android:id="@+id/play_button"
         android:layout_below="@+id/tale_spinner"
-        android:backgroundTint="@color/play_bg"
         android:onClick="play"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/cont"
+        android:id="@+id/resume_button"
+        android:layout_below="@+id/play_button"
+        android:onClick="resume"/>
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/download"
         android:id="@+id/download_button"
-        android:layout_below="@+id/play_button"
+        android:layout_below="@+id/resume_button"
         android:onClick="download"/>
 
     <Button
