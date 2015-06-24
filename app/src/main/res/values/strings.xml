@@ -13,6 +13,17 @@
     <string name="speech_listening">Listening...</string>
     <string name="speech_end">Processing...</string>
 
+    <string name="error_audio">Audio recording error</string>
+    <string name="error_client">Client side error</string>
+    <string name="error_permissions">Insufficient permissions</string>
+    <string name="error_network">Network error</string>
+    <string name="error_network_timeout">Network timeout</string>
+    <string name="error_nomatch">No match, please try again</string>
+    <string name="error_busy">RecognitionService busy</string>
+    <string name="error_server">error from server</string>
+    <string name="error_speech_timeout">No speech input</string>
+    <string name="error_default">Didn\'t understand, please try again</string>
+
     <string name="pause">pause</string>
     <string name="resume">resume</string>
     <string name="skip">skip</string>

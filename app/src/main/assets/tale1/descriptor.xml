@@ -3,6 +3,8 @@
 
     <entry-scene>intro</entry-scene>
 
+    <lang>fr-FR</lang>
+
     <scenes>
         <scene id="intro" sound="intro.mp3" title="Introduction">
             <action keys="oui" next-scene="step1"></action>

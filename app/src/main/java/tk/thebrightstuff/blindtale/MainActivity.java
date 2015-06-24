@@ -41,7 +41,7 @@ public class MainActivity extends Activity {
         if(firstRun){
             Log.v(TAG, "First run: deploying default tale");
             if(copyTaleToInternalStorage())
-                p.edit().putBoolean(PREFERENCE_FIRST_RUN, false).commit();
+                p.edit().putBoolean(PREFERENCE_FIRST_RUN, false).apply();
             else
                 Log.e(TAG, "Failed to copy the default tale to internal storage");
         }else
@@ -131,7 +131,7 @@ public class MainActivity extends Activity {
         b.putSerializable(SCENE, scene);
         b.putSerializable(STATE, state);
         intent.putExtras(b);
-        Log.v(TAG, "Starting tale " + scene.tale.toString());
+        Log.v(TAG, "Starting tale " + scene.tale.toString()+" ("+scene.tale.getLang()+")");
         startActivity(intent);
     }
 }

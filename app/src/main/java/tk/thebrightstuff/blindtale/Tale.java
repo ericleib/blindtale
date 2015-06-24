@@ -28,13 +28,17 @@ public class Tale implements Serializable {
 
     private File folder;
 
-    private String title;
+    private String title, lang = "en-US";
 
     private Scene scene;
     private Map<String,Scene> scenes = new HashMap<>();
 
     public String toString() {
         return title;
+    }
+
+    public String getLang() {
+        return lang;
     }
 
     public Scene getScene() {
@@ -76,6 +80,7 @@ public class Tale implements Serializable {
                 // Starts by looking for the entry tag
                 switch (name) {
                     case "title": this.title = readTxtTag(parser, name); break;
+                    case "lang": this.lang = readTxtTag(parser, name); break;
                     case "entry-scene" : entryScene = readTxtTag(parser, name); break;
                     case "scenes": readScenesTag(parser, name); break;
                     default: throw new Exception("Unexpected tag in descriptor: "+name);

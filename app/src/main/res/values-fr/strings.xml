@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Blind Tale</string>
+    <string name="cont">Continuer</string>
+    <string name="download">Télécharger</string>
+    <string name="download_soon">Bientôt disponible !</string>
+    <string name="error_audio">Erreur d\'enregistrement audio</string>
+    <string name="error_busy">Service de reconnaissance vocal occupé</string>
+    <string name="error_client">Erreur du client</string>
+    <string name="error_default">Je n\'ai pas compris, pouvez-vous répéter ?</string>
+    <string name="error_network">Erreur réseau</string>
+    <string name="error_network_timeout">Pas de réponse du réseau</string>
+    <string name="error_nomatch">Pas de résultat, pouvez-vous répéter ?</string>
+    <string name="error_permissions">Permissions insuffisantes</string>
+    <string name="error_server">Erreur du serveur</string>
+    <string name="error_speech_timeout">Pas de commande</string>
+    <string name="exit">Quitter</string>
+    <string name="pause">pause</string>
+    <string name="play">Commencer</string>
+    <string name="quit">quitter</string>
+    <string name="repeat">répéter</string>
+    <string name="resume">reprendre</string>
+    <string name="skip">passer</string>
+    <string name="speech_end">Analyse...</string>
+    <string name="speech_listening">Ecoute...</string>
+    <string name="speech_ready">Parlez maintenant!</string>
+    <string name="speech_start">Début de la reconnaissance vocale</string>
+    <string name="title_activity_scene">Scène</string>
+</resources>
