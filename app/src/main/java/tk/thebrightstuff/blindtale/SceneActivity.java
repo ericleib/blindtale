@@ -40,7 +40,7 @@ public class SceneActivity extends Activity implements MediaPlayer.OnCompletionL
 
     private final Map<String,Button> buttonMap = new HashMap<>();
 
-    private final static String TAG = "SceneActivity";
+    private final static String TAG = "SceneActivity", SCENE = "scene", ACTION = "action";
 
     private MediaPlayer player;
     private SpeechRecognizer speech;
@@ -91,30 +91,34 @@ public class SceneActivity extends Activity implements MediaPlayer.OnCompletionL
         Log.v(TAG, "OnDestroy");
         this.mWakeLock.release();
         this.player.release();
-        this.speech.destroy();
+        if(speech!=null)
+            speech.destroy();
         super.onDestroy();
     }
 
     private void newScene(Scene s){
         Log.v(TAG, "New scene: " + s.id);
 
-        TextView tv = (TextView) findViewById(R.id.scene_title);
-        tv.setText(s.title);
+        // Set title
+        ((TextView) findViewById(R.id.scene_title)).setText(s.title);
 
+        // Add buttons
         LinearLayout lm = (LinearLayout) findViewById(R.id.container);
         lm.removeAllViews();
         int i = 0;
         for(Action a: s.actions){
-            addActionButton(lm, a, i++);
+            if(a.condition==null || a.condition.check(state))
+                addActionButton(lm, a, i++);
         }
         addStandardButtons(lm, i, s.actions.size() > 0);
 
+        // Play sound
         File soundFile = s.getSoundFile();
         Log.v(TAG, "Playing sound: " + soundFile.getAbsolutePath());
-        if(!soundFile.exists())
-            Log.e(TAG, "Sound file does not exist: "+soundFile.getAbsolutePath());
-        //player = MediaPlayer.create(this, Uri.fromFile(soundFile));
         try{
+            if(!soundFile.exists())
+                throw new Exception("Sound file does not exist: "+soundFile.getAbsolutePath());
+            //player = MediaPlayer.create(this, Uri.fromFile(soundFile));
             player = new MediaPlayer();
             player.setAudioStreamType(AudioManager.STREAM_MUSIC);
             player.setOnCompletionListener(this);
@@ -131,6 +135,10 @@ public class SceneActivity extends Activity implements MediaPlayer.OnCompletionL
             Toast.makeText(this, "Oops... There's a problem with that scene!", Toast.LENGTH_LONG).show();
         }
 
+        // Update state
+        updateState(s);
+
+        // Saving player's progress
         saveProgress(s);
     }
 
@@ -145,6 +153,18 @@ public class SceneActivity extends Activity implements MediaPlayer.OnCompletionL
             newScene(nextScene);
     }
 
+    private void updateState(Scene s) {
+        state.put(SCENE + "_" + s.id + "_visited", "true");
+    }
+
+    private void updateAction(Action a) {
+        if(a.id!=null)
+            state.put(ACTION+"_"+a.id+"_completed", "true");
+    }
+
+
+    // Buttons
+
     private void addActionButton(LinearLayout lm, final Action a, int id) {
         Button btn = addButton(lm, a.keys.get(0), id);
         btn.setTypeface(null, Typeface.BOLD);
@@ -152,6 +172,7 @@ public class SceneActivity extends Activity implements MediaPlayer.OnCompletionL
         btn.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
+                updateAction(a);
                 endScene(a.nextScene);
             }
         });
@@ -230,6 +251,7 @@ public class SceneActivity extends Activity implements MediaPlayer.OnCompletionL
         lm.addView(btn);
         return btn;
     }
+
 
     /**
      * Called when sound is finished playing

@@ -171,6 +171,9 @@ public class Tale implements Serializable {
             throw new Exception("Action must have at least one key");
 
         action.nextSceneId = parser.getAttributeValue(null, "next-scene");
+        action.id = parser.getAttributeValue(null, "id");
+        String conditionStr = parser.getAttributeValue(null, "condition");
+        action.condition = conditionStr==null? null : new Condition(conditionStr);
 
         parser.nextTag();
         parser.require(XmlPullParser.END_TAG, null, tag);

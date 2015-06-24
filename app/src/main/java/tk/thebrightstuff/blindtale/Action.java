@@ -11,8 +11,10 @@ public class Action implements Serializable {
 
     public List<String> keys = new ArrayList<String>();
 
+    public String id;
     public String nextSceneId;
     public Scene nextScene;
 
+    public Condition condition;
 
 }
