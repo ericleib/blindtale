@@ -1,0 +1,17 @@
+cmudict-en-us.dict
+frenchWords62K.dic
+en-us-ptm/README
+en-us-ptm/feat.params
+en-us-ptm/mdef
+en-us-ptm/means
+en-us-ptm/noisedict
+en-us-ptm/sendump
+en-us-ptm/transition_matrices
+en-us-ptm/variances
+lium_french_f2/feat.params
+lium_french_f2/mdef
+lium_french_f2/means
+lium_french_f2/mixture_weights
+lium_french_f2/noisedict
+lium_french_f2/transition_matrices
+lium_french_f2/variances

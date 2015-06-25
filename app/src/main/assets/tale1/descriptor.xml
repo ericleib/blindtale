@@ -14,8 +14,6 @@
         <scene id="step1" sound="step1.mp3">
             <action keys="oui" next-scene="end" condition="action_chose_step1_completed__eq__true"></action>
             <action keys="non" next-scene="end" condition="action_chose_step1_completed__eq__false"></action>
-            <action keys="bof" next-scene="end" condition="scene_intro_visited__eq__true"></action>
-            <action keys="oula" next-scene="end" condition="scene_intro_visited__eq__false"></action>
         </scene>
 
         <scene id="step2" sound="step2.mp3">

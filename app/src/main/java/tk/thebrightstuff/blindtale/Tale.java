@@ -14,7 +14,9 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by niluje on 17/06/15.
@@ -32,24 +34,21 @@ public class Tale implements Serializable {
 
     private Scene scene;
     private Map<String,Scene> scenes = new HashMap<>();
+    private Set<String> keywords = new HashSet<>();
 
-    public String toString() {
-        return title;
-    }
 
-    public String getLang() {
-        return lang;
-    }
 
-    public Scene getScene() {
-        return scene;
-    }
+    public String toString() { return title; }
+
+    public String getLang() { return lang; }
+
+    public Scene getScene() { return scene; }
 
     public Map<String,Scene> getScenes() { return scenes; }
 
-    public File getTaleFolder(){
-        return folder;
-    }
+    public Set<String> getKeywords() { return keywords; }
+
+    public File getTaleFolder(){ return folder; }
 
     public File getSaveFile() {
         if(!new File(folder, "save").exists())
@@ -97,6 +96,7 @@ public class Tale implements Serializable {
 
             for(Scene s : scenes.values()){
                 for(Action a: s.actions){
+                    keywords.addAll(a.keys);
                     if(scenes.containsKey(a.nextSceneId))
                         a.nextScene = scenes.get(a.nextSceneId);
                     else

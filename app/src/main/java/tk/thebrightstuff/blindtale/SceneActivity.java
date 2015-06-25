@@ -10,9 +10,6 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.PowerManager;
-import android.speech.RecognitionListener;
-import android.speech.RecognizerIntent;
-import android.speech.SpeechRecognizer;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -26,14 +23,18 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import tk.thebrightstuff.blindtale.tk.thebrightstuff.blindtale.utils.StringUtils;
+import tk.thebrightstuff.blindtale.speech.GoogleSpeechAdapter;
+import tk.thebrightstuff.blindtale.speech.SpeechAdapter;
+import tk.thebrightstuff.blindtale.speech.SpeechListener;
+import tk.thebrightstuff.blindtale.speech.SphinxSpeechAdapter;
+import tk.thebrightstuff.blindtale.utils.StringUtils;
 
 
-public class SceneActivity extends Activity implements MediaPlayer.OnCompletionListener, RecognitionListener {
+public class SceneActivity extends Activity implements MediaPlayer.OnCompletionListener, SpeechListener {
 
     private final static LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -42,9 +43,11 @@ public class SceneActivity extends Activity implements MediaPlayer.OnCompletionL
 
     private final static String TAG = "SceneActivity", SCENE = "scene", ACTION = "action";
 
+    private final static int GOOGLE = 0, SPHINX = 1;
+    private final static int SPEECH_ENGINE = SPHINX;
+
     private MediaPlayer player;
-    private SpeechRecognizer speech;
-    private Intent speechIntent;
+    private SpeechAdapter speech = SPEECH_ENGINE==GOOGLE? new GoogleSpeechAdapter() : new SphinxSpeechAdapter();
 
     private Map<String,String> state;
 
@@ -68,19 +71,16 @@ public class SceneActivity extends Activity implements MediaPlayer.OnCompletionL
         this.mWakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, TAG);
         this.mWakeLock.acquire();
 
-        if( SpeechRecognizer.isRecognitionAvailable(this) ){
-            Log.v(TAG, "Starting new speech recognition instance");
-            speech = SpeechRecognizer.createSpeechRecognizer(getApplicationContext());
-            speech.setRecognitionListener(this);
-            speechIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-            speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, scene.tale.getLang());
-            speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, scene.tale.getLang());
-            speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, scene.tale.getLang());
-            speechIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, getPackageName());
-            //SPEECH_INTENT.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 3);
-        }else{
-            Log.e(TAG, "Speech recognition is unavailable!!");
-            Toast.makeText(this, "Speech recognition is unavailable!!", Toast.LENGTH_LONG).show();
+        Log.v(TAG, "Starting new speech recognition instance");
+        try {
+            scene.tale.getKeywords().add(getResources().getString(R.string.repeat));
+            scene.tale.getKeywords().add(getResources().getString(R.string.pause));
+            scene.tale.getKeywords().add(getResources().getString(R.string.skip));
+            scene.tale.getKeywords().add(getResources().getString(R.string.quit));
+            speech.initialize(this, scene.tale.getLang(), scene.tale.getKeywords());
+        } catch (Exception e) {
+            Log.e(TAG, "Error with speech recognition", e);
+            Toast.makeText(this, "Speech recognition is unavailable!", Toast.LENGTH_LONG).show();
         }
 
         newScene(scene);
@@ -91,8 +91,7 @@ public class SceneActivity extends Activity implements MediaPlayer.OnCompletionL
         Log.v(TAG, "OnDestroy");
         this.mWakeLock.release();
         this.player.release();
-        if(speech!=null)
-            speech.destroy();
+        speech.destroy();
         super.onDestroy();
     }
 
@@ -144,11 +143,9 @@ public class SceneActivity extends Activity implements MediaPlayer.OnCompletionL
 
     private void endScene(Scene nextScene){
         Log.v(TAG, "Ending scene");
+        buttonMap.clear();
         player.stop();
-        if(speech!=null){
-            findViewById(R.id.progress_bar).setVisibility(View.INVISIBLE);
-            ((TextView)findViewById(R.id.scene_speech_text)).setText("");
-        }
+        stopSpeechRecognition();
         if(nextScene!=null)
             newScene(nextScene);
     }
@@ -232,8 +229,6 @@ public class SceneActivity extends Activity implements MediaPlayer.OnCompletionL
                 }
                 if (speech != null) {
                     Log.i(TAG, "Stopping speech recognition");
-                    speech.cancel();
-                    speech.stopListening();
                     speech.destroy();
                 }
                 Log.i(TAG, "Killing activity");
@@ -266,15 +261,24 @@ public class SceneActivity extends Activity implements MediaPlayer.OnCompletionL
     }
 
     private void startSpeechRecognition() {
-        if(speech!=null){
+        if(speech.isAvailable()){
             Log.i(TAG, "Starting speech recognition");
-            speech.startListening(speechIntent);
+            speech.startListening();
             findViewById(R.id.progress_bar).setVisibility(View.VISIBLE);
             ((TextView)findViewById(R.id.scene_speech_text)).setText(R.string.speech_start);
         }
     }
 
-    private void checkSpeechRecognitionResults(Bundle results) {
+    private void stopSpeechRecognition() {
+        if(speech.isAvailable()){
+            Log.i(TAG, "Stopping speech recognition");
+            speech.stopListening();
+            findViewById(R.id.progress_bar).setVisibility(View.INVISIBLE);
+            ((TextView)findViewById(R.id.scene_speech_text)).setText("");
+        }
+    }
+
+    private void checkSpeechRecognitionResults(List<String> matches) {
 
         Log.i(TAG, "Checking speech recognition results");
 
@@ -284,7 +288,6 @@ public class SceneActivity extends Activity implements MediaPlayer.OnCompletionL
 
         ((ProgressBar)findViewById(R.id.progress_bar)).setIndeterminate(false);
 
-        ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
         Toast.makeText(this, "You said: "+matches.get(0), Toast.LENGTH_SHORT).show();
 
         Log.i(TAG, "Processing results");
@@ -307,101 +310,12 @@ public class SceneActivity extends Activity implements MediaPlayer.OnCompletionL
                 break;
         }
 
-        if(found){
-
-        }else{
+        if(!found){
             Log.i(TAG, "Did not recognize a usable match: starting to listen again!");
-            speech.startListening(speechIntent);
+            speech.startListening();
         }
     }
 
-
-    // Speech recognition interface implementation //
-    //=============================================//
-
-    @Override
-    public void onReadyForSpeech(Bundle params) {
-        Log.i(TAG, "onReadyForSpeech");
-        ((TextView)findViewById(R.id.scene_speech_text)).setText(R.string.speech_ready);
-        ((ProgressBar)findViewById(R.id.progress_bar)).setIndeterminate(true);
-        ((ProgressBar)findViewById(R.id.progress_bar)).getIndeterminateDrawable().setColorFilter(Color.GREEN, PorterDuff.Mode.MULTIPLY);
-    }
-
-    /**
-     * User starts to speak
-     */
-    @Override
-    public void onBeginningOfSpeech() {
-        Log.i(TAG, "onBeginningOfSpeech");
-        ((TextView)findViewById(R.id.scene_speech_text)).setText(R.string.speech_listening);
-    }
-
-    @Override
-    public void onRmsChanged(float rmsdB) {
-        // Log.i(TAG, "onRmsChanged: " + rmsdB);
-        // Sound level changed (update progress bar ?)
-    }
-
-    @Override
-    public void onBufferReceived(byte[] buffer) {
-        // Log.i(TAG, "onBufferReceived: " + buffer);
-    }
-
-    /**
-     * User stopped speaking
-     */
-    @Override
-    public void onEndOfSpeech() {
-        Log.i(TAG, "onEndOfSpeech");
-        ((TextView)findViewById(R.id.scene_speech_text)).setText(R.string.speech_end);
-        ((ProgressBar)findViewById(R.id.progress_bar)).getIndeterminateDrawable().setColorFilter(Color.BLUE, PorterDuff.Mode.MULTIPLY);
-        // Called after onResult or not?
-    }
-
-    @Override
-    public void onError(int error) {
-        String errorMessage = getErrorText(error);
-        Log.e(TAG, "Failed speech recognition: " + errorMessage);
-        ((ProgressBar)findViewById(R.id.progress_bar)).setIndeterminate(false);
-        ((ProgressBar)findViewById(R.id.progress_bar)).getIndeterminateDrawable().setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
-        Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show();
-        // process error
-        //speech.cancel();
-        //speech.stopListening();
-        speech.startListening(speechIntent);
-    }
-
-    @Override
-    public void onResults(Bundle results) {
-        Log.i(TAG, "onResults");
-        checkSpeechRecognitionResults(results);
-    }
-
-    @Override
-    public void onPartialResults(Bundle partialResults) {
-        Log.i(TAG, "onPartialResults");
-        checkSpeechRecognitionResults(partialResults);
-    }
-
-    @Override
-    public void onEvent(int eventType, Bundle params) {
-        Log.i(TAG, "onEvent");
-    }
-
-    public String getErrorText(int errorCode) {
-        switch (errorCode) {
-            case SpeechRecognizer.ERROR_AUDIO: return getResources().getString(R.string.error_audio);
-            case SpeechRecognizer.ERROR_CLIENT: return getResources().getString(R.string.error_client);
-            case SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS: return getResources().getString(R.string.error_permissions);
-            case SpeechRecognizer.ERROR_NETWORK: return getResources().getString(R.string.error_network);
-            case SpeechRecognizer.ERROR_NETWORK_TIMEOUT: return getResources().getString(R.string.error_network_timeout);
-            case SpeechRecognizer.ERROR_NO_MATCH: return getResources().getString(R.string.error_nomatch);
-            case SpeechRecognizer.ERROR_RECOGNIZER_BUSY: return getResources().getString(R.string.error_busy);
-            case SpeechRecognizer.ERROR_SERVER: return getResources().getString(R.string.error_server);
-            case SpeechRecognizer.ERROR_SPEECH_TIMEOUT: return getResources().getString(R.string.error_speech_timeout);
-            default: return getResources().getString(R.string.error_default);
-        }
-    }
 
 
     private void saveProgress(Scene scene){
@@ -421,4 +335,58 @@ public class SceneActivity extends Activity implements MediaPlayer.OnCompletionL
     private String getNString(int id){
         return StringUtils.removeAccents(getResources().getString(id));
     }
+
+
+
+    // Speech listener interface implementation
+
+    @Override
+    public Context getContext() {
+        return this;
+    }
+
+    @Override
+    public void onReadyForSpeech() {
+        Log.i(TAG, "onReadyForSpeech");
+        ((TextView)findViewById(R.id.scene_speech_text)).setText(R.string.speech_ready);
+        ((ProgressBar)findViewById(R.id.progress_bar)).setIndeterminate(true);
+        ((ProgressBar)findViewById(R.id.progress_bar)).getIndeterminateDrawable().setColorFilter(Color.GREEN, PorterDuff.Mode.MULTIPLY);
+    }
+
+    @Override
+    public void onBeginningOfSpeech() {
+        Log.i(TAG, "onBeginningOfSpeech");
+        ((TextView)findViewById(R.id.scene_speech_text)).setText(R.string.speech_listening);
+    }
+
+    @Override
+    public void onEndOfSpeech() {
+        Log.i(TAG, "onEndOfSpeech");
+        ((TextView)findViewById(R.id.scene_speech_text)).setText(R.string.speech_end);
+        ((ProgressBar)findViewById(R.id.progress_bar)).getIndeterminateDrawable().setColorFilter(Color.BLUE, PorterDuff.Mode.MULTIPLY);
+        // Called after onResult or not?
+    }
+
+    @Override
+    public void onError(String errorMessage) {
+        Log.e(TAG, "Failed speech recognition: " + errorMessage);
+        ((ProgressBar)findViewById(R.id.progress_bar)).setIndeterminate(false);
+        ((ProgressBar)findViewById(R.id.progress_bar)).getIndeterminateDrawable().setColorFilter(Color.RED, PorterDuff.Mode.MULTIPLY);
+        Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show();
+
+        speech.startListening();
+    }
+
+    @Override
+    public void onResults(List<String> results) {
+        Log.i(TAG, "onResults");
+        checkSpeechRecognitionResults(results);
+    }
+
+    @Override
+    public void onPartialResults(List<String> partialResults) {
+        Log.i(TAG, "onPartialResults");
+        checkSpeechRecognitionResults(partialResults);
+    }
+
 }

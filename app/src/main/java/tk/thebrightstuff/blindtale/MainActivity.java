@@ -17,7 +17,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.HashMap;
 
-import tk.thebrightstuff.blindtale.tk.thebrightstuff.blindtale.utils.AssetCopier;
+import tk.thebrightstuff.blindtale.utils.AssetCopier;
 
 
 public class MainActivity extends Activity {
