@@ -27,4 +27,5 @@
     <string name="speech_ready">Parlez maintenant!</string>
     <string name="speech_start">Début de la reconnaissance vocale</string>
     <string name="title_activity_scene">Scène</string>
+    <string name="aGameBy">Un jeu de:</string>
 </resources>

@@ -32,4 +32,6 @@
     <string name="repeat">repeat</string>
     <string name="quit">quit</string>
 
+    <string name="aGameBy">A game by:</string>
+
 </resources>

@@ -57,6 +57,8 @@ public class AudioText implements Audio, Serializable {
         return text.length()>30? text.substring(0, 30)+"..." : text;
     }
 
+    @Override
+    public String getText() { return text; }
 
 
     @Override

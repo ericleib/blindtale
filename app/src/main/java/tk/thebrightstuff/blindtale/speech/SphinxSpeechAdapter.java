@@ -50,10 +50,14 @@ public class SphinxSpeechAdapter implements SpeechAdapter, RecognitionListener {
             @Override
             protected Exception doInBackground(Void... params) {
                 try {
-                    keywordFile = writeKeywordFile(resource.getKeywords(), context);
-                    Assets assets = new Assets(context);
-                    File assetDir = assets.syncAssets();
-                    setupRecognizer(assetDir, data, dict);
+
+                    if(recognizer==null) {   // Avoid multiple initializations
+                        keywordFile = writeKeywordFile(resource.getKeywords(), context);
+                        Assets assets = new Assets(context);
+                        File assetDir = assets.syncAssets();
+                        setupRecognizer(assetDir, data, dict);
+                    }
+
                 } catch (Exception e) {
                     e.printStackTrace();
                     return e;
@@ -96,6 +100,13 @@ public class SphinxSpeechAdapter implements SpeechAdapter, RecognitionListener {
         // Create keyword-activation search.
         recognizer.addKeywordSearch(SEARCH, keywordFile);
 
+    }
+
+    public static void cleanup(){
+        if(recognizer!=null) {
+            recognizer.shutdown();
+            recognizer = null;
+        }
     }
 
 

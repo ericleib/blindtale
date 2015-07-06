@@ -20,6 +20,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.HashMap;
 
+import tk.thebrightstuff.blindtale.speech.SphinxSpeechAdapter;
 import tk.thebrightstuff.blindtale.utils.AssetCopier;
 
 
@@ -67,6 +68,13 @@ public class MainActivity extends Activity {
         findViewById(R.id.resume_button).setEnabled(getSelectedTale().getSaveFile().exists());
     }
 
+    @Override
+    protected void onDestroy(){
+        Log.v(TAG, "OnDestroy");
+        super.onDestroy();
+        SphinxSpeechAdapter.cleanup();
+    }
+
     private boolean copyTaleToInternalStorage() {
         Log.v(TAG, "Copying default Tale to Internal storage");
         return AssetCopier.copyAssets(this);
@@ -96,10 +104,11 @@ public class MainActivity extends Activity {
 
     public void exitApp(View view) {
         Log.v(TAG, "Exiting app");
-        Intent intent = new Intent(Intent.ACTION_MAIN);
-        intent.addCategory(Intent.CATEGORY_HOME);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
+        //Intent intent = new Intent(Intent.ACTION_MAIN);
+        //intent.addCategory(Intent.CATEGORY_HOME);
+        //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //startActivity(intent);
+        finish();
     }
 
     public void play(View view) {

@@ -39,7 +39,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="?android:attr/progressBarStyleHorizontal"
-        android:layout_below="@+id/scene_speech_text" />
+        android:layout_below="@+id/scene_speech_text"
+        android:layout_marginBottom="10dp"  />
+
+    <TextView
+        android:id="@+id/scene_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/progress_bar"
+        android:gravity="start"/>
 
 
 </RelativeLayout>

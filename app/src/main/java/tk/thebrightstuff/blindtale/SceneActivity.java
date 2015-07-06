@@ -48,7 +48,7 @@ public class SceneActivity extends Activity implements SpeechListener, Audio.Com
     private SpeechAdapter speech = SPEECH_ENGINE==GOOGLE? new GoogleSpeechAdapter() : new SphinxSpeechAdapter(this);
 
     private Audio audio;
-
+    private Scene scene;
     private Map<String,String> state;
 
     private PowerManager.WakeLock mWakeLock;
@@ -60,7 +60,7 @@ public class SceneActivity extends Activity implements SpeechListener, Audio.Com
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_scene);
         Intent intent = getIntent();
-        Scene scene = (Scene) intent.getExtras().getSerializable(MainActivity.SCENE);
+        this.scene = (Scene) intent.getExtras().getSerializable(MainActivity.SCENE);
         this.state = (Map) intent.getExtras().getSerializable(MainActivity.STATE);
 
         AudioManager m_amAudioManager = (AudioManager)getSystemService(AUDIO_SERVICE);
@@ -72,7 +72,7 @@ public class SceneActivity extends Activity implements SpeechListener, Audio.Com
         this.mWakeLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, TAG);
         this.mWakeLock.acquire();
 
-        newScene(scene);
+        newScene();
     }
 
     @Override
@@ -80,60 +80,64 @@ public class SceneActivity extends Activity implements SpeechListener, Audio.Com
         Log.v(TAG, "OnDestroy");
         this.mWakeLock.release();
         audio.destroy();
-        speech.destroy();
+        speech.stopListening();
         super.onDestroy();
     }
 
-    private void newScene(Scene s){
-        Log.v(TAG, "New scene: " + s.id);
+    private void newScene(){
+        Log.v(TAG, "New scene: " + scene.id);
 
         // Set title
-        ((TextView) findViewById(R.id.scene_title)).setText(s.title);
+        ((TextView) findViewById(R.id.scene_title)).setText(scene.title);
 
         // Add buttons
         LinearLayout lm = (LinearLayout) findViewById(R.id.container);
         lm.removeAllViews();
         int i = 0;
-        for(Action a: s.actions){
+        for(Action a: scene.actions){
             if(a.getCondition()==null || a.getCondition().check(state))
                 addActionButton(lm, a, i++);
         }
-        addStandardButtons(lm, i, s.end);
+        addStandardButtons(lm, i);
 
         // Play sound
-        this.audio = s.audio.get(0);
+        audio = scene.audio.get(0);
         Log.v(TAG, "Playing sound: " + this.audio.toString());
         try{
-            this.audio.setCompletionListener(this);
-            this.audio.play();
+            audio.setCompletionListener(this);
+            audio.play();
+            if(audio.getText()!=null){
+                ((TextView) findViewById(R.id.scene_text)).setText(audio.getText());
+            }
         }catch(Exception e){
             Log.e(TAG, "Error playing sound: "+this.audio.toString(), e);
             Toast.makeText(this, "Oops... There's a problem with that scene!", Toast.LENGTH_LONG).show();
         }
 
         // Update state
-        updateState(s);
+        updateState();
 
         // Saving player's progress
-        saveProgress(s);
+        saveProgress();
     }
 
-    private void endScene(Scene nextScene){
+    private void endScene(){
         Log.v(TAG, "Ending scene");
         buttonMap.clear();
-        this.audio.stop();
+        audio.stop();
         stopSpeechRecognition();
-        if(nextScene!=null)
-            newScene(nextScene);
+        ((TextView) findViewById(R.id.scene_text)).setText("");
+        if(scene!=null)
+            newScene();
     }
 
-    private void updateState(Scene s) {
-        state.put(SCENE + "_" + s.id + "_visited", "true");
-        String nb = state.get(SCENE + "_" + s.id + "_visited_nb");
+    private void updateState() {
+        state.put(SCENE + "_" + scene.id + "_visited", "true");
+        String nb = state.get(SCENE + "_" + scene.id + "_visited_nb");
         if(nb==null){
-            state.put(SCENE + "_" + s.id + "_visited_nb", Integer.toString(1));
+            state.put(SCENE + "_" + scene.id + "_visited_nb", Integer.toString(1));
         }else{
-            state.put(SCENE + "_" + s.id + "_visited_nb", Integer.toString(Integer.parseInt(nb)+1));
+            state.put(SCENE + "_" + scene.id + "_visited_nb", Integer.toString(Integer.parseInt(nb)+1));
         }
     }
 
@@ -153,14 +157,15 @@ public class SceneActivity extends Activity implements SpeechListener, Audio.Com
             @Override
             public void onClick(View v) {
                 updateAction(a);
-                endScene(a.nextScene);
+                scene = a.nextScene;
+                endScene();
             }
         });
         for(String key : a.keys)
             buttonMap.put(StringUtils.removeAccents(key), btn);
     }
 
-    private void addStandardButtons(LinearLayout lm, int id, boolean end) {
+    private void addStandardButtons(LinearLayout lm, int id) {
         buttonMap.put(getNString(R.string.repeat), addButton(lm, getResources().getString(R.string.repeat), id++));
         buttonMap.get(getNString(R.string.repeat)).setOnClickListener(new Button.OnClickListener() {
             @Override
@@ -202,15 +207,6 @@ public class SceneActivity extends Activity implements SpeechListener, Audio.Com
         buttonMap.get(getNString(R.string.quit)).setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i(TAG, "Quit clicked");
-                if (audio.isPlaying()) {
-                    Log.i(TAG, "Stopping player");
-                    audio.stop();
-                }
-                if (speech != null) {
-                    Log.i(TAG, "Stopping speech recognition");
-                    speech.destroy();
-                }
                 Log.i(TAG, "Killing activity");
                 finish();
             }
@@ -237,12 +233,16 @@ public class SceneActivity extends Activity implements SpeechListener, Audio.Com
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                if (scene.end) {
+                    showCredits();
+                }
                 startSpeechRecognition();
                 buttonMap.get(getNString(R.string.pause)).setEnabled(false);
                 buttonMap.get(getNString(R.string.skip)).setEnabled(false);
             }
         });
     }
+
 
     private void startSpeechRecognition() {
         if(speech.isAvailable()){
@@ -303,7 +303,7 @@ public class SceneActivity extends Activity implements SpeechListener, Audio.Com
 
 
 
-    private void saveProgress(Scene scene){
+    private void saveProgress(){
         File saveFile = scene.tale.getSaveFile();
         try {
             BufferedWriter bw = new BufferedWriter(new FileWriter(saveFile));
@@ -404,4 +404,13 @@ public class SceneActivity extends Activity implements SpeechListener, Audio.Com
         });
     }
 
+
+    private void showCredits() {
+        String credits = "";
+        credits += scene.tale.toString()+"\n";
+        credits += getResources().getString(R.string.aGameBy)+"\n";
+        for(Map.Entry<String,String> e : scene.tale.getCredits().entrySet())
+            credits += e.getKey()+": "+e.getValue()+"\n";
+        ((TextView) findViewById(R.id.scene_text)).setText(credits);
+    }
 }

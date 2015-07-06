@@ -143,6 +143,9 @@ public class AudioFile extends File implements Audio, Serializable {
     }
 
     @Override
+    public String getText() { return null; }
+
+    @Override
     public void setCompletionListener(CompletionListener listener) {
         AudioFile.listener = listener;
     }

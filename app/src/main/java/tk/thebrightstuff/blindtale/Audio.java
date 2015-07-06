@@ -20,6 +20,8 @@ public interface Audio extends Conditional {
 
     String toString();
 
+    String getText();
+
 
 
     class AudioException extends Exception {
