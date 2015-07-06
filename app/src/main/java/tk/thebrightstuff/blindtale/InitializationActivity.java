@@ -56,6 +56,12 @@ public class InitializationActivity extends Activity implements Callback<String>
     }
 
     @Override
+    public void onDestroy(){
+        super.onDestroy();
+        mWakeLock.release();
+    }
+
+    @Override
     public void callback(String data, Exception e) {
         if(e==null) {
             Log.i(TAG, data);

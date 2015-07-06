@@ -36,8 +36,9 @@ public class MainActivity extends Activity {
         Log.v(TAG, "OnCreate");
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.activity_main);
+
         Log.v(TAG, "Setting content view");
+        setContentView(R.layout.activity_main);
 
         findViewById(R.id.play_button).getBackground().setColorFilter(getResources().getColor(R.color.play_bg), PorterDuff.Mode.MULTIPLY);
 
@@ -56,8 +57,8 @@ public class MainActivity extends Activity {
 
         initSpinner();
 
-        final PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        this.mWakeLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, TAG);
+        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        PowerManager.WakeLock mWakeLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, TAG);
         this.mWakeLock.acquire();
     }
 
@@ -72,6 +73,7 @@ public class MainActivity extends Activity {
     protected void onDestroy(){
         Log.v(TAG, "OnDestroy");
         super.onDestroy();
+        mWakeLock.release();
         SphinxSpeechAdapter.cleanup();
     }
 
