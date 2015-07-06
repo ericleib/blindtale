@@ -44,16 +44,9 @@ public class MainActivity extends Activity {
 
         findViewById(R.id.resume_button).setEnabled(false);
 
-        SharedPreferences p = getPreferences(MODE_PRIVATE);
-        boolean firstRun = p.getBoolean(PREFERENCE_FIRST_RUN, true);
-        if(firstRun){
-            Log.v(TAG, "First run: deploying default tale");
-            if(copyTaleToInternalStorage())
-                p.edit().putBoolean(PREFERENCE_FIRST_RUN, false).apply();
-            else
-                Log.e(TAG, "Failed to copy the default tale to internal storage");
-        }else
-            Log.v(TAG, "Not the first run: tale already copied");
+        Log.v(TAG, "First run: deploying default tale");
+        if(!copyTaleToInternalStorage())
+            Log.e(TAG, "Failed to copy the default tale to internal storage");
 
         initSpinner();
 
