@@ -7,8 +7,6 @@ import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 
-import java.util.Set;
-
 import tk.thebrightstuff.blindtale.R;
 
 /**
@@ -21,16 +19,15 @@ public class GoogleSpeechAdapter implements SpeechAdapter, RecognitionListener {
     private SpeechRecognizer speech;
     private Intent speechIntent;
 
-    @Override
-    public void initialize(SpeechListener listener, String lang, Set<String> keywords) throws Exception {
+    public void initialize(SpeechListener listener, SpeechResource resource) throws Exception {
         this.listener = listener;
         if(SpeechRecognizer.isRecognitionAvailable(listener.getContext())){
             speech = SpeechRecognizer.createSpeechRecognizer(listener.getContext().getApplicationContext());
             speech.setRecognitionListener(this);
             speechIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-            speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, lang);
-            speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, lang);
-            speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, lang);
+            speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, resource.getLocale().getDisplayName());
+            speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, resource.getLocale().getDisplayName());
+            speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, resource.getLocale().getDisplayName());
             speechIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, listener.getContext().getPackageName());
             //SPEECH_INTENT.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 3);
         }else{

@@ -14,10 +14,8 @@ public class Scene implements Serializable {
     public Tale tale;
     public String id;
     public String title;
-    public String soundPath;
+    public boolean end = false;
+    public List<Audio> audio = new ArrayList<>();
     public List<Action> actions = new ArrayList<>();
 
-    public File getSoundFile() {
-        return new File(new File(tale.getTaleFolder(),"sounds"),soundPath);
-    }
 }

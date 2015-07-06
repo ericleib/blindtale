@@ -26,6 +26,11 @@ public class Condition implements Serializable {
             return false;
         switch(operator){
             case "eq": return op1.equals(operand2);
+            case "neq": return ! op1.equals(operand2);
+            case "le": return Double.parseDouble(op1) <= Double.parseDouble(operand2);
+            case "lt": return Double.parseDouble(op1) <  Double.parseDouble(operand2);
+            case "ge": return Double.parseDouble(op1) >= Double.parseDouble(operand2);
+            case "gt": return Double.parseDouble(op1) >  Double.parseDouble(operand2);
             default: return false;
         }
     }

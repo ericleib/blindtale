@@ -21,12 +21,20 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SceneActivity"
+            android:name=".InitializationActivity"
             android:parentActivityName=".MainActivity"
             android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="tk.thebrightstuff.blindtale.MainActivity" />
+        </activity>
+        <activity
+            android:name=".SceneActivity"
+            android:parentActivityName=".InitializationActivity"
+            android:screenOrientation="portrait" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="tk.thebrightstuff.blindtale.InitializationActivity" />
         </activity>
     </application>
 

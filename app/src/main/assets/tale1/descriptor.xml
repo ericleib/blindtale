@@ -6,22 +6,31 @@
     <lang>fr-FR</lang>
 
     <scenes>
-        <scene id="intro" sound="intro.mp3" title="Introduction">
+        <scene id="intro" title="Introduction">
+            <audio file="intro.mp3"></audio>
             <action keys="oui" next-scene="step1" id="chose_step1"></action>
             <action keys="non" next-scene="step2"></action>
         </scene>
 
-        <scene id="step1" sound="step1.mp3">
+        <scene id="step1">
+            <audio file="step1.mp3"></audio>
             <action keys="oui" next-scene="end" condition="action_chose_step1_completed__eq__true"></action>
             <action keys="non" next-scene="end" condition="action_chose_step1_completed__eq__false"></action>
         </scene>
 
-        <scene id="step2" sound="step2.mp3">
+        <scene id="step2">
+            <audio>This is just a test. Damn you!</audio>
             <action keys="oui" next-scene="end"></action>
         </scene>
 
-        <scene id="end" sound="end.mp3" end="true">
+        <scene id="end" end="true">
+            <audio file="end.mp3"></audio>
         </scene>
     </scenes>
+
+    <credits>
+        <designer>Eric Leibenguth</designer>
+        <dialogue>Pauline Leibenguth</dialogue>
+    </credits>
 
 </tale>

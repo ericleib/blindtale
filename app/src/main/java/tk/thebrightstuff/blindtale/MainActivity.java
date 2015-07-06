@@ -1,12 +1,15 @@
 package tk.thebrightstuff.blindtale;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
@@ -25,10 +28,13 @@ public class MainActivity extends Activity {
     public static final String SCENE = "SCENE", STATE = "STATE", PREFERENCE_FIRST_RUN = "FIRST_RUN", TAG="MainActivity";
     private Spinner taleSpinner;
 
+    private PowerManager.WakeLock mWakeLock;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.v(TAG, "OnCreate");
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
         Log.v(TAG, "Setting content view");
 
@@ -48,6 +54,10 @@ public class MainActivity extends Activity {
             Log.v(TAG, "Not the first run: tale already copied");
 
         initSpinner();
+
+        final PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        this.mWakeLock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, TAG);
+        this.mWakeLock.acquire();
     }
 
     @Override
@@ -65,7 +75,7 @@ public class MainActivity extends Activity {
     private void initSpinner() {
         Log.v(TAG, "Setting up Tale spinner");
         taleSpinner = (Spinner)findViewById(R.id.tale_spinner);
-        SpinnerAdapter adapter = new ArrayAdapter<>(this, R.layout.spinner_item, Tale.getAvailableTales(getDir("", MODE_PRIVATE).getParentFile()));
+        SpinnerAdapter adapter = new ArrayAdapter<>(this, R.layout.spinner_item, Tale.getAvailableTales(getDir("", MODE_PRIVATE).getParentFile(), this));
         taleSpinner.setAdapter(adapter);
         taleSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -126,12 +136,12 @@ public class MainActivity extends Activity {
     }
 
     private void launchTale(Scene scene, HashMap<String,String> state){
-        Intent intent = new Intent(this, SceneActivity.class);
+        Intent intent = new Intent(this, InitializationActivity.class);
         Bundle b = new Bundle();
         b.putSerializable(SCENE, scene);
         b.putSerializable(STATE, state);
         intent.putExtras(b);
-        Log.v(TAG, "Starting tale " + scene.tale.toString()+" ("+scene.tale.getLang()+")");
+        Log.v(TAG, "Starting tale " + scene.tale.toString()+" ("+scene.tale.getLocale().toString()+")");
         startActivity(intent);
     }
 }

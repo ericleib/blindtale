@@ -1,5 +1,6 @@
 package tk.thebrightstuff.blindtale;
 
+import android.content.Context;
 import android.util.Log;
 import android.util.Xml;
 
@@ -15,14 +16,18 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+
+import tk.thebrightstuff.blindtale.speech.SpeechResource;
 
 /**
  * Created by niluje on 17/06/15.
  *
  */
-public class Tale implements Serializable {
+public class Tale implements Serializable, SpeechResource {
 
     private final static String DESCRIPTOR = "descriptor.xml";
     private final static String SAVE_FILE = "save.txt";
@@ -30,23 +35,29 @@ public class Tale implements Serializable {
 
     private File folder;
 
-    private String title, lang = "en-US";
+    private String title;
+    private Locale locale = Locale.ENGLISH;
 
     private Scene scene;
     private Map<String,Scene> scenes = new HashMap<>();
     private Set<String> keywords = new HashSet<>();
+    private Map<String, String> credits = new LinkedHashMap<>();
 
 
 
     public String toString() { return title; }
 
-    public String getLang() { return lang; }
+    @Override
+    public Locale getLocale() { return locale; }
 
     public Scene getScene() { return scene; }
 
     public Map<String,Scene> getScenes() { return scenes; }
 
+    @Override
     public Set<String> getKeywords() { return keywords; }
+
+    public Map<String, String> getCredits() { return credits; }
 
     public File getTaleFolder(){ return folder; }
 
@@ -79,9 +90,10 @@ public class Tale implements Serializable {
                 // Starts by looking for the entry tag
                 switch (name) {
                     case "title": this.title = readTxtTag(parser, name); break;
-                    case "lang": this.lang = readTxtTag(parser, name); break;
+                    case "lang": this.locale = readLocale(readTxtTag(parser, name)); break;
                     case "entry-scene" : entryScene = readTxtTag(parser, name); break;
                     case "scenes": readScenesTag(parser, name); break;
+                    case "credits": readCreditsTag(parser, name); break;
                     default: throw new Exception("Unexpected tag in descriptor: "+name);
                 }
             }
@@ -113,6 +125,7 @@ public class Tale implements Serializable {
         }
     }
 
+
     private void readScenesTag(XmlPullParser parser, String tag) throws Exception {
         parser.require(XmlPullParser.START_TAG, null, tag);
 
@@ -130,6 +143,17 @@ public class Tale implements Serializable {
         }
     }
 
+    private void readCreditsTag(XmlPullParser parser, String tag) throws Exception {
+        parser.require(XmlPullParser.START_TAG, null, tag);
+
+        while (parser.next() != XmlPullParser.END_TAG) {
+            if (parser.getEventType() == XmlPullParser.START_TAG) {
+                String name = parser.getName();
+                credits.put(name, readTxtTag(parser, name));
+            }
+        }
+    }
+
     private Scene readSceneTag(XmlPullParser parser, String tag) throws Exception {
         parser.require(XmlPullParser.START_TAG, null, tag);
 
@@ -138,10 +162,10 @@ public class Tale implements Serializable {
         scene.tale = this;
         scene.id = parser.getAttributeValue(null, "id");
         scene.title = parser.getAttributeValue(null, "title");
-        scene.soundPath = parser.getAttributeValue(null, "sound");
+        scene.end = parser.getAttributeValue(null, "end")!=null;
 
-        if(scene.id==null || scene.soundPath==null)
-            throw new Exception("Scene must have an id and a sound path");
+        if(scene.id==null)
+            throw new Exception("Scene must have an id");
 
         while (parser.next() != XmlPullParser.END_TAG) {
             if (parser.getEventType() != XmlPullParser.START_TAG) {
@@ -151,6 +175,9 @@ public class Tale implements Serializable {
             if (name.equals("action")) {
                 Action action = readActionTag(parser, name);
                 scene.actions.add(action);
+            } else if(name.equals("audio")) {
+                Audio audio = readAudioTag(parser, name);
+                scene.audio.add(audio);
             } else {
                 throw new Exception("Unexpected tag: "+name);
             }
@@ -173,12 +200,28 @@ public class Tale implements Serializable {
         action.nextSceneId = parser.getAttributeValue(null, "next-scene");
         action.id = parser.getAttributeValue(null, "id");
         String conditionStr = parser.getAttributeValue(null, "condition");
-        action.condition = conditionStr==null? null : new Condition(conditionStr);
+        action.setCondition(conditionStr==null? null : new Condition(conditionStr));
 
         parser.nextTag();
         parser.require(XmlPullParser.END_TAG, null, tag);
 
         return action;
+    }
+
+    private Audio readAudioTag(XmlPullParser parser, String tag) throws Exception {
+        parser.require(XmlPullParser.START_TAG, null, tag);
+
+        Audio audio;
+        String file = parser.getAttributeValue(null, "file");
+        if(file==null){
+            audio = new AudioText(readTxtTag(parser, tag));
+        }else{
+            audio = new AudioFile(getTaleFolder(), file);
+            parser.nextTag();
+        }
+        parser.require(XmlPullParser.END_TAG, null, tag);
+
+        return audio;
     }
 
     private String readTxtTag(XmlPullParser parser, String tag) throws IOException, XmlPullParserException {
@@ -197,13 +240,21 @@ public class Tale implements Serializable {
         return result;
     }
 
+    private Locale readLocale(String s) throws Exception {
+        if(s.toLowerCase().startsWith("en"))
+            return Locale.ENGLISH;
+        else if(s.toLowerCase().startsWith("fr"))
+            return Locale.FRENCH;
+        else
+            throw new Exception("Unsupported language: "+s);
+    }
 
     /**
      * Static method to read all tales from internal storage
      * @param rootDir Directory in which tales are stored
      * @return array of tales
      */
-    public static Tale[] getAvailableTales(File rootDir){
+    public static Tale[] getAvailableTales(File rootDir, Context context){
         Log.v(TAG, "Scanning app folder to look for tales... "+rootDir.getAbsolutePath());
         File[] dirs = rootDir.listFiles(new FileFilter() {
             @Override
@@ -220,6 +271,10 @@ public class Tale implements Serializable {
             if(descr.exists())
                 try {
                     tales[i].readFromXML(descr);
+                    tales[i].keywords.add(context.getResources().getString(R.string.repeat));
+                    tales[i].keywords.add(context.getResources().getString(R.string.pause));
+                    tales[i].keywords.add(context.getResources().getString(R.string.skip));
+                    tales[i].keywords.add(context.getResources().getString(R.string.quit));
                 } catch (IOException e) {
                     Log.e(TAG, "Error reading the descriptor file: "+descr.getAbsolutePath(), e);
                 }

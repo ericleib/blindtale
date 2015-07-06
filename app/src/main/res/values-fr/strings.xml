@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Blind Tale</string>
+    <string name="init">Chargement...</string>
     <string name="cont">Continuer</string>
     <string name="download">Télécharger</string>
     <string name="download_soon">Bientôt disponible !</string>
