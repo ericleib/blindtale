@@ -139,19 +139,23 @@ public class SceneActivity extends Activity implements Controller.TaleView, tk.t
     @Override
     public void addButton(String text, final Controller.UIAction action) {
         Log.v(TAG, "Adding button: " + text);
-        LinearLayout lm = (LinearLayout) findViewById(R.id.container);
         final Button btn = new Button(this);
         btn.setText(StringUtils.capitalize(text));
         btn.setId(id++);
         btn.setLayoutParams(params);
-        lm.addView(btn);
         btn.setTypeface(null, Typeface.BOLD);
         btn.getBackground().setColorFilter(getResources().getColor(R.color.play_bg), PorterDuff.Mode.MULTIPLY);
-
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 action.doAction();
+            }
+        });
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                LinearLayout lm = (LinearLayout) findViewById(R.id.container);
+                lm.addView(btn);
             }
         });
     }
@@ -259,7 +263,8 @@ public class SceneActivity extends Activity implements Controller.TaleView, tk.t
 
     @Override
     public String getNString(int ref){
-        return StringUtils.removeAccents(getIString(id));
+        Log.v(TAG, "Removing accents from "+getIString(ref)+" ("+ref+")");
+        return StringUtils.removeAccents(getIString(ref));
     }
 
 

@@ -167,23 +167,24 @@ public class Tale implements Serializable, SpeechResource {
             }
         });
         TaleParser parser = new TaleParser();
-        Tale[] tales = new Tale[dirs.length];
-        for(int i=0; i<tales.length; i++){
-            log.info("Tale", "Found Tale folder: " + dirs[i]);
-            File descr = new File(dirs[i], DESCRIPTOR);
+        List<Tale> tales = new ArrayList<>();
+        for(File dir : dirs){
+            log.info("Tale", "Found Tale folder: " + dir.getAbsolutePath());
+            File descr = new File(dir, DESCRIPTOR);
             if(descr.exists())
                 try {
-                    tales[i] = parser.parse(descr);
-                    tales[i].folder = dirs[i];
+                    Tale tale = parser.parse(descr);
+                    tale.folder = dir;
+                    tales.add(tale);
                     log.info("Tale", "Reading descriptor :" + descr.getAbsolutePath());
                 } catch (Exception e) {
                     log.error("Tale", "Error reading the descriptor file: "+descr.getAbsolutePath(), e);
                 }
             else{
-                log.error("Tale", "Could not find a descriptor in :"+tales[i].folder.getAbsolutePath(), null);
+                log.error("Tale", "Could not find a descriptor in :"+dir.getAbsolutePath(), null);
             }
         }
-        return tales;
+        return tales.toArray(new Tale[tales.size()]);
     }
 
 
