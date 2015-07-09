@@ -14,6 +14,7 @@
     <string name="speech_ready">Speak now!</string>
     <string name="speech_listening">Listening...</string>
     <string name="speech_end">Processing...</string>
+    <string name="speech_error">Error with speech recognition!</string>
 
     <string name="error_audio">Audio recording error</string>
     <string name="error_client">Client side error</string>

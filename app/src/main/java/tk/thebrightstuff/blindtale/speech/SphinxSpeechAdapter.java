@@ -35,10 +35,10 @@ public class SphinxSpeechAdapter implements SpeechAdapter, RecognitionListener {
     public static void initialize(final Context context, final SpeechResource resource, final Callback<String> callback) {
 
         final String data, dict;
-        if(resource.getLocale().equals(Locale.FRENCH)){
+        if(resource.getLang().equals(Locale.FRENCH)){
             dict = "frenchWords62K.dic";
             data = "lium_french_f2";
-        }else if(resource.getLocale().equals(Locale.ENGLISH)){
+        }else if(resource.getLang().equals(Locale.ENGLISH)){
             dict = "cmudict-en-us.dict";
             data = "en-us-ptm";
         }else {
@@ -129,12 +129,17 @@ public class SphinxSpeechAdapter implements SpeechAdapter, RecognitionListener {
 
 
     private SpeechListener listener;
-    public SphinxSpeechAdapter(SpeechListener listener){
-        this.listener = listener;
+
+    public SphinxSpeechAdapter(){
         if(recognitionListener!=null)
             recognizer.removeListener(recognitionListener);
         recognizer.addListener(this);
         recognitionListener = this; // Trick to make sure there's always only one recognition listener
+    }
+
+    @Override
+    public void setSpeechListener(SpeechListener listener){
+        this.listener = listener;
     }
 
     @Override

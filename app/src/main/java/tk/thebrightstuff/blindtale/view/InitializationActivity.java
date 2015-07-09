@@ -1,8 +1,9 @@
-package tk.thebrightstuff.blindtale;
+package tk.thebrightstuff.blindtale.view;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.PowerManager;
@@ -11,7 +12,12 @@ import android.view.View;
 import android.view.Window;
 import android.widget.TextView;
 
+import java.util.Locale;
+
+import tk.thebrightstuff.blindtale.R;
 import tk.thebrightstuff.blindtale.speech.SphinxSpeechAdapter;
+import tk.thebrightstuff.blindtale.tale.Scene;
+import tk.thebrightstuff.blindtale.tale.Tale;
 import tk.thebrightstuff.blindtale.utils.Callback;
 
 /**
@@ -39,13 +45,23 @@ public class InitializationActivity extends Activity implements Callback<String>
         bundle = getIntent().getExtras();
         Tale tale = ((Scene) bundle.getSerializable(MainActivity.SCENE)).tale;
 
+        Locale.setDefault(tale.getLang());
+        Configuration config = new Configuration();
+        config.locale = tale.getLang();
+        getBaseContext().getResources().updateConfiguration(config,
+                getBaseContext().getResources().getDisplayMetrics());
+        tale.getKeywords().add(getResources().getString(R.string.repeat));
+        tale.getKeywords().add(getResources().getString(R.string.pause));
+        tale.getKeywords().add(getResources().getString(R.string.skip));
+        tale.getKeywords().add(getResources().getString(R.string.quit));
+
         cpt = 0;
 
         Log.v(TAG, (++cpt)+" - Initializing text-to-speech");
-        AudioText.initialize(getApplicationContext(), tale, this);
+        AudioTextAdapter.initialize(getApplicationContext(), tale, this);
 
         Log.v(TAG, (++cpt)+" - Initializing Media player");
-        AudioFile.initialize(getApplicationContext(), tale, this);
+        AudioFileAdapter.initialize(getApplicationContext(), tale, this);
 
         Log.v(TAG, (++cpt)+" - Initializing speech-to-text");
         SphinxSpeechAdapter.initialize(getApplicationContext(), tale, this);

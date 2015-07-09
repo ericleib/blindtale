@@ -1,4 +1,4 @@
-package tk.thebrightstuff.blindtale;
+package tk.thebrightstuff.blindtale.view;
 
 import android.content.Context;
 import android.media.AudioManager;
@@ -8,15 +8,16 @@ import android.os.AsyncTask;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.Serializable;
-import java.util.Locale;
 
+import tk.thebrightstuff.blindtale.tale.AudioAdapter;
+import tk.thebrightstuff.blindtale.tale.Tale;
 import tk.thebrightstuff.blindtale.utils.Callback;
 
 /**
  * Created by niluje on 02/07/15.
  *
  */
-public class AudioFile extends File implements Audio, Serializable {
+public class AudioFileAdapter implements AudioAdapter, Serializable {
 
 
 
@@ -69,33 +70,32 @@ public class AudioFile extends File implements Audio, Serializable {
         @Override
         public void onCompletion(MediaPlayer mp) {
             if(listener!=null){
-                listener.completed(playing);
+                listener.completed();
             }
         }
 
     }
 
     public static CompletionListener listener;
-    public static Audio playing;
+    public static AudioAdapter playing;
 
+    private final File file;
 
-    private Condition condition;
-
-    public AudioFile(File dir, String name) {
-        super(new File(dir, SOUND_FOLDER), name);
+    public AudioFileAdapter(File dir, String name) {
+        this.file = new File(new File(dir, SOUND_FOLDER), name);
     }
 
     @Override
     public void play() throws AudioException {
         try{
-            if(!this.exists())
-                throw new Exception("Audio file does not exist: "+getAbsolutePath());
+            if(!file.exists())
+                throw new Exception("AudioAdapter file does not exist: "+file.getAbsolutePath());
             getPlayer().reset();
-            getPlayer().setDataSource(new FileInputStream(this).getFD());
+            getPlayer().setDataSource(new FileInputStream(file).getFD());
             getPlayer().prepareAsync();
             playing = this;
         }catch(Exception e){
-            throw new Audio.AudioException("Could not play audio file on media player", e);
+            throw new AudioAdapter.AudioException("Could not play audio file on media player", e);
         }
     }
 
@@ -139,7 +139,7 @@ public class AudioFile extends File implements Audio, Serializable {
 
     @Override
     public String toString() {
-        return this.getName();
+        return this.file.getName();
     }
 
     @Override
@@ -147,16 +147,7 @@ public class AudioFile extends File implements Audio, Serializable {
 
     @Override
     public void setCompletionListener(CompletionListener listener) {
-        AudioFile.listener = listener;
+        AudioFileAdapter.listener = listener;
     }
 
-    @Override
-    public Condition getCondition() {
-        return condition;
-    }
-
-    @Override
-    public void setCondition(Condition condition) {
-        this.condition = condition;
-    }
 }

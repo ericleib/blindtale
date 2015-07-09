@@ -1,9 +1,8 @@
-package tk.thebrightstuff.blindtale;
+package tk.thebrightstuff.blindtale.view;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.os.PowerManager;
@@ -20,7 +19,10 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.HashMap;
 
+import tk.thebrightstuff.blindtale.R;
 import tk.thebrightstuff.blindtale.speech.SphinxSpeechAdapter;
+import tk.thebrightstuff.blindtale.tale.Scene;
+import tk.thebrightstuff.blindtale.tale.Tale;
 import tk.thebrightstuff.blindtale.utils.AssetCopier;
 
 
@@ -78,7 +80,20 @@ public class MainActivity extends Activity {
     private void initSpinner() {
         Log.v(TAG, "Setting up Tale spinner");
         taleSpinner = (Spinner)findViewById(R.id.tale_spinner);
-        SpinnerAdapter adapter = new ArrayAdapter<>(this, R.layout.spinner_item, Tale.getAvailableTales(getDir("", MODE_PRIVATE).getParentFile(), this));
+        SpinnerAdapter adapter = new ArrayAdapter<>(this, R.layout.spinner_item, Tale.getAvailableTales(getDir("", MODE_PRIVATE).getParentFile(), new tk.thebrightstuff.blindtale.utils.Log() {
+            @Override
+            public void info(String tag, String message) {
+                Log.i(tag, message);
+            }
+
+            @Override
+            public void error(String tag, String message, Exception e) {
+                if(e!=null)
+                    Log.e(tag, message, e);
+                else
+                    Log.e(tag, message);
+            }
+        }));
         taleSpinner.setAdapter(adapter);
         taleSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -123,7 +138,7 @@ public class MainActivity extends Activity {
                 String[] words = line.split("\\s*=\\s*");
                 state.put(words[0], words[1]);
             }
-            launchTale(tale.getScenes().get(sceneId), state);
+            launchTale(tale.getScene(sceneId), state);
         }catch(Exception e){
             Log.e(TAG, "Could not read saved file: "+tale.getSaveFile().getAbsolutePath(), e);
             Toast.makeText(this, "Could not restore the saved game...", Toast.LENGTH_LONG).show();
@@ -145,7 +160,7 @@ public class MainActivity extends Activity {
         b.putSerializable(SCENE, scene);
         b.putSerializable(STATE, state);
         intent.putExtras(b);
-        Log.v(TAG, "Starting tale " + scene.tale.toString()+" ("+scene.tale.getLocale().toString()+")");
+        Log.v(TAG, "Starting tale " + scene.tale.toString()+" ("+scene.tale.getLang().toString()+")");
         startActivity(intent);
     }
 }

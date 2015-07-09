@@ -22,4 +22,14 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    repositories {
+        jcenter()
+    }
+    // Robolectric
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.hamcrest:hamcrest-core:1.1'
+    testCompile 'org.hamcrest:hamcrest-library:1.1'
+    testCompile 'org.hamcrest:hamcrest-integration:1.1'
+    testCompile 'org.robolectric:robolectric:3.0-rc3'
+    compile files('libs/simple-xml-2.7.1.jar')
 }

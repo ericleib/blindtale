@@ -3,19 +3,60 @@
 
     <entry-scene>intro</entry-scene>
 
-    <lang>fr-FR</lang>
+    <lang>fr</lang>
 
     <scenes>
+
         <scene id="intro" title="Introduction">
-            <audio file="intro.mp3"></audio>
-            <action keys="oui" next-scene="step1" id="chose_step1"></action>
-            <action keys="non" next-scene="step2"></action>
+
+            <audio>
+                Il y a bien longtemps, dans le royaume de blablabla, vivait un jeune homme nommé blabla.
+                Son village était assailli par un monstre qui, chaque année, emportait des jeunes filles et garçons dans son labyrinthe.
+            </audio>
+            <audio>Vous pouvez...</audio>
+
+            <action keys="oui" description="dire oui" next-scene="step1">
+                <audio condition="dummy==false">
+                    Vous dites "oui".
+                </audio>
+                <state-change change="increment" state="user_said_yes"></state-change>
+            </action>
+            <action keys="non" description="dire non" next-scene="step2"></action>
+            <action keys="parler" description="parler a quelqu'un" next-dialog="speak_to_someone"></action>
+            <action keys="décrire" description="décrire le lieu" do-immediately-condition="place_described == false">
+                <audio>
+                    Vous êtes chez vous, c'est cool.
+                </audio>
+                <state-change change="set-true" state="place_described"></state-change>
+            </action>
+
+            <dialog id="speak_to_someone">
+                <audio>
+                    De quoi voulez-vous parler?
+                </audio>
+                <audio>Vous pouvez...</audio>
+                <line keys="oui" description="dire oui" next-dialog="said_yes">
+                    <audio>Oui! Voulez-vous en savoir plus?</audio>
+                </line>
+                <line keys="non" description="dire non" next-scene="step2">
+                    <audio>Non!</audio>
+                </line>
+            </dialog>
+            <dialog id="said_yes">
+                <line keys="oui" description="dire oui">
+                    <audio>Oui! Voulez-vous en savoir plus?</audio>
+                </line>
+                <line keys="non" description="dire non" next-dialog="speak_to_someone">
+                    <audio>Non! Tant pis...</audio>
+                </line>
+            </dialog>
+
         </scene>
 
         <scene id="step1">
             <audio file="step1.mp3"></audio>
-            <action keys="oui" next-scene="end" condition="action_chose_step1_completed__eq__true"></action>
-            <action keys="non" next-scene="end" condition="action_chose_step1_completed__eq__false"></action>
+            <action keys="oui" next-scene="end"></action>
+            <action keys="non" next-scene="end"></action>
         </scene>
 
         <scene id="step2">
@@ -26,11 +67,12 @@
         <scene id="end" end="true">
             <audio file="end.mp3"></audio>
         </scene>
+
     </scenes>
 
     <credits>
-        <designer>Eric Leibenguth</designer>
-        <dialogue>Pauline Leibenguth</dialogue>
+        <credit role="designer">Eric Leibenguth</credit>
+        <credit role="dialogue">Pauline Leibenguth</credit>
     </credits>
 
 </tale>

@@ -1,5 +1,6 @@
 package tk.thebrightstuff.blindtale.speech;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -18,17 +19,18 @@ public class GoogleSpeechAdapter implements SpeechAdapter, RecognitionListener {
     private SpeechListener listener;
     private SpeechRecognizer speech;
     private Intent speechIntent;
+    private Context context;
 
-    public void initialize(SpeechListener listener, SpeechResource resource) throws Exception {
-        this.listener = listener;
-        if(SpeechRecognizer.isRecognitionAvailable(listener.getContext())){
-            speech = SpeechRecognizer.createSpeechRecognizer(listener.getContext().getApplicationContext());
+    public void initialize(SpeechResource resource, Context context) throws Exception {
+        this.context = context;
+        if(SpeechRecognizer.isRecognitionAvailable(context)){
+            speech = SpeechRecognizer.createSpeechRecognizer(context.getApplicationContext());
             speech.setRecognitionListener(this);
             speechIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-            speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, resource.getLocale().getDisplayName());
-            speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, resource.getLocale().getDisplayName());
-            speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, resource.getLocale().getDisplayName());
-            speechIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, listener.getContext().getPackageName());
+            speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, resource.getLang().getDisplayName());
+            speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, resource.getLang().getDisplayName());
+            speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, resource.getLang().getDisplayName());
+            speechIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, context.getPackageName());
             //SPEECH_INTENT.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 3);
         }else{
             throw new Exception("Google Speech recognition is not supported!");
@@ -58,6 +60,10 @@ public class GoogleSpeechAdapter implements SpeechAdapter, RecognitionListener {
         return speech!=null;
     }
 
+    @Override
+    public void setSpeechListener(SpeechListener listener) {
+        this.listener = listener;
+    }
 
 
     // Speech recognition interface implementation //
@@ -116,7 +122,7 @@ public class GoogleSpeechAdapter implements SpeechAdapter, RecognitionListener {
 
 
     public String getErrorText(int errorCode) {
-        Resources res = listener.getContext().getResources();
+        Resources res = context.getResources();
         switch (errorCode) {
             case SpeechRecognizer.ERROR_AUDIO: return res.getString(R.string.error_audio);
             case SpeechRecognizer.ERROR_CLIENT: return res.getString(R.string.error_client);

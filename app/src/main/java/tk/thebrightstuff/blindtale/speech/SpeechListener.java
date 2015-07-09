@@ -10,8 +10,6 @@ import java.util.List;
  */
 public interface SpeechListener {
 
-    Context getContext();
-
     void onReadyForSpeech();
     void onBeginningOfSpeech();
     void onEndOfSpeech();

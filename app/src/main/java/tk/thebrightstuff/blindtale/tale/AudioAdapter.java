@@ -1,10 +1,10 @@
-package tk.thebrightstuff.blindtale;
+package tk.thebrightstuff.blindtale.tale;
 
 /**
  * Created by niluje on 02/07/15.
  *
  */
-public interface Audio extends Conditional {
+public interface AudioAdapter {
 
     void play() throws AudioException;
     void pause();
@@ -31,6 +31,6 @@ public interface Audio extends Conditional {
     }
 
     interface CompletionListener {
-        void completed(Audio audio);
+        void completed();
     }
 }

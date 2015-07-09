@@ -8,6 +8,6 @@ import java.util.Set;
  *
  */
 public interface SpeechResource {
-    Locale getLocale();
+    Locale getLang();
     Set<String> getKeywords();
 }

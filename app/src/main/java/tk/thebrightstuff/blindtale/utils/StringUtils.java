@@ -19,4 +19,13 @@ public class StringUtils {
         return pattern.matcher(nfdNormalizedString).replaceAll("");
     }
 
+    public static boolean isNumber(String str){
+        try {
+            Double.parseDouble(str);
+            return true;
+        }catch(Exception e){
+            return false;
+        }
+    }
+
 }

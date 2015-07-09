@@ -1,4 +1,4 @@
-package tk.thebrightstuff.blindtale;
+package tk.thebrightstuff.blindtale.view;
 
 import android.content.Context;
 import android.speech.tts.TextToSpeech;
@@ -8,27 +8,28 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 import tk.thebrightstuff.blindtale.speech.SpeechResource;
+import tk.thebrightstuff.blindtale.tale.AudioAdapter;
 import tk.thebrightstuff.blindtale.utils.Callback;
 
 /**
  * Created by niluje on 02/07/15.
  *
  */
-public class AudioText implements Audio, Serializable {
+public class AudioTextAdapter implements AudioAdapter, Serializable {
 
 
 
     public static void initialize(Context context, final SpeechResource resource, final Callback<String> callback){
-        AudioText.tts = new TextToSpeech(context, new TextToSpeech.OnInitListener() {
+        AudioTextAdapter.tts = new TextToSpeech(context, new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
                 if(status != TextToSpeech.ERROR) {
-                    tts.setLanguage(resource.getLocale());
+                    tts.setLanguage(resource.getLang());
                     tts.setOnUtteranceCompletedListener(new OnUtteranceCompletedListener(){
                         @Override
                         public void onUtteranceCompleted(String utteranceId) {
                             System.out.println("Utterance completed");
-                            listener.completed(audioText);
+                            listener.completed();
                         }
                     });
                     callback.callback("Text to speech engine correctly initialized", null);
@@ -46,11 +47,10 @@ public class AudioText implements Audio, Serializable {
         params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID,"dummy");
     }
 
-    private Condition condition;
     private String text;
 
-    public AudioText(String text){
-        this.text = text;
+    public AudioTextAdapter(String text){
+        this.text = text.trim();
     }
 
     public String toString(){
@@ -90,7 +90,7 @@ public class AudioText implements Audio, Serializable {
     @Override
     public void skip() {
         tts.stop();
-        listener.completed(this);
+        listener.completed();
     }
 
     @Override
@@ -104,21 +104,9 @@ public class AudioText implements Audio, Serializable {
     }
 
     private static CompletionListener listener;
-    private static AudioText audioText;
     @Override
     public void setCompletionListener(CompletionListener listener) {
-        AudioText.listener = listener;
-        AudioText.audioText = this;
-    }
-
-    @Override
-    public Condition getCondition() {
-        return condition;
-    }
-
-    @Override
-    public void setCondition(Condition condition) {
-        this.condition = condition;
+        AudioTextAdapter.listener = listener;
     }
 
 }

@@ -9,4 +9,5 @@ public interface SpeechAdapter {
     void startListening();
     void stopListening();
     boolean isAvailable();
+    void setSpeechListener(SpeechListener listener);
 }
