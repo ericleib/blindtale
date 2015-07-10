@@ -1,5 +1,6 @@
 package tk.thebrightstuff.blindtale.tale;
 
+import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
@@ -39,7 +40,6 @@ public class Tale implements Serializable, SpeechResource {
             new File(folder, "save").mkdir();
         return new File(new File(folder, "save"), SAVE_FILE);
     }
-
 
     private final Map<String,Scene> sceneMap = new HashMap<>();
     public Scene getScene() { return sceneMap.get(getEntryScene()); }
@@ -101,9 +101,11 @@ public class Tale implements Serializable, SpeechResource {
     private String entryScene;
     @Element
     private Locale lang;
+    @Element
+    private Voices voices;
     @ElementList(entry="scene")
     private List<Scene> scenes = new ArrayList<>();
-    @ElementList
+    @ElementList(entry="credit")
     private List<Credit> credits = new ArrayList<>();
 
 
@@ -146,6 +148,55 @@ public class Tale implements Serializable, SpeechResource {
 
     public void setCredits(List<Credit> credits) {
         this.credits = credits;
+    }
+
+    public Voices getVoices() {
+        return voices;
+    }
+
+    public void setVoices(Voices voices) {
+        this.voices = voices;
+    }
+
+
+    public static class Voices {
+
+        @Attribute(name="default")
+        private String defaultVoiceId;
+        @ElementList(entry="voice", inline=true)
+        private List<Voice> voices = new ArrayList<>();
+
+        private final Map<String,Voice> voiceMap = new HashMap<>();
+        public Voice getVoice(String id){ return id!=null && voiceMap.containsKey(id)? voiceMap.get(id) : getDefaultVoice(); }
+        public Voice getDefaultVoice(){ return voiceMap.get(getDefaultVoiceId());}
+
+        public List<Voice> getVoices() {
+            return voices;
+        }
+
+        public void setVoices(List<Voice> voices) {
+            this.voices = voices;
+        }
+
+        public String getDefaultVoiceId() {
+            return defaultVoiceId;
+        }
+
+        public void setDefaultVoiceId(String defaultVoice) {
+            this.defaultVoiceId = defaultVoice;
+        }
+
+        @Validate
+        public void validate() throws Exception {
+            for(Voice v : getVoices())
+                if(!voiceMap.containsKey(v.getId()))
+                    voiceMap.put(v.getId(), v);
+                else
+                    throw new Exception("Duplicate voice: "+v.getId());
+
+            if(!voiceMap.containsKey(defaultVoiceId))
+                throw new Exception("Default voice id does not exist: "+defaultVoiceId);
+        }
     }
 
 

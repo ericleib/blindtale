@@ -5,6 +5,11 @@
 
     <lang>fr</lang>
 
+    <voices default="toto">
+        <voice id="toto" pitch="1.0" rate="1.0"/>
+    </voices>
+
+
     <scenes>
 
         <scene id="intro" title="Introduction">
@@ -19,15 +24,15 @@
                 <audio condition="dummy==false">
                     Vous dites "oui".
                 </audio>
-                <state-change change="increment" state="user_said_yes"></state-change>
+                <state-change change="increment" state="user_said_yes"/>
             </action>
-            <action keys="non" description="dire non" next-scene="step2"></action>
-            <action keys="parler" description="parler a quelqu'un" next-dialog="speak_to_someone"></action>
+            <action keys="non" description="dire non" next-scene="step2"/>
+            <action keys="parler" description="parler a quelqu'un" next-dialog="speak_to_someone"/>
             <action keys="décrire" description="décrire le lieu" do-immediately-condition="place_described == false">
                 <audio>
                     Vous êtes chez vous, c'est cool.
                 </audio>
-                <state-change change="set-true" state="place_described"></state-change>
+                <state-change change="set-true" state="place_described"/>
             </action>
 
             <dialog id="speak_to_someone">
@@ -54,18 +59,18 @@
         </scene>
 
         <scene id="step1">
-            <audio file="step1.mp3"></audio>
-            <action keys="oui" next-scene="end"></action>
-            <action keys="non" next-scene="end"></action>
+            <audio file="step1.mp3"/>
+            <action keys="oui" next-scene="end"/>
+            <action keys="non" next-scene="end"/>
         </scene>
 
         <scene id="step2">
             <audio>This is just a test. Damn you!</audio>
-            <action keys="oui" next-scene="end"></action>
+            <action keys="oui" next-scene="end"/>
         </scene>
 
         <scene id="end" end="true">
-            <audio file="end.mp3"></audio>
+            <audio file="end.mp3"/>
         </scene>
 
     </scenes>

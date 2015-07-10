@@ -8,7 +8,10 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 import tk.thebrightstuff.blindtale.speech.SpeechResource;
+import tk.thebrightstuff.blindtale.tale.Audio;
 import tk.thebrightstuff.blindtale.tale.AudioAdapter;
+import tk.thebrightstuff.blindtale.tale.Tale;
+import tk.thebrightstuff.blindtale.tale.Voice;
 import tk.thebrightstuff.blindtale.utils.Callback;
 
 /**
@@ -47,23 +50,27 @@ public class AudioTextAdapter implements AudioAdapter, Serializable {
         params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID,"dummy");
     }
 
-    private String text;
+    private Audio audio;
+    private Tale.Voices voices;
 
-    public AudioTextAdapter(String text){
-        this.text = text.trim();
+    public AudioTextAdapter(Audio audio, Tale.Voices voices){
+        this.audio = audio;
     }
 
     public String toString(){
-        return text.length()>30? text.substring(0, 30)+"..." : text;
+        return audio.getText().trim().length()>30? audio.getText().trim().substring(0, 30)+"..." : audio.getText().trim();
     }
 
     @Override
-    public String getText() { return text; }
+    public String getText() { return audio.getText().trim(); }
 
 
     @Override
     public void play() throws AudioException {
-        tts.speak(text, TextToSpeech.QUEUE_FLUSH, params);
+        Voice voice = voices.getVoice(audio.getVoiceId());
+        tts.setPitch(voice.getPitch());
+        tts.setSpeechRate(voice.getRate());
+        tts.speak(audio.getText().trim(), TextToSpeech.QUEUE_FLUSH, params);
     }
 
     @Override

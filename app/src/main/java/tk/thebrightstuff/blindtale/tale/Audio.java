@@ -13,6 +13,8 @@ import java.io.Serializable;
  */
 public class Audio extends AbstractConditional implements Serializable {
 
+    @Attribute(required=false)
+    private String voiceId;
     @Text(required=false)
     private String text;
     @Attribute(required=false)
@@ -43,4 +45,11 @@ public class Audio extends AbstractConditional implements Serializable {
         this.file = file;
     }
 
+    public String getVoiceId() {
+        return voiceId;
+    }
+
+    public void setVoiceId(String voiceId) {
+        this.voiceId = voiceId;
+    }
 }

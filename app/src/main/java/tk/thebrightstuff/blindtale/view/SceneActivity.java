@@ -234,7 +234,7 @@ public class SceneActivity extends Activity implements Controller.TaleView, tk.t
         if(audio.getFile()!=null){
             return new AudioFileAdapter(controller.getTale().getTaleFolder(), audio.getFile());
         }else{
-            return new AudioTextAdapter(audio.getText());
+            return new AudioTextAdapter(audio, controller.getTale().getVoices());
         }
     }
 
