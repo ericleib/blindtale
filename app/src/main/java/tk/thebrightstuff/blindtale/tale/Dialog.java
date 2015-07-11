@@ -22,6 +22,7 @@ public class Dialog implements Serializable {
     @ElementList(entry="line",inline=true)
     private List<Line> lineList = new ArrayList<>();
 
+    @Validate
     public void validate() throws Exception {
         if(lineList.size()==0)
             throw new Exception("A dialog must have at least one line");
