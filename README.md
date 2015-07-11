@@ -22,9 +22,11 @@ Blind Tale makes use of [**PocketSphinx**](https://github.com/cmusphinx/pocketsp
 ## Architecture
 
 Blind Tale is cleanly divided into three parts for enhanced modularity, interoperability and extendibility.
- * **Tale files**: These are what defines a tale. They consist at least of a **descriptor**, as well as any number of sound files. The descriptor is a xml file describing the story (Scenes, Audio segments, Actions, Dialogs, Conditions, Game variables). See below how to write a descriptor.
+ * **Tale data**: These are what defines a particular tale. They consist at least of a **descriptor**, as well as any number of sound files. The descriptor is a xml file describing the story (Scenes, Audio segments, Actions, Dialogs, Conditions, Game variables). See below how to write a descriptor.
  * **Game Engine**: The engine (or *"Controller"*) is responsible for reading the descriptor, building the corresponding Java classes and wiring them up (= creating the *model*), and ultimately "run" the game, (chaining the scenes, actions, etc.) responding to user input.
  * **Tale View**: A tale view is in charge of interacting with the player (displaying buttons, playing sounds, listening to voice and clicks as ordered by the controller). A view can be implemented on any system supporting Java (a simplistic [Command-line view](app/src/main/java/tk/thebrightstuff/blindtale/view/CliTaleView.java) is provided to give an idea). The [Android view](app/src/main/java/tk/thebrightstuff/blindtale/view/SceneActivity.java) is an *Activity* class, which is in charge of providing the Controller with the handles for voice recognition, media player, text-to-speech, and for displaying a dynamic UI for each scene and dialog.
+
+![architecture](https://cloud.githubusercontent.com/assets/12696790/8634221/d12e4c28-27f0-11e5-82bb-eb494ee090ef.png)
 
 ## Writing a descriptor
 
@@ -36,12 +38,14 @@ The [Simple XML framework](http://simple.sourceforge.net/) is used to build the 
 
 You can first test your tale with the Command-line view (without needing to run the app in Android, just running it locally on a JVM), with just a few lines of code:
 
-    public static void main(String[] args) throws Exception {
-        Tale tale = new TaleParser().parse(new File("/path/to/descriptor.xml"));
-        TaleView view = new CliTaleView(false);
-        Map<String,String> state = new HashMap<String,String>();
-        new Controller(tale.getScene(), state, view).startScene();
-    }
+```java
+public static void main(String[] args) throws Exception {
+    Tale tale = new TaleParser().parse(new File("/path/to/descriptor.xml"));
+    TaleView view = new CliTaleView(false);
+    Map<String,String> state = new HashMap<String,String>();
+    new Controller(tale.getScene(), state, view).startScene();
+}
+```
 
 To test the tale on an Android device, the descriptor (and sound files) must be stored in the application's assets, and the application deployed to the phone. The tale will then be available in the dropdown menu when the application is launched.
 
