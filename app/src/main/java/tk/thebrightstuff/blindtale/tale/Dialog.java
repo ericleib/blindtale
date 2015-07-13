@@ -2,6 +2,7 @@ package tk.thebrightstuff.blindtale.tale;
 
 import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.ElementList;
+import org.simpleframework.xml.core.Validate;
 
 import java.io.Serializable;
 import java.util.ArrayList;
