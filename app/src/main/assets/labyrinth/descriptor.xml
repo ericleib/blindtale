@@ -25,7 +25,7 @@
                 Son village était assailli par un monstre qui, chaque année, emportait des jeunes filles et garçons dans son labyrinthe.
             </audio>
 
-            <action key="commencer" description="Commencer" do-immediately-condition="true" next-scene="maison_heros"/>
+            <action keys="commencer" description="Commencer" do-immediately-condition="true" next-scene="maison_heros"/>
 
         </scene>
 
@@ -40,7 +40,7 @@
                 <state-change change="set-true" state="maison_heros_decrite"/>
             </action>
 
-            <action keys="sortir" description="Sortir de la maison" next-scene="devant_maison">
+            <action keys="sortir" description="Sortir de la maison" next-scene="devant_maison_heros">
                 <audio>
                     OK, sortons dehors!
                 </audio>
@@ -67,7 +67,7 @@
 
 
 
-        <scene id="devant_maison_hero">
+        <scene id="devant_maison_heros">
 
             <action keys="décrire" description="décrire le lieu" do-immediately-condition="devant_maison_decrite == false">
                 <audio>
@@ -121,6 +121,11 @@
                 </audio>
             </action>
 
+            <dialog id="parler">
+                <line keys="oui" description="dire oui">
+                    <audio>Oui! Tout est pret.</audio>
+                </line>
+            </dialog>
         </scene>
 
 
@@ -147,7 +152,7 @@
                 </audio>
             </action>
 
-            <action keys="village" description="Revenir vers le village" next-scene="devant_maison_hero">
+            <action keys="village" description="Revenir vers le village" next-scene="devant_maison_heros">
                 <audio>
                     OK, revenons vers le village!
                 </audio>
@@ -171,7 +176,7 @@
                 </audio>
             </action>
 
-            <action keys="maison" description="Revenir vers la maison" next-scene="devant_maison_hero">
+            <action keys="maison" description="Revenir vers la maison" next-scene="devant_maison_heros">
                 <audio>
                     OK, revenons vers chez moi!
                 </audio>
@@ -243,37 +248,37 @@
 
 
 
-        <scene id="chaumiere">
+        <scene id="chaumiere" end="true">
 
         </scene>
 
 
 
-        <scene id="cabane">
+        <scene id="cabane" end="true">
 
         </scene>
 
 
 
-        <scene id="laby">
+        <scene id="laby" end="true">
 
         </scene>
 
 
 
-        <scene id="place">
+        <scene id="place" end="true">
 
         </scene>
 
 
 
-        <scene id="taverne">
+        <scene id="taverne" end="true">
 
         </scene>
 
 
 
-        <scene id="marchand">
+        <scene id="marchand" end="true">
 
         </scene>
 

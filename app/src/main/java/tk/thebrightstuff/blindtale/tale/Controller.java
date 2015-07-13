@@ -27,7 +27,7 @@ public class Controller implements SpeechListener, AudioAdapter.CompletionListen
 
     public final static int STATUS_READY = 0, STATUS_LISTENING = 1, STATUS_ANALYSIS = 2, STATUS_ERROR = 3, STATUS_HIDDEN = 4;
 
-    private final static  List<Audio> dummy = new ArrayList<Audio>();
+    private final static  List<Audio> dummy = new ArrayList<>();
 
     private Scene scene;
     private Dialog dialog;

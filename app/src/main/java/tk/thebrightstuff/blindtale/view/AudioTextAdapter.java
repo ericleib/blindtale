@@ -67,7 +67,7 @@ public class AudioTextAdapter implements AudioAdapter, Serializable {
 
     @Override
     public void play() throws AudioException {
-        Voice voice = voices.getVoice(audio.getVoiceId());
+        Voice voice = voices.getVoice(audio.getVoice());
         tts.setPitch(voice.getPitch());
         tts.setSpeechRate(voice.getRate());
         tts.speak(audio.getText().trim(), TextToSpeech.QUEUE_FLUSH, params);

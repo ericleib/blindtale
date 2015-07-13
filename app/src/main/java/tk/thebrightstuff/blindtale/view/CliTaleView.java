@@ -209,7 +209,8 @@ public class CliTaleView implements Controller.TaleView, SpeechAdapter, Log, Aud
 
 
     public static void main(String[] args) throws Exception {
-        Tale tale = new TaleParser().parse(new File("/mnt/data/DEV/BlindTale/app/src/main/assets/labyrinth/descriptor.xml"));
+        String path = args.length>0? args[0] : "/mnt/data/DEV/BlindTale/app/src/main/assets/labyrinth/descriptor.xml";
+        Tale tale = new TaleParser().parse(new File(path));
         Controller controller = new Controller(tale.getScene(), new HashMap<String,String>(), new CliTaleView(false));
         controller.startScene();
     }
