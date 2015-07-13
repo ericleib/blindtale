@@ -22,7 +22,11 @@
 
             <audio voice="low">
                 Il y a bien longtemps, dans le royaume de blablabla, vivait un jeune homme nommé Santiago.
-                Son village était assailli par un monstre qui, chaque année, emportait des jeunes filles et garçons dans son labyrinthe.
+                Son village était assailli par un monstre qui, chaque année, emportait des jeunes filles et garçons dans son labyrinthe. 
+                Santiago ne s'était jamais vraiment senti concerné par cette menace parce que de toute façon, ça n'arrivait qu'aux autres.
+                Mais cette année, c'est sa petite soeur qui a été prise en otage par le monstre! 
+                Après d'interminables remises en question existentielles et quelques verres de vin, il décida d'agir. 
+                Il entrerait dans le labyrinthe et arracherait sa soeur aux griffes du monstre! Aussi laid soit-il! (le monstre) 
             </audio>
 
             <action key="commencer" description="Commencer" do-immediately-condition="true" next-scene="maison_heros"/>
