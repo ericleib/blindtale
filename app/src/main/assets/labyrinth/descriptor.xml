@@ -1,76 +1,280 @@
 <tale>
-    <title>The Labyrinth - Act I</title>
+    <title>Le Labyrinthe - Acte I</title>
 
     <entry-scene>intro</entry-scene>
 
     <lang>fr</lang>
 
-    <voices default="toto">
-        <voice id="toto" pitch="1.0" rate="1.0"/>
+    <voices default="narrator">
+        <voice id="narrator" pitch="0.9" rate="0.75"/>
+        <voice id="low" pitch="0.65" rate="0.75"/>
+        <voice id="high" pitch="1.1" rate="0.75"/>
+        <voice id="higher" pitch="1.4" rate="1.1"/>
+        <voice id="angry" pitch="0.65" rate="1.2"/>
+        <voice id="angry_fast" pitch="0.5" rate="0.5"/>
+        <voice id="angry_slow" pitch="0.65" rate="0.65"/>
+        <voice id="pretentious" pitch="1.5" rate="0.65"/>
     </voices>
-
 
     <scenes>
 
         <scene id="intro" title="Introduction">
 
-            <audio>
-                Il y a bien longtemps, dans le royaume de blablabla, vivait un jeune homme nommé blabla.
+            <audio voice="low">
+                Il y a bien longtemps, dans le royaume de blablabla, vivait un jeune homme nommé Santiago.
                 Son village était assailli par un monstre qui, chaque année, emportait des jeunes filles et garçons dans son labyrinthe.
             </audio>
-            <audio>Vous pouvez...</audio>
 
-            <action keys="oui" description="dire oui" next-scene="step1">
-                <audio condition="dummy==false">
-                    Vous dites "oui".
-                </audio>
-                <state-change change="increment" state="user_said_yes"/>
-            </action>
-            <action keys="non" description="dire non" next-scene="step2"/>
-            <action keys="parler" description="parler a quelqu'un" next-dialog="speak_to_someone"/>
-            <action keys="décrire" description="décrire le lieu" do-immediately-condition="place_described == false">
+            <action key="commencer" description="Commencer" do-immediately-condition="true" next-scene="maison_heros"/>
+
+        </scene>
+
+
+
+        <scene id="maison_heros">
+
+            <action keys="décrire" description="décrire le lieu" do-immediately-condition="maison_heros_decrite == false">
                 <audio>
-                    Vous êtes chez vous, c'est cool.
+                    Je suis chez moi. Il y a ma mère, et mon sac à dos pour aller dans la labyrinthe.
                 </audio>
-                <state-change change="set-true" state="place_described"/>
+                <state-change change="set-true" state="maison_heros_decrite"/>
             </action>
 
-            <dialog id="speak_to_someone">
+            <action keys="sortir" description="Sortir de la maison" next-scene="devant_maison">
                 <audio>
-                    De quoi voulez-vous parler?
+                    OK, sortons dehors!
                 </audio>
-                <audio>Vous pouvez...</audio>
-                <line keys="oui" description="dire oui" next-dialog="said_yes">
-                    <audio>Oui! Voulez-vous en savoir plus?</audio>
-                </line>
-                <line keys="non" description="dire non" next-scene="step2">
-                    <audio>Non!</audio>
-                </line>
-            </dialog>
-            <dialog id="said_yes">
+            </action>
+
+            <action keys="parler" description="Parler à ma mère" next-dialog="parler_mere">
+                <audio>
+                    Bonjour, mère!
+                </audio>
+            </action>
+
+            <dialog id="parler_mere">
+                <audio voice="high">
+                    Bonjour Santiago ! Tu es prêt à partir ?
+                </audio>
                 <line keys="oui" description="dire oui">
-                    <audio>Oui! Voulez-vous en savoir plus?</audio>
+                    <audio>Oui! Tout est pret.</audio>
                 </line>
-                <line keys="non" description="dire non" next-dialog="speak_to_someone">
-                    <audio>Non! Tant pis...</audio>
+                <line keys="non" description="dire non">
+                    <audio>Non! J'ai encore quelques courses à faire</audio>
                 </line>
             </dialog>
+        </scene>
+
+
+
+        <scene id="devant_maison_hero">
+
+            <action keys="décrire" description="décrire le lieu" do-immediately-condition="devant_maison_decrite == false">
+                <audio>
+                    Je suis devant chez moi.
+                    Il y a une route qui va vers le village.
+                    Il y a aussi un chemin qui va vers la forêt et le labyrinthe.
+                </audio>
+                <state-change change="set-true" state="devant_maison_decrite"/>
+            </action>
+
+            <action keys="maison" description="Aller chez moi" next-scene="maison_heros">
+                <audio>
+                    OK, allons chez moi !
+                </audio>
+            </action>
+
+            <action keys="chemin" description="Chemin vers la forêt" next-scene="chemin">
+                <audio>
+                    OK, allons vers la forêt !
+                </audio>
+            </action>
+
+            <action keys="route" description="Route vers le village" next-scene="route">
+                <audio>
+                    OK, allons vers le village !
+                </audio>
+            </action>
 
         </scene>
 
-        <scene id="step1">
-            <audio file="step1.mp3"/>
-            <action keys="oui" next-scene="end"/>
-            <action keys="non" next-scene="end"/>
+
+
+        <scene id="maison_grand_pere">
+
+            <action keys="décrire" description="décrire le lieu" do-immediately-condition="maison_gp_decrite == false">
+                <audio>
+                    Je suis chez mon grand-père.
+                </audio>
+                <state-change change="set-true" state="maison_gp_decrite"/>
+            </action>
+
+            <action keys="sortir" description="Sortir de la maison" next-scene="route">
+                <audio>
+                    OK, sortons dehors!
+                </audio>
+            </action>
+
+            <action keys="parler" description="parler à mon grand-père" next-dialog="parler">
+                <audio>
+                    Bonjour grand-père!
+                </audio>
+            </action>
+
         </scene>
 
-        <scene id="step2">
-            <audio>This is just a test. Damn you!</audio>
-            <action keys="oui" next-scene="end"/>
+
+
+        <scene id="chemin">
+
+            <action keys="décrire" description="décrire le lieu" do-immediately-condition="chemin_decrit == false">
+                <audio>
+                    C'est le petit chemin qui va dans la forêt...
+                    Il y a un croisement pour aller au labyrinthe.
+                </audio>
+                <state-change change="set-true" state="chemin_decrit"/>
+            </action>
+
+            <action keys="labyrinthe" description="Aller au labyrinthe" next-scene="laby">
+                <audio>
+                    OK, allons au labyrinthe!
+                </audio>
+            </action>
+
+            <action keys="foret" description="Aller dans la forêt" next-scene="foret">
+                <audio>
+                    OK, allons dans la forêt!
+                </audio>
+            </action>
+
+            <action keys="village" description="Revenir vers le village" next-scene="devant_maison_hero">
+                <audio>
+                    OK, revenons vers le village!
+                </audio>
+            </action>
+
         </scene>
 
-        <scene id="end" end="true">
-            <audio file="end.mp3"/>
+
+
+        <scene id="route">
+            <action keys="décrire" description="décrire le lieu" do-immediately-condition="route_decrite == false">
+                <audio>
+                    C'est la route qui mène de ma maison jusqu'au village. Il y a la maison de mon grand-père sur le chemin !
+                </audio>
+                <state-change change="set-true" state="route_decrite"/>
+            </action>
+
+            <action keys="village" description="Aller au village" next-scene="place">
+                <audio>
+                    OK, allons au village !
+                </audio>
+            </action>
+
+            <action keys="maison" description="Revenir vers la maison" next-scene="devant_maison_hero">
+                <audio>
+                    OK, revenons vers chez moi!
+                </audio>
+            </action>
+
+            <action keys="grand-pere" description="Aller chez le grand-père" next-scene="maison_grand_pere">
+                <audio>
+                    OK, allons voir mon grand-père !
+                </audio>
+            </action>
+        </scene>
+
+
+
+        <scene id="foret">
+
+            <action keys="décrire" description="décrire le lieu" do-immediately-condition="foret_decrite == false">
+                <audio>
+                    Je suis dans la forêt sombre et humide...
+                    Je distingue une clairière et et un petit chemin avec un panneau disant "propriété privée".
+                </audio>
+                <state-change change="set-true" state="foret_decrite"/>
+            </action>
+
+            <action keys="clairière" description="aller vers la clairière" next-scene="clairiere">
+                <audio>
+                    OK, allons vers la clairière !
+                </audio>
+            </action>
+
+            <action keys="village" description="revenir au village" next-scene="chemin">
+                <audio>
+                    OK, revenons au village !
+                </audio>
+            </action>
+
+            <action keys="chemin" description="prendre le petit chemin" next-scene="cabane">
+                <audio>
+                    OK, prenons le petit chemin ! J'espère qu'il n'y a pas de pièges...
+                </audio>
+            </action>
+
+        </scene>
+
+
+
+        <scene id="clairiere">
+
+            <action keys="décrire" description="décrire le lieu" do-immediately-condition="clairiere_decrite == false">
+                <audio>
+                    Ah, je reconnais cette clairière ! C'est la où habite le sorcier blablabla ! Sa chaumière est juste là.
+                    C'est lui qui me gardait quand j'étais enfant... Ca explique peut-être certaines choses...
+                </audio>
+                <state-change change="set-true" state="clairiere_decrite"/>
+            </action>
+
+            <action keys="chaumière" description="entrer dans la chaumière" next-scene="chaumiere">
+                <audio>
+                    OK, entrons dans la chaumière.
+                </audio>
+            </action>
+
+            <action keys="foret" description="revenir dans la forêt" next-scene="foret">
+                <audio>
+                    OK, revenons vers la forêt.
+                </audio>
+            </action>
+        </scene>
+
+
+
+        <scene id="chaumiere">
+
+        </scene>
+
+
+
+        <scene id="cabane">
+
+        </scene>
+
+
+
+        <scene id="laby">
+
+        </scene>
+
+
+
+        <scene id="place">
+
+        </scene>
+
+
+
+        <scene id="taverne">
+
+        </scene>
+
+
+
+        <scene id="marchand">
+
         </scene>
 
     </scenes>
