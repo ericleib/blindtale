@@ -77,15 +77,9 @@
                     Bon, tout ça fait un peu lourd, mais tu ne peux pas partir sans ces choses là, c'est sur!
                 </audio>
 
-                <action keys="porter" next-dialog="">
+                <line keys="partir">
 
-                </action>
-                <action keys="ajouter" next-dialog="">
-
-                </action>
-                <action keys="enlever" next-dialog="Indispensable">
-
-                </action>
+                </line>
             </dialog>
 
             <dialog id="malade">
@@ -112,6 +106,10 @@
                     En plus ça donne une petite touche de couleur au plat, c’est super sympa.  </audio>
 
                 <audio> Bon, à plus tard! </audio>
+
+                <line keys="partir">
+
+                </line>
             </dialog>
 
         </scene>
@@ -474,11 +472,11 @@
             </dialog>
 
             <dialog id="test_carte">
-                <line keys="oui" next-dialog="test_sac" condition="carte_trouvee == true">
-                    <audio>Oui ! J'ai acheté cette carte du labyrinthe !</audio>
-                    <audio voice="angry_fast">Ouais... On dirait qu'elle date un peu, et il y a des tâches de café, mais c'est mieux que rien... Bon, et est-ce que tu as de quoi survivre dans le labyrinthe ?</audio>
+                <line keys="oui" next-dialog="test_sac" condition="guide_achete == true">
+                    <audio>Oui ! J'ai ce guide touristique du labyrinthe !</audio>
+                    <audio voice="angry_fast">Ouais... On dirait que les cartes datent un peu, et il y a des tâches de café, mais c'est mieux que rien... Bon, et est-ce que tu as de quoi survivre dans le labyrinthe ?</audio>
                 </line>
-                <line keys="non" next-dialog="entrer" condition="carte_trouvee == false">
+                <line keys="non" next-dialog="entrer" condition="guide_achete == false">
                     <audio>Euh... Non... Je n'ai pas encore trouvé de carte...</audio>
                     <audio voice="angry_fast">Alors arrête de me faire perdre mon temps !</audio>
                     <audio>Désolé...</audio>
@@ -528,13 +526,16 @@
 
             <dialog id="parler">
 
+                <line keys="partir">
+
+                </line>
             </dialog>
 
         </scene>
 
 
 
-        <scene id="taverne" end="true">
+        <scene id="taverne">
 
             <action keys="décrire" description="Décrire le lieu" do-immediately-condition="taverne_decrite == false">
                 <audio>
@@ -546,7 +547,7 @@
                 <state-change change="set-true" state="taverne_decrite"/>
             </action>
 
-            <action keys="sortir" description="Sortir de la taverne" next-scene="sortir">
+            <action keys="sortir" description="Sortir de la taverne" next-scene="place">
                 <audio> OK, sortons de la taverne. </audio>
             </action>
 
@@ -564,26 +565,32 @@
 
             <dialog id="arbitre">
 
+                <line keys="partir">
+
+                </line>
             </dialog>
 
             <dialog id="adversaire">
 
+                <line keys="partir">
+
+                </line>
             </dialog>
 
             <dialog id="cuisinier">
 
+                <line keys="partir">
+
+                </line>
             </dialog>
         </scene>
 
 
 
-        <scene id="marchand" end="true">
+        <scene id="marchand">
 
             <audio voice="high" condition="marchand_bonjour == false">
                 Bonjour cher client ! Que puis-je faire pour vous aujourd'hui ?
-            </audio>
-            <audio condition="marchand_bonjour == false">
-                Bonjour !
             </audio>
 
             <action keys="décrire" description="Décrire le lieu" do-immediately-condition="boutique_decrite == false">
@@ -593,18 +600,121 @@
                 <state-change change="set-true" state="boutique_decrite"/>
             </action>
 
-            <action keys="sortir" description="Sortir de la boutique" next-scene="sortir">
+            <action keys="sortir" description="Sortir de la boutique" next-scene="place">
                 <audio> OK, sortons de la boutique. </audio>
                 <state-change change="set-false" state="marchand_bonjour"/>
             </action>
 
-            <action keys="parler" description="Parler au marchand" next-dialog="parler">
+            <action keys="parler" description="Parler au marchand" next-dialog="produits">
                 <audio> Alors qu'est-ce que vous avez en stock aujourd'hui ? </audio>
+                <audio voice="high">Ah, aujourd'hui j'ai une sélection remarquable de produits:</audio>
+                <audio voice="high">Un magnifique piano à queue en promotion.</audio>
+                <audio voice="high">Une ceinture de chasteté en acier trempé.</audio>
+                <audio voice="high">Une bague de marriage de cent-vingt huit carrats.</audio>
+                <audio voice="high" condition="guide_achete == false"> Un guide touristique collector du labyrinthe.</audio>
+                <audio voice="high">Une lance ayant appartenu à Attila le Hun lui-même.</audio>
+                <audio voice="high" condition="grimoire_trouve == false">Un livre de recettes amusantes à peine utilisé.</audio>
+                <audio voice="high">Une paire de bottes en cuir de louttre.</audio>
+                <audio voice="high">Alors, qu'est-ce qui vous ferait plaisir ?</audio>
+
                 <state-change change="set-true" state="marchand_bonjour"/>
             </action>
 
-            <dialog id="parler">
+            <dialog id="produits">
+                <line keys="piano" description="Acheter le piano" next-dialog="acheter"><audio>Au sujet de ce piano...</audio><state-change state="marchand_objet" change="set-value" value="piano"/></line>
+                <line keys="ceinture" description="Acheter la ceinture" next-dialog="acheter"><audio>Au sujet de cette ceinture de chasteté...</audio><state-change state="marchand_objet" change="set-value" value="ceinture"/></line>
+                <line keys="bague" description="Acheter la bague" next-dialog="acheter"><audio>Au sujet de cette bague...</audio><state-change state="marchand_objet" change="set-value" value="bague"/></line>
+                <line keys="guide" description="Acheter le guide" next-dialog="acheter"><audio>Au sujet de ce guide...</audio><state-change state="marchand_objet" change="set-value" value="guide"/></line>
+                <line keys="lance" description="Acheter la lance" next-dialog="acheter"><audio>Au sujet de cette lance...</audio><state-change state="marchand_objet" change="set-value" value="lance"/></line>
+                <line keys="livre,recette" description="Acheter le livre" next-dialog="acheter" condition="livre_regarde == false"><audio>Au sujet de ce livre...</audio><state-change state="marchand_objet" change="set-value" value="livre"/></line>
+                <line keys="livre,recette" description="Acheter le livre" next-dialog="livre" condition="livre_regarde == true"><audio>Au sujet de ce livre...</audio><state-change state="marchand_objet" change="set-value" value="livre"/></line>
+                <line keys="botte" description="Acheter les bottes" next-dialog="acheter"><audio>Au sujet de ces bottes...</audio><state-change state="marchand_objet" change="set-value" value="bottes"/></line>
+                <line keys="annuler" description="Pas intéressé">
+                    <audio>Je crois que rien ne m'intéresse, désolé</audio>
+                    <audio voice="high">Quelle dommage... Revenez quand vous voulez !</audio>
+                </line>
+            </dialog>
 
+            <dialog id="acheter">
+                <audio voice="high">Ah oui... Très bel article... Mais probablement au dessus de vos moyens ! A moins que vous n'ayez quelque chose de spécial à me proposer...?</audio>
+                <line keys="non" next-dialog="produits">
+                    <audio>Pas vraiment non... Tant pis !</audio>
+                    <audio voice="high">Dommage ! Est-ce qu'un autre article vous intéresse ?</audio>
+                </line>
+                <line keys="acheter" next-dialog="acheter" condition="prix_gagne == true">
+                    <audio>Et bien, je peux vous proposer ces cent pièces d'or... Je pense que vous y gagnez...</audio>
+                    <audio voice="high">Ah ah ah ! Vous êtes bien en dessous du compte. Il en faudrait au minimum le double!</audio>
+                    <state-change state="marchand_objet" change="set-value" value="guide_negocie" condition="marchand_objet == guide"/>
+                </line>
+                <line keys="regarder" description="Regarder le livre" condition="marchand_objet == livre" next-dialog="livre">
+                    <audio>Puis-je jeter un oeil à ce livre, avant de l'acheter ?</audio>
+                    <audio voice="high">Mais je vous en prie !</audio>
+                    <audio>Mais... C'est, c'est, c'est le grimoire de ce bon blablabla!</audio>
+                    <audio voice="high">Vous devez faire erreur mon garçon... Ce livre est en ma possession depuis des années!</audio>
+                    <state-change state="livre_regarde" change="set-true"/>
+                </line>
+                <line keys="négocier" description="Négocier le guide" condition="marchand_objet == guide_negocie">
+                    <audio>Dites-moi, le tourisme n'existe presque plus dans le labyrinthe... Vous ne voulez pas me faire une petite ristourne ?</audio>
+                    <audio voice="high">Je déteste l'avouer, mais il y a du vrai... Je peux vous le faire à cent cinquante pièces d'or...</audio>
+                    <audio>Cinquantes!</audio>
+                    <audio voice="high">Cent-vingt</audio>
+                    <audio>Soixante-quinze!</audio>
+                    <audio voice="high">Cent-dix</audio>
+                    <audio>Cent!</audio>
+                    <audio voice="high">Vous m'arrachez le coeur... je vends à perte, c'est sûr... Allons... Marché conclu</audio>
+                    <audio>Génial ! voici mon guide pour trouver mon chemin dans le labyrinthe !!</audio>
+                    <state-change state="guide_achete" change="set-true"/>
+                </line>
+            </dialog>
+
+            <dialog id="livre">
+                <line keys="police" description="Menacer d'appeler la police" next-dialog="livre">
+                    <audio>Je vais appeler la police si vous ne me donnez pas ce livre</audio>
+                    <audio voice="high">Ah ah ah! Nous vivons au huitième siècle mon garçon. Il y a une justice équitable et on ne peut pas accuser sans preuve!</audio>
+                </line>
+                <line keys="battre" description="Menacer de se battre" next-dialog="livre">
+                    <audio>Je vous déclare en duel, si vous ne me donnez pas ce livre!</audio>
+                    <audio voice="high">Allons, allons, mon garçon, vous savez aussi bien que moi que vous ne faites absolument pas le poids...</audio>
+                </line>
+                <line keys="magie" description="Menacer d'un sort magique" next-dialog="magie">
+                    <audio>Vous savez, ce livre appartient au sorcier blablabla. Si vous ne le rendez pas, il pourrait s'énerver...</audio>
+                    <audio voice="high">Ah oui, et que sait-il faire ce magicien ?</audio>
+                </line>
+                <line keys="chanter" description="Menacer de chanter" next-dialog="livre">
+                    <audio>Si vous ne me donnez pas ce livre tout de suite, je vous chante l'intégrale de Francis Cabrel sur-le-champ</audio>
+                    <audio voice="high">Hum, c'est dûr, mais heureusement mon audition est exécrable, donc je devrais pouvoir supporter ça.</audio>
+                </line>
+                <line keys="revenir" description="Revenir avec du renfort">
+                    <audio>Je reviendrai avec quelques copains rugbymen... On verra si vous faites toujours le fier.</audio>
+                    <audio voice="high">C'est ça, c'est ça. Vous n'êtes pas le premier à faire ce genre de menace vous savez !</audio>
+                </line>
+            </dialog>
+
+            <dialog id="magie">
+                <line keys="grenouille" description="Vous changer en grenouille">
+                    <audio>Hé bien, il pourrait vous changer en grenouille par exemple.</audio>
+                    <audio voice="high">Euh... Vraiment ? Humm je suppose que ça ne serait pas très bon pour les affaires... OK, prenez votre fichu livre !</audio>
+                    <audio>Génial! J'ai récupéré le grimoire de blablabla!</audio>
+                    <state-change change="set-true" state="grimoire_trouve"/>
+                </line>
+                <line keys="clients" description="Faire fuir les clients">
+                    <audio>Oh, je l'ai déjà vu jeter des boules de feux pour faire fuir tous les clients dans un supermarché qui lui déplaisait !</audio>
+                    <audio voice="high">Euh... Vraiment ? Humm je suppose que ça ne serait pas très bon pour les affaires... OK, prenez votre fichu livre !</audio>
+                    <audio>Génial! J'ai récupéré le grimoire de blablabla!</audio>
+                    <state-change change="set-true" state="grimoire_trouve"/>
+                </line>
+                <line keys="disparaitre" description="Faire disparaitre tout votre stock">
+                    <audio>Oh, je l'ai déjà vu faire disparaitre tous les produits d'un supermarché qui lui déplaisait !</audio>
+                    <audio voice="high">Euh... Vraiment ? Humm je suppose que ça ne serait pas très bon pour les affaires... OK, prenez votre fichu livre !</audio>
+                    <audio>Génial! J'ai récupéré le grimoire de blablabla!</audio>
+                    <state-change change="set-true" state="grimoire_trouve"/>
+                </line>
+                <line keys="impots" description="Augmenter vos impots locaux">
+                    <audio>Hé bien, il pourrait hypnotiser le maire de blablabla et faire augmenter d'un coup vos impots locaux!</audio>
+                    <audio voice="high">Euh... Vraiment ? Humm je suppose que ça ne serait pas très bon pour les affaires... OK, prenez votre fichu livre !</audio>
+                    <audio>Génial! J'ai récupéré le grimoire de blablabla!</audio>
+                    <state-change change="set-true" state="grimoire_trouve"/>
+                </line>
             </dialog>
 
         </scene>
