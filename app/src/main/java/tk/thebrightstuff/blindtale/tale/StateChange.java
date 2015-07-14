@@ -17,18 +17,23 @@ public class StateChange extends AbstractConditional implements Serializable, Co
             DECREMENT = "decrement",
             SET_TRUE = "set-true",
             SET_FALSE = "set-false",
-            SET_ZERO = "set-zero";
+            SET_ZERO = "set-zero",
+            SET_VALUE = "set-value";
 
     @Attribute
     private String change;
     @Attribute
     private String state;
+    @Attribute(required=false)
+    private String value;
 
 
     @Validate
     public void validate() throws Exception {
-        if( ! (change.equals(INCREMENT) || change.equals(DECREMENT) || change.equals(SET_TRUE) || change.equals(SET_FALSE) || change.equals(SET_ZERO)) )
+        if( ! (change.equals(INCREMENT) || change.equals(DECREMENT) || change.equals(SET_TRUE) || change.equals(SET_FALSE) || change.equals(SET_ZERO) || change.equals(SET_VALUE)) )
             throw new Exception("Unknown state change: "+change);
+        if(change.equals(SET_VALUE) && getValue()==null)
+            throw new Exception("State-change 'set-value' must have a 'value' attribute");
     }
 
     public String getChange() {
@@ -45,6 +50,14 @@ public class StateChange extends AbstractConditional implements Serializable, Co
 
     public void setState(String state) {
         this.state = state;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
     }
 
 
@@ -69,6 +82,9 @@ public class StateChange extends AbstractConditional implements Serializable, Co
                 break;
             case SET_FALSE:
                 state.put(this.state, "false");
+                break;
+            case SET_VALUE:
+                state.put(this.state, getValue());
                 break;
         }
     }
