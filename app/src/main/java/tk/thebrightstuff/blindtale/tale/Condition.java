@@ -48,11 +48,18 @@ public class Condition implements Serializable {
 
         Condition c = new Condition();
         String[] tokens = input.trim().split("\\b");
-        if(tokens.length!=4)
+        if(tokens.length==4){
+            c.operand1 = tokens[1].trim();
+            c.operator = tokens[2].trim();
+            c.operand2 = tokens[3].trim();
+        }else if(tokens.length==3){
+            c.operand1 = tokens[0].trim();
+            c.operator = tokens[1].trim();
+            c.operand2 = tokens[2].trim();
+        }else
             throw new Exception("Incorrect condition syntax: "+input);
-        c.operand1 = tokens[1].trim();
-        c.operator = tokens[2].trim();
-        c.operand2 = tokens[3].trim();
+        if(! (c.operator.equals("==") || c.operator.equals("!=") || c.operator.equals("<=") || c.operator.equals("<") || c.operator.equals(">=") || c.operator.equals(">")) )
+            throw new Exception("Incorrect operator: "+c.operator);
         return c;
     }
 
