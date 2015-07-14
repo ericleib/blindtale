@@ -453,7 +453,35 @@
 
 
 
-        <scene id="place" end="true">
+        <scene id="place">
+
+            <action keys="décrire" description="Décrire le lieu" do-immediately-condition="place_decrite == false">
+                <audio>
+                    Je suis sur la place du village. Je peux aller boire un verre à la taverne, ou faire un peu de shopping chez le marchand.
+                    Oh! Et il y a aussi Pablito, l'idiot du village.
+                </audio>
+                <state-change change="set-true" state="place_decrite"/>
+            </action>
+
+            <action keys="chemin" description="Revenir sur le chemin" next-scene="chemin">
+                <audio> OK, revenons sur le chemin. </audio>
+            </action>
+
+            <action keys="taverne" description="Entrer dans la taverne" next-scene="taverne">
+                <audio> OK, allons boire un verre à la taverne. </audio>
+            </action>
+
+            <action keys="marchand" description="Entrer chez le marchand" next-scene="marchand">
+                <audio> OK, allons voir ce que le marchand a en stock. </audio>
+            </action>
+
+            <action keys="parler" description="Parler à Pablito" next-dialog="parler">
+                <audio> Salut Pablito. ça va pour toi ? </audio>
+            </action>
+
+            <dialog id="parler">
+
+            </dialog>
 
         </scene>
 
@@ -461,18 +489,83 @@
 
         <scene id="taverne" end="true">
 
+            <action keys="décrire" description="Décrire le lieu" do-immediately-condition="taverne_decrite == false">
+                <audio>
+                    Ah ! Me voici dans la célèbre taverne de blablabla. Il y a du monde ce soir. Ca doit être le célèbre concours de bras de fer.
+                    C'est le vieux Roberto qui gagne le concours depuis plus de dix ans.
+                    Et comme d'habitude c'est son frère Alfredo qui fait arbitre...
+                    Bon, j'espère que le cuisinier a cuisiné quelque chose de bon ce soir !
+                </audio>
+                <state-change change="set-true" state="taverne_decrite"/>
+            </action>
+
+            <action keys="sortir" description="Sortir de la taverne" next-scene="sortir">
+                <audio> OK, sortons de la taverne. </audio>
+            </action>
+
+            <action keys="arbitre" description="Parler à Alfredo" next-dialog="arbitre">
+                <audio> Hola Alfredo ! </audio>
+            </action>
+
+            <action keys="adversaire" description="Parler à Roberto" next-dialog="adversaire">
+                <audio> Hola Roberto ! </audio>
+            </action>
+
+            <action keys="cuisinier" description="Parler au cuisinier" next-dialog="cuisinier">
+                <audio> Bonjour cuistot ! Qu'est-ce que tu prépares de bon pour ce soir ? </audio>
+            </action>
+
+            <dialog id="arbitre">
+
+            </dialog>
+
+            <dialog id="adversaire">
+
+            </dialog>
+
+            <dialog id="cuisinier">
+
+            </dialog>
         </scene>
 
 
 
         <scene id="marchand" end="true">
 
+            <audio voice="high" condition="marchand_bonjour == false">
+                Bonjour cher client ! Que puis-je faire pour vous aujourd'hui ?
+            </audio>
+            <audio condition="marchand_bonjour == false">
+                Bonjour !
+            </audio>
+
+            <action keys="décrire" description="Décrire le lieu" do-immediately-condition="boutique_decrite == false">
+                <audio>
+                    C'est la boutique du marchand de blablabla. Il a toujours mille et une choses à vendre...
+                </audio>
+                <state-change change="set-true" state="boutique_decrite"/>
+            </action>
+
+            <action keys="sortir" description="Sortir de la boutique" next-scene="sortir">
+                <audio> OK, sortons de la boutique. </audio>
+                <state-change change="set-false" state="marchand_bonjour"/>
+            </action>
+
+            <action keys="parler" description="Parler au marchand" next-dialog="parler">
+                <audio> Alors qu'est-ce que vous avez en stock aujourd'hui ? </audio>
+                <state-change change="set-true" state="marchand_bonjour"/>
+            </action>
+
+            <dialog id="parler">
+
+            </dialog>
+
         </scene>
 
 
 
-        <scene id="fin" end="true">
-
+        <scene id="fin" title="Fin de l'acte I" end="true">
+            <audio>Bravo ! Vous avez terminé l'acte I du Labyrinthe ! A bientôt pour l'acte II...</audio>
         </scene>
 
     </scenes>
