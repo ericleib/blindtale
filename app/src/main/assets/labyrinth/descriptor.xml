@@ -11,7 +11,7 @@
         <voice id="high" pitch="1.1" rate="0.75"/>
         <voice id="higher" pitch="1.4" rate="1.1"/>
         <voice id="angry" pitch="0.65" rate="1.2"/>
-        <voice id="angry_fast" pitch="0.5" rate="1.5"/>
+        <voice id="angry_fast" pitch="0.5" rate="0.5"/>
         <voice id="angry_slow" pitch="0.65" rate="0.65"/>
         <voice id="pretentious" pitch="1.5" rate="0.65"/>
     </voices>
@@ -52,25 +52,62 @@
 
             <action keys="parler" description="Parler à ma mère" next-dialog="parler_mere">
                 <audio>
-                    Bonjour, mère!
+                    Bien le bonjour, mère! 
                 </audio>
             </action>
 
-            <dialog id="parler_mere">
+ <dialog id="parler_mere">
                 <audio voice="high">
-                    Bonjour Santiago ! Tu es prêt à partir ?
+                    Bonjour Santiago ! Tu m'as l'air prêt à partir!
                 </audio>
-                <line keys="oui" description="dire oui">
-                    <audio>Oui! Tout est pret.</audio>
+                <line keys="oui" description="dire oui" next-dialog="partir_maintenant">
+                    <audio> Oui! Je me sens prêt! Je vais partir dès maintenant. </audio>
                 </line>
-                <line keys="non" description="dire non">
-                    <audio>Non! J'ai encore quelques courses à faire</audio>
+                <line keys="non" description="dire non" next-dialog="malade">
+                    <audio>Non! Je suis pas très frais, j'ai l'impression que je suis malade..  </audio>
                 </line>
-            </dialog>
-        </scene>
+        </dialog>
 
+        <dialog id="partir_maintenant">
+                <audio voice="high">
+                   J'ai régardé dans ton sac, partir maintenant serait une folie!  
+                </audio>
+                <line keys="chose" description="demander ce qui manque" next-dialog="manquant">
+                    <audio>Comment ça? Que manque-t-il dans mon sac ??</audio>
+                </line>
+                <line keys="ok" description="tant pis">
+                    <audio>Tant pis, je vais re-préparer mon sac...
+                  </audio>
+                </line>
+        </dialog>
 
+        <dialog id="malade">
+                <audio voice="high">
+                    Oh, tu es malade ? Tu as de la fièvre ?
+                </audio>
+                <audio>
+                    Non, je crois que je n'ai pas digéré ton cassoulet hier soir, 
+                    j'ai passé les heures qui ont suivies aux toilettes! 
+                    J'avais jamais vu un effet aussi instantané..
+                </audio>
+                <audio voice="high">
+                    Ah lala, il faut toujours que ça soit ma faute, moi, ta mère, qui te fait toujours de bons petits plats avec amour! 
+                    Et je ne recois aucune once de reconnaissance! Dois-je te rappeler les douleurs d'un accouchement? 
+                    Finalement tu as sans doute raison, j'ai probablement raté ton éducation... 
+                    De toute façon depuis que ta soeur est partie.. tout me parait tellement fade..
+                </audio>
+              
+                <audio> Sérieusement, qu'est-ce que tu as mis dans le cassoulet ? </audio>
+              
+                <audio voice="high"> 
+                    Oh j’ai rajouté cette petite plante qui pousse dans la forêt ! 
+                    J’ai lu dans un vieux livre que c’était bon pour remettre en ordre toutes ces histoires d’intestins! 
+                    Le nom m’échappe mais elle est facilement reconnaissable, c’est une sorte de petite pâquerette rouge fluo. 
+                    En plus ça donne une petite touche de couleur au plat, c’est super sympa.  </audio>
 
+                <audio> Bon, à plus tard! </audio>
+                <next-scene="devant_maison_heros">
+   
         <scene id="devant_maison_heros">
 
             <action keys="décrire" description="décrire le lieu" do-immediately-condition="devant_maison_decrite == false">
@@ -238,217 +275,34 @@
             </action>
 
             <action keys="chaumière" description="entrer dans la chaumière" next-scene="chaumiere">
-                <audio> OK, entrons dans la chaumière. </audio>
+                <audio>
+                    OK, entrons dans la chaumière.
+                </audio>
             </action>
 
             <action keys="foret" description="revenir dans la forêt" next-scene="foret">
-                <audio> OK, revenons vers la forêt. </audio>
-            </action>
-        </scene>
-
-
-
-        <scene id="chaumiere">
-
-            <action keys="décrire" description="décrire le lieu" do-immediately-condition="chaumiere_decrite == false">
                 <audio>
-                    C'est la chaumière du sorcier blablabla.
-                    Il n'a pas fait le ménage de puis longtemps...
-                    Il y a des fioles remplies de potions et ingrédients dans tous les coins.
-                    Blablabla est en train de préparer une recette je crois.
-                </audio>
-                <state-change change="set-true" state="chaumiere_decrite"/>
-            </action>
-
-            <action keys="sortir" description="Sortir de la chaumière" next-scene="clairiere">
-                <audio> OK, sortons de la chaumière. </audio>
-            </action>
-
-            <action keys="parler" description="parler à mon grand-père" next-dialog="parler">
-                <audio> Bonjour blablabla! </audio>
-                <audio voice="low">
-                    Oh! Bonjour mon petit Santiago. Qu'est-ce qui t'amène chez moi ?
+                    OK, revenons vers la forêt.
                 </audio>
             </action>
+        </scene>
 
-            <dialog id="parler">
-                <line keys="nouvelles" description="demander des nouvelles" next-dialog="parler">
-                    <audio>Comment va la santé blablabla?</audio>
-                    <audio voice="low">Oh, je n'ai pas à me plaindre...</audio>
-                </line>
-            </dialog>
+
+
+        <scene id="chaumiere" end="true">
 
         </scene>
 
 
 
-        <scene id="cabane">
-
-            <action keys="décrire" description="décrire le lieu" do-immediately-condition="cabane_decrite == false">
-                <audio> Il y a une vieille cabane décrépite. Je me demande ce qu'elle peut bien contenir... </audio>
-                <state-change change="set-true" state="cabane_decrite"/>
-            </action>
-
-            <action keys="foret" description="Revenir vers la foret" next-scene="foret">
-                <audio> OK, revenons vers la foret. </audio>
-            </action>
-
-            <action keys="ouvrir" description="Ouvrir la cabane" condition="clef_cabane == false">
-                <audio> On dirait que c'est fermé à clé... </audio>
-            </action>
-
-            <action keys="ouvrir" description="Ouvrir la cabane" condition="clef_cabane == true">
-                <audio condition="cabane_ouverte == false">
-                    Je vais essayer d'ouvrir la porte avec la clef de chez grand-père...
-                    Oui! Ca marche. Je vais entrer...
-                </audio>
-                <audio condition="cabane_ouverte == true">
-                    J'ai déjà ouvert la porte tout à l'heure !
-                </audio>
-                <state-change change="set-true" state="cabane_ouverte"/>
-            </action>
-
-            <action keys="chercher" description="Chercher des objets" condition="cabane_ouverte == true">
-                <audio condition="epee_trouvee == false">
-                    Je n'ai jamais vu autant de poussière !
-                    Quel bazar... Voyons-voir...
-                    Ah ! Voici l'épée de grand-père ! Elle est un peu rouillée, mais elle fera bien l'affaire !
-                </audio>
-                <audio condition="epee_trouvee == true">
-                    Je crois que j'ai déjà trouvé tout ce qu'il y a d'utile dans cette cabane...
-                </audio>
-                <state-change change="set-true" state="epee_trouvee"/>
-            </action>
+        <scene id="cabane" end="true">
 
         </scene>
 
 
 
-        <scene id="laby">
+        <scene id="laby" end="true">
 
-            <action keys="décrire" description="décrire le lieu" do-immediately-condition="laby_decrit == false">
-                <audio>
-                    Voici l'entrée du labyrinthe ou se cache le blablabla...
-                    On dirait qu'il y a un garde à l'entrée.
-                </audio>
-                <state-change change="set-true" state="laby_decrit"/>
-            </action>
-
-            <action keys="route" description="Revenir vers la route" next-scene="route">
-                <audio> OK, revenons vers la route. </audio>
-            </action>
-
-            <action keys="parler" description="parler au garde" next-dialog="parler">
-                <audio> Je voudrais entrer dans le labyrinthe... </audio>
-                <audio voice="angry_fast"> Personne ne rentre dans le labyrinthe ! </audio>
-            </action>
-
-            <dialog id="parler">
-                <line keys="entrer" description="demander à entrer" next-dialog="entrer">
-                    <audio>Pourquoi ne puis-je pas entrer dans le labyrinthe?</audio>
-                    <audio voice="angry_fast">Ce sont les ordres! C'est beaucoup trop dangereux pour les gamins comme toi.</audio>
-                </line>
-                <line keys="santé" next-dialog="parler">
-                    <audio>Et sinon la santé ça va?</audio>
-                    <audio voice="angry_fast">Non, ce travail est incroyablement difficile.</audio>
-                    <audio>Vraiment? Garder l'entrée d'un labyrinthe, ça ne doit pas être très stressant...</audio>
-                    <audio voice="angry_fast">Détrompe-toi, j'en suis à mon troisième burn-out ! Oh, j'aurais dû écouter ma mère et faire de la couture. Il y a beaucoup d'avenir dans...</audio>
-                    <audio>Oui bon, ça va, merci.</audio>
-                </line>
-                <line keys="passage" description="Beaucoup de passage?" next-dialog="parler">
-                    <audio>Il y a beaucoup de passage dans le labyrinthe en ce moment ?</audio>
-                    <audio voice="angry_fast">Non, il n'y a jamais personne. C'est ce qui rend ce job difficile voyez-vous. La solitude. On commence à se parler à soi-même, et à avoir des hallucinations...</audio>
-                    <audio>Oui bon, ça va, merci.</audio>
-                </line>
-                <line keys="battre" description="Se battre contre le garde" next-dialog="parler">
-                    <audio>Ah, vous ne voulez pas me laisser rentrer? Et bien je vais devoir vous occir sur le champ !</audio>
-                    <audio voice="angry_fast">Ah ah ah! Tu es mignon gamin, mais franchement tu ne fais pas le poids. J'en ai étrippé plus d'un des allumés qui voulaient rentrer dans le labyrinthe. Rentre chez ta mère !</audio>
-                    <audio>Malheureusement vous avez probablement raison... Je n'ai plus beaucoup de souvenirs de mes cours de judo...</audio>
-                </line>
-                <line keys="revenir" description="Je repasserai">
-                    <audio>Tant pis, je repasserai, je ne suis pas encore prêt...</audio>
-                    <audio voice="angry_fast">C'est ça gamin ! Crois-moi, tu es bien plus heureux en dehors de ce labyrinthe</audio>
-                </line>
-            </dialog>
-
-            <dialog id="entrer">
-                <line keys="pourquoi" description="Pourquoi est-ce dangereux" next-dialog="entrer">
-                    <audio>Pourquoi le labyrinthe est-il si dangereux ?</audio>
-                    <audio voice="angry_fast">Enfin, tu n'as jamais entendu parler du monstre qui vit là-dedans ?</audio>
-                    <audio>Si, mais enfin, en étant bien armés on devrait en venir à bout, vous ne croyez pas ?</audio>
-                    <audio voice="angry_fast">Ah ah ah ! Tu es bien naif, bonhomme. Cettre créature te dévorerait sans te laisser la moindre chance si elle te voyait !</audio>
-                </line>
-                <line keys="faveur" description="Proposer une faveur" next-dialog="entrer">
-                    <audio>Allons, allons, je peux bien faire quelque chose pour vous, pour que vous me laissiez rentrer ?</audio>
-                    <audio voice="angry_fast">Comment? De la corruption? Je devrais te transpercer avec mon épée sur le champ, mais je me sens vraiment seul... Tu es la première personne avec qui je parle depuis un bout de temps...</audio>
-                    <audio>Tant pis...</audio>
-                </line>
-                <line keys="soeur" description="Ma soeur capturée" next-dialog="entrer">
-                    <audio>Vous devez m'aider ! Ma soeur a été capturée par le monstre !</audio>
-                    <audio voice="angry_fast">J'en suis fort désolé gamin, mais je ne peux pas te laisser rentrer. Ca ne ferait qu'ajouter ton nom sur le tableau de chasse du monstre.</audio>
-                    <audio>Mais je suis son seul espoir ! Vous devez comprendre !</audio>
-                    <audio voice="angry_fast">Je comprends, mais les règles sont les règles, petit.</audio>
-                </line>
-                <line keys="conditions" description="Conditions pour rentrer" next-dialog="conditions">
-                    <audio>Qu'est-ce qui me faudrait pour entrer dans le labyrinthe ?</audio>
-                    <audio voice="angry_fast">
-                        Hé bien... D'abord il faudrait que tu sois bien armé.
-                        Ensuite, il faudrait que tu me prouves que tu es capable de trouver ton chemin dans le labyrinthe.
-                        Et surtout, il faudrait tu emportes avec toi tout le matériel de survie!
-                    </audio>
-                </line>
-                <line keys="revenir" description="Je repasserai">
-                    <audio>Tant pis, je repasserai, je ne suis pas encore prêt...</audio>
-                    <audio voice="angry_fast">C'est ça gamin ! Crois-moi, tu es bien plus heureux en dehors de ce labyrinthe</audio>
-                </line>
-            </dialog>
-
-            <dialog id="conditions">
-                <line keys="pret" description="Je suis pret" next-dialog="test_arme">
-                    <audio>Je crois que je suis pret!</audio>
-                    <audio voice="angry_fast">Ah oui? voyons-voir ça... Es-tu armé ?</audio>
-                </line>
-                <line keys="revenir" description="Je repasserai">
-                    <audio>Tant pis, je repasserai, je ne suis pas encore prêt...</audio>
-                    <audio voice="angry_fast">C'est ça gamin ! Crois-moi, tu es bien plus heureux en dehors de ce labyrinthe</audio>
-                </line>
-            </dialog>
-
-            <dialog id="test_arme">
-                <line keys="oui" next-dialog="test_carte" condition="epee_trouvee == true">
-                    <audio>Oui ! J'ai cette épée redoutable !</audio>
-                    <audio voice="angry_fast">Ouais... Elle est un peu rouillée, mais ça devrait aller. Est-ce que tu peux naviguer dans le labyrinthe ?</audio>
-                </line>
-                <line keys="non" next-dialog="entrer" condition="epee_trouvee == false">
-                    <audio>Euh... Non... Je n'ai pas encore trouvé d'arme</audio>
-                    <audio voice="angry_fast">Alors arrête de me faire perdre mon temps !</audio>
-                    <audio>Désolé...</audio>
-                </line>
-            </dialog>
-
-            <dialog id="test_carte">
-                <line keys="oui" next-dialog="test_sac" condition="carte_trouvee == true">
-                    <audio>Oui ! J'ai acheté cette carte du labyrinthe !</audio>
-                    <audio voice="angry_fast">Ouais... On dirait qu'elle date un peu, et il y a des tâches de café, mais c'est mieux que rien... Bon, et est-ce que tu as de quoi survivre dans le labyrinthe ?</audio>
-                </line>
-                <line keys="non" next-dialog="entrer" condition="carte_trouvee == false">
-                    <audio>Euh... Non... Je n'ai pas encore trouvé de carte...</audio>
-                    <audio voice="angry_fast">Alors arrête de me faire perdre mon temps !</audio>
-                    <audio>Désolé...</audio>
-                </line>
-            </dialog>
-
-            <dialog id="test_sac">
-                <line keys="oui" next-scene="fin" condition="porteur_recrute == true">
-                    <audio>Oui ! Mon porteur est là pour m'aider dans le labyrinthe !</audio>
-                    <audio voice="angry_fast">Bon, on dirait que tu as été suffisament prévoyant! Bravo tu es prêt à entrer dans le labyrinthe... Mais je te préviens... Ce n'est que le début de tes aventures...</audio>
-                </line>
-                <line keys="non" next-dialog="entrer" condition="porteur_recrute == false">
-                    <audio>Euh... Non... Je n'ai pas encore de quoi subsister dans le labyrinthe...</audio>
-                    <audio voice="angry_fast">Alors arrête de me faire perdre mon temps !</audio>
-                    <audio>Désolé...</audio>
-                </line>
-            </dialog>
         </scene>
 
 
@@ -466,12 +320,6 @@
 
 
         <scene id="marchand" end="true">
-
-        </scene>
-
-
-
-        <scene id="fin" end="true">
 
         </scene>
 
