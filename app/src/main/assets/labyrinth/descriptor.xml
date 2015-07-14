@@ -139,7 +139,7 @@
             <action keys="décrire" description="décrire le lieu" do-immediately-condition="chemin_decrit == false">
                 <audio>
                     C'est le petit chemin qui va dans la forêt...
-                    Il y a un croisement pour aller au labyrinthe.
+                    Il y a un croisement avec un autre chemin qui mène au labyrinthe.
                 </audio>
                 <state-change change="set-true" state="chemin_decrit"/>
             </action>
