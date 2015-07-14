@@ -70,15 +70,17 @@
 
         <dialog id="partir_maintenant">
                 <audio voice="high">
-                   J'ai régardé dans ton sac, partir maintenant serait une folie!  
+                   Au fait, j'ai rajouté des choses dans ton sac! 
+                  Tu n'avais mis aucun pull ni aucune affaire de rechange!
+                  J'ai aussi mis une lanterne pour la nuit, et de quoi faire fuir les moustiques! 
+                  On est jamais trop prudent mon chéri!
+                  Bon, tout ça fait un peu lourd, mais tu ne peux pas partir sans ces choses là, c'est sur!
                 </audio>
-                <line keys="chose" description="demander ce qui manque" next-dialog="manquant">
-                    <audio>Comment ça? Que manque-t-il dans mon sac ??</audio>
-                </line>
-                <line keys="ok" description="tant pis">
-                    <audio>Tant pis, je vais re-préparer mon sac...
-                  </audio>
-                </line>
+                
+                <action keys="porter" next-dialog="">
+                <action keys="ajouter" next-dialog="">
+                <action keys="enlever" next-dialog="Indispensable">
+                
         </dialog>
 
         <dialog id="malade">
@@ -91,7 +93,8 @@
                     J'avais jamais vu un effet aussi instantané..
                 </audio>
                 <audio voice="high">
-                    Ah lala, il faut toujours que ça soit ma faute, moi, ta mère, qui te fait toujours de bons petits plats avec amour! 
+                    Ah lala, il faut toujours que ça soit ma faute, moi, ta mère, 
+                    qui te fait toujours de bons petits plats avec amour! 
                     Et je ne recois aucune once de reconnaissance! Dois-je te rappeler les douleurs d'un accouchement? 
                     Finalement tu as sans doute raison, j'ai probablement raté ton éducation... 
                     De toute façon depuis que ta soeur est partie.. tout me parait tellement fade..
@@ -106,6 +109,7 @@
                     En plus ça donne une petite touche de couleur au plat, c’est super sympa.  </audio>
 
                 <audio> Bon, à plus tard! </audio>
+                 </dialog>
                 <next-scene="devant_maison_heros">
    
         <scene id="devant_maison_heros">
