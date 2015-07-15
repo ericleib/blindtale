@@ -520,14 +520,70 @@
                 <audio> OK, allons voir ce que le marchand a en stock. </audio>
             </action>
 
-            <action keys="parler" description="Parler à Pablito" next-dialog="parler">
+            <action keys="parler" description="Parler à Pablito" next-dialog="parler" condition="potion_aphro_bue == false">
                 <audio> Salut Pablito. ça va pour toi ? </audio>
+                <audio voice="higher"> Oh bonjour Santiago ! Oui, ça va, qu'est-ce que je peux faire pour toi ? </audio>
+            </action>
+
+            <action keys="parler" description="Parler à Pablito" next-dialog="parler_aphrodisiaque" condition="potion_aphro_bue == true">
+                <audio> Salut Pablito. ça va pour toi ? </audio>
+                <audio voice="higher"> Oh Santiago ! Comme ta voix est douce à l'oreille... </audio>
             </action>
 
             <dialog id="parler">
-
+                <line keys="idiot" description="Prendre des nouvelles" next-dialog="parler" condition="porteur_recrute == false">
+                    <audio> Alors Pablito, toujours idiot du village ? </audio>
+                    <audio voice="higher"> Oui, et fier de l'être ! ça fait la cinquième année de suite que je gagne le concours. Il faut dire que je travaille beaucoup pour gagner... Peut-être trop. </audio>
+                </line>
+                <line keys="village" description="Prendre des nouvelles du village" next-dialog="parler" condition="porteur_recrute == false">
+                    <audio> Que se passe-t-il de beau ces jours-ci à blablabla ? </audio>
+                    <audio voice="higher"> Oh, hé bien, il y a en ce moment même un concours de bras de fer à la taverne. Tu devrais aller voir, il y a une jolie récompense à gagner. Mais ce vieux Roberto est plus fort que tout le monde... </audio>
+                </line>
+                <line keys="aide" description="Demander de l'aide" next-dialog="aide" condition="porteur_recrute == false">
+                    <audio> Dis, ma soeur est dans le labyrinthe. Est-ce que tu peux m'aider à la sauver ? </audio>
+                    <audio voice="higher"> Le labyrinthe ? Oh mon dieu ! Tu ne veux tout de même pas aller là-dedans ! Hors de question que je te suive ! </audio>
+                </line>
+                <line keys="grimoire" description="Chercher grimoire" condition="livre_regarde == false" next-dialog="livre">
+                    <audio> Je suis à la recherche du grimoire de blablabla. Tu as une idée d'où je pourrais le trouver ? </audio>
+                    <audio voice="higher"> Je ne suis pas sûr mais l'autre jour j'ai aperçu blablabla en ville... Il a passer la soirée à boire du vin à la taverne. Mais si il a oublié son grimoire. Tu devrais peut-être aller leur demander.</audio>
+                </line>
                 <line keys="partir">
+                    <audio> Bon ciao Pablito, je dois y aller ! </audio>
+                    <audio voice="higher"> A la prochaine Santiago ! </audio>
+                </line>
+            </dialog>
 
+            <dialog id="aide">
+                <line keys="insister" description="demander de l'aide" next-dialog="aide">
+                    <audio>Ecoute Pablito, tout ce que je te demande, c'est un coup de main pour m'aider à sauver ma soeur !</audio>
+                    <audio voice="higher"> Santiago, je t'aime beaucoup, et ta soeur aussi. Mais pas au point de risquer ma peau dans ce labyrinthe maudit ! </audio>
+                </line>
+                <line keys="payer" description="proposer de l'argent" next-dialog="aide">
+                    <audio>Je peux te payer tu sais ! Bon, je n'ai pas grand chose en ce moment, mais on peut s'arranger, hein ?</audio>
+                    <audio voice="higher"> Ce n'est pas une question d'argent ! Tu sais ce que ce monstre fait à ceux qui s'introduisent dans son labyrinthe ? </audio>
+                </line>
+                <line keys="flatter" description="flatter Pablito" next-dialog="aide">
+                    <audio>Tu sais, je trouve ces bottes te vont admirablement bien. Où les as-tu achetées ?</audio>
+                    <audio voice="higher"> Oh, tu es trop gentil Santiago... Mais si tu essaies de me caresser dans le sens du poil, tu peux toujours courrir. Je n'irai pas dans ce labyrinthe. </audio>
+                </line>
+                <line keys="partir">
+                    <audio> Bon ciao Pablito, je dois y aller ! </audio>
+                    <audio voice="higher"> A la prochaine Santiago ! </audio>
+                </line>
+            </dialog>
+
+            <dialog id="parler_aphrodisiaque">
+                <line keys="différent" description="Tu me trouves différent?" next-dialog="parler_aphrodisiaque">
+                    <audio>Tu me trouves différent de d'habitude ?</audio>
+                    <audio voice="higher"> Oh Santiago ! Je n'avais jamais remarqué ta belle voix, tes beaux yeux et ton corps d'Appolon ! </audio>
+                </line>
+                <line keys="aide">
+                    <audio>Alors tu veux m'accompagner dans le labyrinthe ?</audio>
+                    <audio voice="higher"> T'accompagner où ? Oh, Santiago, qu'importe ! Je t'accompagnerai où tu voudras, grand fou ! </audio>
+                    <audio>Génial ! c'est très gentil de ta part ! Peux-tu me retrouver chez moi demain matin à l'aube, pour le départ ?</audio>
+                    <audio voice="higher"> Tes désirs sont des ordres, mon beau Santiago. </audio>
+                    <audio>Oula, cette potion était vraiment très efficace ! J'espère que les effets ne vont pas empirer !</audio>
+                    <state-change state="porteur_recrute" change="set-true"/>
                 </line>
             </dialog>
 
@@ -539,7 +595,7 @@
 
             <action keys="décrire" description="Décrire le lieu" do-immediately-condition="taverne_decrite == false">
                 <audio>
-                    Ah ! Me voici dans la célèbre taverne de blablabla. Il y a du monde ce soir. Ca doit être le célèbre concours de bras de fer.
+                    Ah ! Me voici dans la célèbre taverne du dragon bourré. Il y a du monde ce soir. Ca doit être le célèbre concours de bras de fer.
                     C'est le vieux Roberto qui gagne le concours depuis plus de dix ans.
                     Et comme d'habitude c'est son frère Alfredo qui fait arbitre...
                     Bon, j'espère que le cuisinier a cuisiné quelque chose de bon ce soir !
@@ -551,36 +607,128 @@
                 <audio> OK, sortons de la taverne. </audio>
             </action>
 
-            <action keys="arbitre" description="Parler à Alfredo" next-dialog="arbitre">
+            <action keys="arbitre" description="Parler à Alfredo" next-dialog="arbitre" condition="prix_gagne == false">
                 <audio> Hola Alfredo ! </audio>
+                <audio voice="high"> Salut gamin ! Tu veux participer au grand tournois de bras de fer inter régional ? Ce soir Roberto est en grande forme ! </audio>
             </action>
 
-            <action keys="adversaire" description="Parler à Roberto" next-dialog="adversaire">
+            <action keys="adversaire" description="Parler à Roberto" condition="prix_gagne == false">
                 <audio> Hola Roberto ! </audio>
+                <audio voice="angry"> Ne me parle pas ! Je suis hyper concentré ! Si tu participes au concours je vais t'écrabouiller le bras !</audio>
+                <audio> Oula! Bon OK, je te laisse... </audio>
             </action>
 
             <action keys="cuisinier" description="Parler au cuisinier" next-dialog="cuisinier">
-                <audio> Bonjour cuistot ! Qu'est-ce que tu prépares de bon pour ce soir ? </audio>
+                <audio> Bonjour cuistot ! </audio>
+                <audio voice="pretentious"> Bonjour Santiago ! Bienvenu à la taverne du dragon bourré ! </audio>
             </action>
 
             <dialog id="arbitre">
-
-                <line keys="partir">
-
+                <line keys="prix" description="Demander le prix en jeu" next-dialog="arbitre">
+                    <audio>Qu'est-ce qu'il y a à gagner ?</audio>
+                    <audio voice="high">Ah! ce soir il y a en jeu une belle somme de cent pièces d'or pour celui qui parviendra à battre Roberto ! Tu es intéressé ?</audio>
+                    <audio>Oui, oui, j'ai plein de choses à acheter chez le marchand !!</audio>
                 </line>
-            </dialog>
-
-            <dialog id="adversaire">
-
+                <line keys="participer" description="Demander à participer" condition="laisse_gagner == false">
+                    <audio>Est-ce que je peux participer au concours ?</audio>
+                    <audio voice="high">Ah ah ah! Tu es un peu jeune, mais pourquoi pas. Comme tu n'as aucune chance, je te fais participer gratuitement ! Roberto, tu es près à écraser ce gringalet ?</audio>
+                    <audio voice="angry" condition="cuistot_intro != menu_fini">Oui! Allons-y. Je vais le massacrer !</audio>
+                    <audio condition="cuistot_intro != menu_fini">Euh finalement je pense qu'il faut que je m'entraine encore un petit peu...</audio>
+                    <audio voice="angry" condition="cuistot_intro == menu_fini">Euh Alfredo, je ne me sens pas très bien... Je crois que je vais vommir... Oh... C'est le cassoulet de ce foutu cuistot... Je crois que je ne peux pas jouer ce coup-ci</audio>
+                    <audio voice="high" condition="cuistot_intro == menu_fini">Non, Roberto, tu ne peux pas me faire ça ! Ah la la... Bon Santiago, il faut que tu patientes un petit peu pour que Roberto reprenne des forces...</audio>
+                    <audio condition="cuistot_intro == menu_fini">Comment, je n'ai pas gagné, mais il n'est pas en état de jouer...</audio>
+                    <audio voice="high" condition="cuistot_intro == menu_fini">Je ne vais pas te laisser gagner aussi facilement petit gringalet !</audio>
+                    <audio condition="cuistot_intro == menu_fini">ça ne va pas se passer comme ça !</audio>
+                </line>
+                <line keys="participer" description="Demander à participer" condition="laisse_gagner == true">
+                    <audio>Est-ce que je peux participer au concours ?</audio>
+                    <audio voice="high">Ah ah ah! Tu es un peu jeune, mais pourquoi pas. Comme tu n'as aucune chance, je te fais participer gratuitement ! Roberto, tu es près à écraser ce gringalet ?</audio>
+                    <audio voice="angry" condition="cuistot_intro != menu_fini">Oui! Allons-y. Je vais le massacrer !</audio>
+                    <audio condition="cuistot_intro != menu_fini">Euh finalement je pense qu'il faut que je m'entraine encore un petit peu...</audio>
+                    <audio voice="angry" condition="cuistot_intro == menu_fini">Euh Alfredo, je ne me sens pas très bien... Je crois que je vais vommir... Oh... C'est le cassoulet de ce foutu cuistot... Je crois que je ne peux pas jouer ce coup-ci</audio>
+                    <audio voice="high" condition="cuistot_intro == menu_fini">Non, Roberto, tu ne peux pas me faire ça ! Ah la la... Bon Santiago, je crois que je vais devoir te laisser gagner !</audio>
+                    <audio condition="cuistot_intro == menu_fini">Youpi ! A moi les cent pièces d'or !</audio>
+                    <state-change state="prix_gagne" change="set-true" condition="cuistot_intro == menu_fini"/>
+                </line>
+                <line keys="gagner" description="Demander de te laisser gagner" next-dialog="arbitre">
+                    <audio>J'ai vraiment besoin de ces cent pièces d'or. C'est une question de vie ou de mort !</audio>
+                    <audio condition="gp_taverne == false" voice="high">Quoi, tu te figures que je vais te laisser gagner ? Non mais qui est-ce qui t'a appris ce genre de manières ? Remarque, de quoi je m'étonne ? C'est vrai que tu viens d'une famille de vauriens...</audio>
+                    <audio condition="gp_taverne == true" voice="high">Oh... Ton grand-père m'a flanqué une sacré correction tout à l'heure... OK, je veux bien te laisser gagner, mais il faut quand même que tu participes au concours de bras de fer...</audio>
+                    <state-change state="laisse_gagner" change="set-true" condition="gp_taverne == true"/>
+                </line>
                 <line keys="partir">
-
+                    <audio>OK, ciao Alfredo !</audio>
                 </line>
             </dialog>
 
             <dialog id="cuisinier">
-
+                <line keys="affaires" description="Comment vont les affaires?" next-dialog="cuisinier">
+                    <audio>Comment vont les affaires en ce moment ?</audio>
+                    <audio voice="pretentious">Pas mal, pas mal. Enfin, à part ce monstre qui dévore ma clientèle d'année en année. Sans parler du marché de l'immobilier qui ne s'est jamais porté aussi mal dernièrement... </audio>
+                </line>
+                <line keys="concours" description="Comment se passe le concours?" next-dialog="concours" condition="prix_gagne == false">
+                    <audio>Comment se passe le concours ? J'aimerais bien participer.</audio>
+                    <audio voice="pretentious">Oh, le concours se passe bien. Je n'aime pas beaucoup cette débauche de violence dans mon établissement, mais au moins ça ramène des clients. Et puis Roberto mange comme un ogre ! C'est simple, il avale tout mon stock quasiment tous les soirs !</audio>
+                </line>
+                <line keys="menu" description="Demander le menu" condition="cuistot_intro == false" next-dialog="menu">
+                    <audio>Qu'est-ce que tu prépares de bon pour ce soir ? </audio>
+                    <audio voice="pretentious"> Oh, hé bien, c'est embarassant... Comment expliquer ? En fait, j'ai le syndrome de la page blanche des cuisiniers... Je n'ai pas d'idée de menu. Si tu as une idée, n'hésite pas à me la proposer ! </audio>
+                    <state-change state="cuistot_intro" change="set-true"/>
+                </line>
+                <line keys="menu" description="Proposer un plat" condition="cuistot_intro == true" next-dialog="menu">
+                    <audio>Au sujet du menu de ce soir, j'ai bien une proposition... </audio>
+                </line>
                 <line keys="partir">
+                    <audio>OK, a bientôt cuistot !</audio>
+                </line>
+            </dialog>
 
+            <dialog id="concours">
+                <line keys="comment" description="Comment participer?" next-dialog="concours">
+                    <audio>Comment peut-on participer au concours de bras de fer ?</audio>
+                    <audio voice="pretentious">Il faut s'adresser à Alfredo. C'est l'organisateur et arbitre du concours, et aussi le frère de Roberto.</audio>
+                </line>
+                <line keys="gagner" description="Comment gagner le concours?" next-dialog="concours">
+                    <audio>Entre nous, j'ai vraiment envie de gagner le concours. Est-ce que tu aurais un tuyau ?</audio>
+                    <audio voice="pretentious">ça va être difficile mon garçon. Roberto est vraiment très fort. Je ne pense pas qu'on puisse gagner sans tricher.</audio>
+                </line>
+                <line keys="aide" description="Demander de l'aide" next-dialog="concours">
+                    <audio>Il faut que tu m'aides à gagner ce concours... C'est mon seul espoir de sauver ma soeur des griffes du blablabla.</audio>
+                    <audio voice="pretentious">Je ne vois vraiment pas ce que je peux faire pour toi... Mais si tu veux mon avis, tu devrais tourner la page et noyer ton chagrin dans l'alcool. En tout cas pour moi, ça a toujours bien marché.</audio>
+                </line>
+                <line keys="merci" description="Merci pour les conseils" next-dialog="cuisinier">
+                    <audio>Merci pour les conseils !</audio>
+                </line>
+            </dialog>
+
+            <dialog id="menu">
+                <line keys="pâtes" description="Faire des pâtes" next-dialog="menu">
+                    <audio>Tu pourrais préparer des Spaghetti à la Bolognaise ! C'est mon plat préféré !</audio>
+                    <audio voice="pretentious">Des pâtes? Bof, ce n'est pas très original. Je veux préparer quelque chose d'unique !</audio>
+                </line>
+                <line keys="pizza" description="Faire une pizza" next-dialog="menu">
+                    <audio>Qu'est-ce que tu penses d'une bonne pizza ? C'est une valeur sûre.</audio>
+                    <audio voice="pretentious">Non, non, non, ce n'est pas un restaurant italien ici. Je veux préparer quelque chose d'unique !</audio>
+                </line>
+                <line keys="salade" description="Faire une salade" next-dialog="menu">
+                    <audio>Pourquoi ne pas préparer une bonne salade ? C'est bon pour mon régime. </audio>
+                    <audio voice="pretentious">Non, trop facile. Je veux préparer quelque chose d'unique !</audio>
+                </line>
+                <line keys="soupe" description="Faire une soupe" next-dialog="menu">
+                    <audio>Pourquoi ne pas préparer une bonne soupe ? C'est bon pour mon régime. </audio>
+                    <audio voice="pretentious">Non, trop facile. Je veux préparer quelque chose d'unique !</audio>
+                </line>
+                <line keys="soupe" description="Faire une soupe" condition="cassoulet_recette == true">
+                    <audio>Je sais ! Tu pourrais nous préparer un bon cassoulet ! </audio>
+                    <audio voice="pretentious">Un cassoulet ? C'est un peu classique tu trouves pas ?</audio>
+                    <audio>Oui, mais je connais une recette spéciale... Tu m'en diras des nouvelles ! </audio>
+                    <audio voice="pretentious">Ah oui ? D'accord ! passe-moi la recette et je m'y mets !</audio>
+                    <audio>Hé bien il te faut... </audio>
+                    <audio voice="pretentious">OK ! C'est parti !</audio>
+                    <state-change state="cuistot_intro" change="set-value" value="menu_fini"/>
+                </line>
+                <line keys="rien" description="Pas d'idée" next-dialog="cuisinier">
+                    <audio>Je n'ai pas d'idée, désolé. </audio>
                 </line>
             </dialog>
         </scene>
@@ -640,6 +788,10 @@
                 <line keys="non" next-dialog="produits">
                     <audio>Pas vraiment non... Tant pis !</audio>
                     <audio voice="high">Dommage ! Est-ce qu'un autre article vous intéresse ?</audio>
+                </line>
+                <line keys="acheter" next-dialog="acheter" condition="prix_gagne == false">
+                    <audio>Et bien, je peux vous chanter une belle chanson, ou vous dessiner un joli mouton...</audio>
+                    <audio voice="high">Ah ah ah ! Reviens ici avec de la monnaie sonnante et trébuchante !</audio>
                 </line>
                 <line keys="acheter" next-dialog="acheter" condition="prix_gagne == true">
                     <audio>Et bien, je peux vous proposer ces cent pièces d'or... Je pense que vous y gagnez...</audio>
