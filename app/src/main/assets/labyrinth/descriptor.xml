@@ -39,76 +39,100 @@
 
             <action keys="décrire" description="décrire le lieu" do-immediately-condition="maison_heros_decrite == false">
                 <audio>
-                    Je suis chez moi. Il y a ma mère, et mon sac à dos pour aller dans la labyrinthe.
+                    Je suis chez moi. Il y a ma mère, et mon sac à dos pour aller dans la labyrinthe. Je l'ai préparé moi-même.
                 </audio>
                 <state-change change="set-true" state="maison_heros_decrite"/>
             </action>
 
-            <action keys="sortir" description="Sortir de la maison" next-scene="devant_maison_heros">
-                <audio>
-                    OK, sortons dehors!
+            <action keys="sac" description="Prendre le sac" next-scene="maison_heros" condition="porteur_recrute == false">
+                <audio> Bon, mon sac est prêt. Je peux y aller. </audio>
+
+                <audio condition="sac_vide==false"> Oula ! Mais mon sac est beaucoup trop lourd ! Je ne pourrai jamais le porter tout seul ! </audio>
+                <audio voice="higher" condition="sac_vide==false">
+                    Santiago, mon garçon, j'ai rajouté des choses dans ton sac!
+                    Tu n'avais mis aucun pull ni aucune affaire de rechange!
+                    Et bien sûr tu n'avais presque pas prévu de provisions.
+                    J'ai aussi mis une lanterne pour la nuit, et de quoi faire fuir les moustiques!
+                    Ah ! Et puis il manquait ta brosse à dents...
                 </audio>
+                <audio condition="sac_vide==false"> Oui bon ça va, j'ai compris !</audio>
+
+                <audio voice="higher" condition="sac_vide==true">
+                    Enfin Santiago, tu es fou, je ne peux pas te laisser partir comme ça à l'aventure avec un sac à moitié vide. Laisse-moi faire, je te préparer tout ce dont tu as besoin.
+                </audio>
+                <state-change state="sac_vide" change="set-false"/>
+
+            </action>
+
+            <action keys="sac" description="Prendre le sac" condition="porteur_recrute == true">
+                <audio> Ah! Pablito, tu es là ! Tu peux prendre mon sac ? </audio>
+                <audio voice="higher"> Salut mon beau Santiago ! Pas de problème, tes désirs sont des ordres ! </audio>
+                <audio> Parfait. Voila une bonne chose de faite. Prochaine étape: Le labyrinthe ! </audio>
+                <state-change condition="porteur_sac" change="set-true"/>
+            </action>
+
+            <action keys="vider" description="Vider le sac" condition="sac_vide==false" next-scene="maison_heros">
+                <audio> Il y a trop de choses là-dedans. Je ne vais prendre que le strict nécessaire !</audio>
+                <state-change state="sac_vide" change="set-true"/>
             </action>
 
             <action keys="parler" description="Parler à ma mère" next-dialog="parler_mere">
-                <audio>
-                    Bien le bonjour, mère!
-                </audio>
+                <audio> Bien le bonjour, mère! </audio>
+                <audio voice="higher"> Bonjour Santiago ! Alors, c'est décidé ? Tu vas partir à la recherche de ta soeur ? J'espère que mon cassoulet spécial t'a donné plein de forces ! </audio>
             </action>
 
+            <action keys="sortir" description="Sortir de la maison" next-scene="devant_maison_heros">
+                <audio> OK, sortons dehors! </audio>
+            </action>
+
+
             <dialog id="parler_mere">
-                <audio voice="high">
-                    Bonjour Santiago ! Tu m'as l'air prêt à partir!
-                </audio>
-                <line keys="oui" description="dire oui" next-dialog="partir_maintenant">
-                    <audio> Oui! Je me sens prêt! Je vais partir dès maintenant. </audio>
+                <line keys="soeur" description="Parler de ma soeur" next-dialog="parler_mere">
+                    <audio> Quand je pense à ce monstre qui a emporté blablabla ! Je te jure que j'aurai sa peau !</audio>
+                    <audio voice="higher"> Oh Santiago, Depuis que blabla est partie je n'ai plus beaucoup envie de vivre... Je t'en conjure, fais ce que tu peux pour la ramener !</audio>
                 </line>
-                <line keys="non" description="dire non" next-dialog="malade">
-                    <audio>Non! Je suis pas très frais, j'ai l'impression que je suis malade..  </audio>
+                <line keys="malade" description="Je suis malade" next-dialog="malade">
+                    <audio> Non, je crois que je n'ai pas digéré ton cassoulet. Hier soir, j'ai passé les heures qui ont suivies aux toilettes! J'avais jamais vu un effet aussi instantané..</audio>
+                    <audio voice="higher">Oh, je suis désolé que tu sois malade...</audio>
                 </line>
-            </dialog>
-
-            <dialog id="partir_maintenant">
-                <audio voice="high">
-                    Au fait, j'ai rajouté des choses dans ton sac!
-                    Tu n'avais mis aucun pull ni aucune affaire de rechange!
-                    J'ai aussi mis une lanterne pour la nuit, et de quoi faire fuir les moustiques!
-                    On est jamais trop prudent mon chéri!
-                    Bon, tout ça fait un peu lourd, mais tu ne peux pas partir sans ces choses là, c'est sur!
-                </audio>
-
-                <line keys="partir">
-
+                <line keys="argent" description="Demander de l'argent" next-dialog="parler_mere">
+                    <audio> Tu peux me dépanner d'un peu d'argent de poche ?</audio>
+                    <audio voice="higher">Désolé mon garçon... Tu sais bien que je suis ruinée depuis le départ de ton père... Il va falloir que tu le gagnes, ton argent !</audio>
+                </line>
+                <line keys="partir" description="Je dois y aller">
+                    <audio> Bon je te laisse, j'ai quelques petites choses à régler... </audio>
                 </line>
             </dialog>
 
             <dialog id="malade">
-                <audio voice="high">
-                    Oh, tu es malade ? Tu as de la fièvre ?
-                </audio>
-                <audio>
-                    Non, je crois que je n'ai pas digéré ton cassoulet hier soir,
-                    j'ai passé les heures qui ont suivies aux toilettes!
-                    J'avais jamais vu un effet aussi instantané..
-                </audio>
-                <audio voice="high">
-                    Ah lala, il faut toujours que ça soit ma faute, moi, ta mère,
-                    qui te fait toujours de bons petits plats avec amour!
-                    Et je ne recois aucune once de reconnaissance! Dois-je te rappeler les douleurs d'un accouchement?
-                    Finalement tu as sans doute raison, j'ai probablement raté ton éducation...
-                    De toute façon depuis que ta soeur est partie.. tout me parait tellement fade..
-                </audio>
-                <audio> Sérieusement, qu'est-ce que tu as mis dans le cassoulet ? </audio>
-                <audio voice="high">
-                    Oh j’ai rajouté cette petite plante qui pousse dans la forêt !
-                    J’ai lu dans un vieux livre que c’était bon pour remettre en ordre toutes ces histoires d’intestins!
-                    Le nom m’échappe mais elle est facilement reconnaissable, c’est une sorte de petite pâquerette rouge fluo.
-                    En plus ça donne une petite touche de couleur au plat, c’est super sympa.  </audio>
-
-                <audio> Bon, à plus tard! </audio>
-
-                <line keys="partir">
-
+                <line keys="aspirine" description="Demander de l'aspirine" next-dialog="malade">
+                    <audio> Tu n'as pas un peu d'aspirine ?</audio>
+                    <audio voice="higher"> Non désolé, il faut que je demande à l'apothicaire de m'en préparer... </audio>
+                </line>
+                <line keys="plaindre" description="Se plaindre" next-dialog="malade">
+                    <audio> C'est bien la dernière fois que je mange de ton cassoulet !</audio>
+                    <audio voice="higher"> Ah lala, il faut toujours que ça soit ma faute, moi, ta mère, qui te fait toujours de bons petits plats avec amour!
+                        Et je ne reçois aucune once de reconnaissance!
+                        Dois-je te rappeler les douleurs d'un accouchement?
+                        Finalement tu as sans doute raison, j'ai probablement raté ton éducation...
+                    </audio>
+                    <audio> Oui, bon, ça va, excuse-moi, je n'ai rien dit...</audio>
+                </line>
+                <line keys="cassoulet" description="Demander la recette" next-dialog="malade">
+                    <audio> Sérieusement, qu'est-ce que tu as mis dans le cassoulet ? </audio>
+                    <audio voice="higher">
+                        Oh j’ai rajouté cette petite plante qui pousse dans la forêt !
+                        J’ai lu dans un vieux livre que c’était bon pour remettre en ordre toutes ces histoires d’intestins!
+                        Le nom m’échappe mais elle est facilement reconnaissable, c’est une sorte de petite pâquerette rouge fluo.
+                        En plus ça donne une petite touche de couleur au plat, c’est super sympa.
+                    </audio>
+                    <audio> Ah c'est bon à savoir, si on veut empoisonner quelqu'un. </audio>
+                    <audio voice="higher"> Qu'est-ce que tu as dit ? </audio>
+                    <audio voice="higher"> Non, rien. </audio>
+                    <state-change state="cassoulet_recette" change="set-true"/>
+                </line>
+                <line keys="partir" description="Je dois y aller">
+                    <audio> Bon je te laisse, j'ai quelques petites choses à régler... </audio>
                 </line>
             </dialog>
 
@@ -537,11 +561,11 @@
             </dialog>
 
             <dialog id="test_sac">
-                <line keys="oui" next-scene="fin" condition="porteur_recrute == true">
-                    <audio>Oui ! Mon porteur est là pour m'aider dans le labyrinthe !</audio>
-                    <audio voice="angry_fast">Bon, on dirait que tu as été suffisament prévoyant! Bravo tu es prêt à entrer dans le labyrinthe... Mais je te préviens... Ce n'est que le début de tes aventures...</audio>
+                <line keys="oui" next-scene="fin" condition="porteur_sac == true">
+                    <audio>Oui ! Mon fidèle Pablito m'accompagne, avec tout ce dont j'ai besoin pour survivre dans le labyrinthe !</audio>
+                    <audio voice="angry_fast">Bon, on dirait que tu as été suffisament prévoyant! Bravo, tu es prêt à entrer dans le labyrinthe... Mais je te préviens... Ce n'est que le début de tes aventures...</audio>
                 </line>
-                <line keys="non" next-dialog="entrer" condition="porteur_recrute == false">
+                <line keys="non" next-dialog="entrer" condition="porteur_sac == false">
                     <audio>Euh... Non... Je n'ai pas encore de quoi subsister dans le labyrinthe...</audio>
                     <audio voice="angry_fast">Alors arrête de me faire perdre mon temps !</audio>
                     <audio>Désolé...</audio>
@@ -633,10 +657,14 @@
                 <line keys="aide">
                     <audio>Alors tu veux m'accompagner dans le labyrinthe ?</audio>
                     <audio voice="higher"> T'accompagner où ? Oh, Santiago, qu'importe ! Je t'accompagnerai où tu voudras, grand fou ! </audio>
-                    <audio>Génial ! c'est très gentil de ta part ! Peux-tu me retrouver chez moi demain matin à l'aube, pour le départ ?</audio>
+                    <audio>Génial ! c'est très gentil de ta part ! Peux-tu me retrouver chez moi pour prendre mon sac ?</audio>
                     <audio voice="higher"> Tes désirs sont des ordres, mon beau Santiago. </audio>
-                    <audio>Oula, cette potion était vraiment très efficace ! J'espère que les effets ne vont pas empirer !</audio>
+                    <audio>Oula, cette potion était vraiment très efficace ! J'espère que les effets ne vont pas encore augmenter !</audio>
                     <state-change state="porteur_recrute" change="set-true"/>
+                </line>
+                <line keys="partir">
+                    <audio> Bon ciao Pablito, je dois y aller ! </audio>
+                    <audio voice="higher"> Au revoir mon beau Santiago ! </audio>
                 </line>
             </dialog>
 
@@ -772,13 +800,13 @@
                     <audio>Pourquoi ne pas préparer une bonne soupe ? C'est bon pour mon régime. </audio>
                     <audio voice="pretentious">Non, trop facile. Je veux préparer quelque chose d'unique !</audio>
                 </line>
-                <line keys="soupe" description="Faire une soupe" condition="cassoulet_recette == true">
+                <line keys="cassoulet" description="Faire un cassoulet" condition="cassoulet_recette == true">
                     <audio>Je sais ! Tu pourrais nous préparer un bon cassoulet ! </audio>
                     <audio voice="pretentious">Un cassoulet ? C'est un peu classique tu trouves pas ?</audio>
-                    <audio>Oui, mais je connais une recette spéciale... Tu m'en diras des nouvelles ! </audio>
-                    <audio voice="pretentious">Ah oui ? D'accord ! passe-moi la recette et je m'y mets !</audio>
-                    <audio>Hé bien il te faut... </audio>
-                    <audio voice="pretentious">OK ! C'est parti !</audio>
+                    <audio>Oui, mais je connais un ingrédient spécial qui rend cette recette extraordinaire... Tu m'en diras des nouvelles ! </audio>
+                    <audio voice="pretentious">Ah oui ? ça m'intéresse ! Quel est cet ingrédient ?</audio>
+                    <audio>Hé bien le secret c'est de rajouter quelques petites fleurs qui poussent dans la forêt. Tu ne peux pas te tromper, elles sont rouge fluo !</audio>
+                    <audio voice="pretentious">OK ! Génial ! Je vais chercher les fleurs et c'est parti !</audio>
                     <state-change state="cuistot_intro" change="set-value" value="menu_fini"/>
                 </line>
                 <line keys="rien" description="Pas d'idée" next-dialog="cuisinier">
