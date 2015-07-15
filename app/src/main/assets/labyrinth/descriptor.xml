@@ -128,21 +128,15 @@
             </action>
 
             <action keys="maison" description="Aller chez moi" next-scene="maison_heros">
-                <audio>
-                    OK, allons chez moi !
-                </audio>
+                <audio> OK, allons chez moi ! </audio>
             </action>
 
             <action keys="chemin" description="Chemin vers la forêt" next-scene="chemin">
-                <audio>
-                    OK, allons vers la forêt !
-                </audio>
+                <audio> OK, allons vers la forêt ! </audio>
             </action>
 
             <action keys="route" description="Route vers le village" next-scene="route">
-                <audio>
-                    OK, allons vers le village !
-                </audio>
+                <audio> OK, allons vers le village ! </audio>
             </action>
 
         </scene>
@@ -152,27 +146,86 @@
         <scene id="maison_grand_pere">
 
             <action keys="décrire" description="décrire le lieu" do-immediately-condition="maison_gp_decrite == false">
-                <audio>
-                    Je suis chez mon grand-père.
-                </audio>
+                <audio condition="gp_taverne==false"> Je suis chez mon grand-père. Sa maison est en très mauvais état... Mon grand-père passe le temps dans son fauteuil... </audio>
+                <audio condition="gp_taverne==true"> Je suis chez mon grand-père. Sa maison est en très mauvais état... Grand-père est parti à la taverne pour flanquer une raclée à l'arbitre...</audio>
                 <state-change change="set-true" state="maison_gp_decrite"/>
             </action>
 
             <action keys="sortir" description="Sortir de la maison" next-scene="route">
-                <audio>
-                    OK, sortons dehors!
-                </audio>
+                <audio> OK, sortons dehors! </audio>
             </action>
 
-            <action keys="parler" description="parler à mon grand-père" next-dialog="parler">
-                <audio>
-                    Bonjour grand-père!
-                </audio>
+            <action keys="fouiller" description="Fouiller la maison" condition="gp_taverne==true">
+                <audio> Maintenant que grand-père est parti, je peux fouiller la maison tranquilement... </audio>
+                <audio> Voyons voir... Rien dans la salle à manger... Rien dans la cuisine... Rien dans le hall... Rien dans son bureau... Rien dans la bibliothèque... Rien dans la salle de billard... Rien dans la salle de bal... Ah ah ! Voici le grenier... Voyons voir.. Ah! ça y est, j'ai trouvé la clé de la cabane secrète de grand-père ! </audio>
+                <state-change change="set-true" state="clef_cabane"/>
+            </action>
+
+            <action keys="parler" description="parler à mon grand-père" next-dialog="parler" condition="clef_cabane == false">
+                <audio>Bonjour grand-père!</audio>
+                <audio voice="angry_slow">Oh bonjour Santiago ! Comment ça va ?</audio>
+            </action>
+
+            <action keys="parler" description="parler à mon grand-père" next-dialog="parler_arme" condition="clef_cabane == parle">
+                <audio>Bonjour grand-père!</audio>
+                <audio voice="angry_slow">Tiens te revoilà ! tu viens essayer de me convaincre à nouveau ?</audio>
             </action>
 
             <dialog id="parler">
-                <line keys="oui" description="dire oui">
-                    <audio>Oui! Tout est pret.</audio>
+                <line keys="mal" description="Ca va très mal" next-dialog="parler">
+                    <audio>Mon dieu grand-père c'est terrible, ma soeur est prisonnière de ce monstre... Mais j’ai décidé de partir à sa recherche dans le labyrinthe ! Comme tu y es déjà allé, est-ce que tu aurais des conseils à me donner ?</audio>
+                    <audio voice="angry_slow">Aaaaah la jeunesse ! Vous seriez prêt à vous jeter dans n’importe quelle aventure ! Le meilleur conseil que j’ai à te donner est de ne pas t’aventurer dans ces parages ! J’y ai vu des choses qu’aucun humain ne souhaiterai voir... J’y ai survécu par miracle mais sache que les ronflements de la bête me hante chaque minute de ma misérable vie ! Réfléchis bien avant de t’aventurer dans cet endroit maudit! </audio>
+                    <audio>C’est tout réfléchi, je dois sauver ma sœur ! Elle a besoin de moi !</audio>
+                    <audio voice="angry_slow">Peut-être, mais seulement dans l’hypothèse où elle est toujours en vie.. Nul ne sait ce que le monstre fait de ses victimes.. Aucun otage n’est revenu. C’est là la seule certitude que nous ayons, j’en ai bien peur.  </audio>
+                    <audio>Toi tu en es revenu !</audio>
+                    <audio voice="angry_slow">Oui bon.. certes. Mais disons que... je ne suis pas allé très loin.. En plus je n’étais pas un otage. J’étais.. simple touriste. </audio>
+                </line>
+                <line keys="malade" description="Je suis malade" next-dialog="parler">
+                    <audio>Bof l’ambiance est tendue à la maison, Maman a fait du cassoulet hier soir et c’est plutôt mal passé. Du coup elle est vexée que je n’ai pas digéré mais moi j’y peux rien, je contrôle pas mon corps tu vois ! </audio>
+                    <audio voice="angry_slow">Elle doit tenir ça de sa mère, elle rendait les meilleurs plats immangeables ! La cuisine était devenu un espèce de laboratoire géant. Je ne sais pas ce qui passe par la tête des femmes parfois !</audio>
+                    <audio>Oui m’enfin vu l’état de ta cuisine, je ne sais pas si ce qui passe par la tête des hommes vaut beaucoup mieux </audio>
+                    <audio voice="angry_slow">Hahaha mais c’est qu’il a de l’humour l’animal ! </audio>
+                </line>
+                <line keys="labyrinthe" description="Parler du labyrinthe">
+                    <audio>De quoi est-ce qu’on a besoin pour survivre dans le labyrinthe ? </audio>
+                    <audio voice="angry_slow">Ohh, c'est un endroit très dangereux, il te faut de quoi te défendre ! Mais ne compte pas sur moi pour te donner mes armes, il est hors de question que je t’envoie à la mort. Pense à ta pauvre mère, ses deux enfants disparus ! Elle ne pourrait pas le supporter ! </audio>
+                    <audio>Quoi, tu as encore des armes chez toi ? </audio>
+                    <audio voice="angry_slow">Non, je ne garde pas mon matériel chez moi, il est en sécurité dans un lieu secret... Mais ! Cesse donc d’essayer de m’amadouer ! Je ne te donnerai jamais la clé ! </audio>
+                    <audio>La clé ? Quelle clé ? </audio>
+                    <audio voice="angry_slow">Celle que je garde précieusement sur la table. Euh... Je veux dire... Non, je n'ai jamais eu de clé pour ma cabane secrete dans la foret. Mais ! hors de ma vue sacripant ! Moi ici tu n’auras jamais ce que tu désires ! Simple menace à visée protectrice hein gamin. </audio>
+                    <state-change state="clef_cabane" change="set-value" value="parle"/>
+                </line>
+                <line keys="partir" description="Je dois partir">
+                    <audio>Au revoir grand-père, je dois te laisser !</audio>
+                    <audio voice="angry_slow">Au revoir mon petit Santiago !</audio>
+                </line>
+            </dialog>
+
+            <dialog id="parler_arme">
+                <line keys="oui" description="Insister" next-dialog="parler_arme">
+                    <audio>Oui, tu es sûre que tu ne veux pas me donner ta vieille épée ? </audio>
+                    <audio voice="angry_slow">Je ne changerai pas d’avis ! Tu es bien trop jeune ! C'est bien trop dangereux...</audio>
+                    <audio>Et au sujet de cette clé...? </audio>
+                    <audio voice="angry_slow">La clé de ma cabane secrète ? Pas question ! D'ailleurs elle n'existe pas.</audio>
+                </line>
+                <line keys="non" description="Abandonner" next-dialog="parler_arme" condition="plus_de_mon_age == false">
+                    <audio>Non, j’ai abandonné mon projet, je reste à la maison finalement. </audio>
+                    <audio voice="angry_slow">Sage décision ! Que vas-tu faire alors ?</audio>
+                    <audio>Il y a un concours de bras de fer organisé à la taverne, le repas est offert pour tous les participants, je voulais te demander si tu voulais participer? </audio>
+                    <audio voice="angry_slow">Un concours de bras de fer ? Ah! Ce n'est plus de mon age.</audio>
+                    <state-change state="plus_de_mon_age" change="set-true"/>
+                </line>
+                <line keys="concours" description="Participer au concours" condition="plus_de_mon_age == true" next-scene="maison_grand_pere">
+                    <audio condition="famille_bon_a_rien == false">Tu es sur que tu ne veux pas participer au concours de bras de fer ? Il y a une super ambiance à la taverne. </audio>
+                    <audio condition="famille_bon_a_rien == true">Tu es sur que tu ne veux pas participer au concours de bras de fer ? L'arbitre a dit que je venais d'une famille de bon-à-rien. </audio>
+                    <audio voice="angry_slow" condition="famille_bon_a_rien == true">Comment ? Une famille de bon-à-rien ? C'est ce qu'il a dit ? Le saligaud, il va m'entendre ! Oh ! Je pars tout de suite à la taverne lui flanquer une raclée !</audio>
+                    <audio condition="famille_bon_a_rien == true">Oh! On dirait qu'il est parti pour de bon. </audio>
+                    <state-change state="gp_taverne" condition="set-true"/>
+                    <state-change state="clef_cabane" change="set-value" value="dispo"/>
+                </line>
+                <line keys="partir" description="Je dois partir">
+                    <audio>Au revoir grand-père, je dois te laisser !</audio>
+                    <audio voice="angry_slow">Au revoir mon petit Santiago !</audio>
                 </line>
             </dialog>
         </scene>
@@ -338,7 +391,7 @@
                 <audio> OK, revenons vers la foret. </audio>
             </action>
 
-            <action keys="ouvrir" description="Ouvrir la cabane" condition="clef_cabane == false">
+            <action keys="ouvrir" description="Ouvrir la cabane" condition="clef_cabane != true">
                 <audio> On dirait que c'est fermé à clé... </audio>
             </action>
 
@@ -654,6 +707,7 @@
                     <audio>J'ai vraiment besoin de ces cent pièces d'or. C'est une question de vie ou de mort !</audio>
                     <audio condition="gp_taverne == false" voice="high">Quoi, tu te figures que je vais te laisser gagner ? Non mais qui est-ce qui t'a appris ce genre de manières ? Remarque, de quoi je m'étonne ? C'est vrai que tu viens d'une famille de vauriens...</audio>
                     <audio condition="gp_taverne == true" voice="high">Oh... Ton grand-père m'a flanqué une sacré correction tout à l'heure... OK, je veux bien te laisser gagner, mais il faut quand même que tu participes au concours de bras de fer...</audio>
+                    <state-change state="famille_bon_a_rien" change="set-true" condition="gp_taverne == false"/>
                     <state-change state="laisse_gagner" change="set-true" condition="gp_taverne == true"/>
                 </line>
                 <line keys="partir">
