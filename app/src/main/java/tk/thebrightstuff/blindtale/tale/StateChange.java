@@ -62,7 +62,7 @@ public class StateChange extends AbstractConditional implements Serializable, Co
 
 
     public void changeState(Map<String,String> state){
-        String prop = state.get(state);
+        String prop = state.get(this.state);
         switch (change){
             case INCREMENT:
                 if(prop==null)

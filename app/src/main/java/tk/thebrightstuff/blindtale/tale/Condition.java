@@ -24,8 +24,8 @@ public class Condition implements Serializable {
                 op1 = "null";
         }
         switch(operator){
-            case "==": return op1.equalsIgnoreCase(operand2);
-            case "!=": return ! op1.equalsIgnoreCase(operand2);
+            case "==": return StringUtils.isNumber(operand2)? Double.parseDouble(op1) == Double.parseDouble(operand2) : op1.equalsIgnoreCase(operand2);
+            case "!=": return StringUtils.isNumber(operand2)? Double.parseDouble(op1) != Double.parseDouble(operand2) : ! op1.equalsIgnoreCase(operand2);
             case "<=": return Double.parseDouble(op1) <= Double.parseDouble(operand2);
             case "<": return Double.parseDouble(op1) <  Double.parseDouble(operand2);
             case ">=": return Double.parseDouble(op1) >= Double.parseDouble(operand2);

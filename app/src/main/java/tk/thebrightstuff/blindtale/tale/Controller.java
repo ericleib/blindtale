@@ -95,7 +95,7 @@ public class Controller implements SpeechListener, AudioAdapter.CompletionListen
 
 
     private void endScene(){
-        view.getLog().info(TAG, "Ending scene" + scene.getId());
+        view.getLog().info(TAG, "Ending scene: " + scene.getId());
         currentActions.clear();
         currentAudio.stop();
         stopSpeechRecognition();
@@ -251,6 +251,8 @@ public class Controller implements SpeechListener, AudioAdapter.CompletionListen
             }
         }else if(isMoreToPlay()){
             playAudioList();
+        }else{
+            completed();
         }
     }
 
