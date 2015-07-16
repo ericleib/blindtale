@@ -87,8 +87,6 @@ public class Tale implements Serializable, SpeechResource {
 
         if(getLang().toString().equals(Locale.FRENCH.toString()))
             setLang(Locale.FRENCH);
-        else if(getLang().toString().equals(Locale.ENGLISH.toString()))
-            setLang(Locale.ENGLISH);
         else
             throw new Exception("Language not supported: "+getLang().toString());
     }

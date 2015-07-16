@@ -38,9 +38,6 @@ public class SphinxSpeechAdapter implements SpeechAdapter, RecognitionListener {
         if(resource.getLang().equals(Locale.FRENCH)){
             dict = "frenchWords62K.dic";
             data = "lium_french_f2";
-        }else if(resource.getLang().equals(Locale.ENGLISH)){
-            dict = "cmudict-en-us.dict";
-            data = "en-us-ptm";
         }else {
             dict = null;
             data = null;
