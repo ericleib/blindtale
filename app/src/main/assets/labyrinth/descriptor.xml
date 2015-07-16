@@ -7,6 +7,7 @@
 
     <voices default="narrator">
         <voice id="narrator" pitch="0.9" rate="0.75"/>
+        <voice id="slow" pitch="0.85" rate="0.6"/>
         <voice id="low" pitch="0.65" rate="0.75"/>
         <voice id="high" pitch="1.1" rate="0.75"/>
         <voice id="higher" pitch="1.4" rate="1.1"/>
@@ -68,7 +69,7 @@
                 <audio> Ah! Pablito, tu es là ! Tu peux prendre mon sac ? </audio>
                 <audio voice="higher"> Salut mon beau Santiago ! Pas de problème, tes désirs sont des ordres ! </audio>
                 <audio> Parfait. Voila une bonne chose de faite. Prochaine étape: Le labyrinthe ! </audio>
-                <state-change condition="porteur_sac" change="set-true"/>
+                <state-change state="porteur_sac" change="set-true"/>
             </action>
 
             <action keys="vider" description="Vider le sac" condition="sac_vide==false" next-scene="maison_heros">
@@ -244,7 +245,7 @@
                     <audio condition="famille_bon_a_rien == true">Tu es sur que tu ne veux pas participer au concours de bras de fer ? L'arbitre a dit que je venais d'une famille de bon-à-rien. </audio>
                     <audio voice="angry_slow" condition="famille_bon_a_rien == true">Comment ? Une famille de bon-à-rien ? C'est ce qu'il a dit ? Le saligaud, il va m'entendre ! Oh ! Je pars tout de suite à la taverne lui flanquer une raclée !</audio>
                     <audio condition="famille_bon_a_rien == true">Oh! On dirait qu'il est parti pour de bon. </audio>
-                    <state-change state="gp_taverne" condition="set-true"/>
+                    <state-change state="gp_taverne" change="set-true"/>
                     <state-change state="clef_cabane" change="set-value" value="dispo"/>
                 </line>
                 <line keys="partir" description="Je dois partir">
@@ -386,17 +387,78 @@
                 <audio> OK, sortons de la chaumière. </audio>
             </action>
 
-            <action keys="parler" description="parler à mon grand-père" next-dialog="parler">
+            <action keys="parler" description="parler au sorcier" next-dialog="parler">
                 <audio> Bonjour blablabla! </audio>
-                <audio voice="low">
-                    Oh! Bonjour mon petit Santiago. Qu'est-ce qui t'amène chez moi ?
-                </audio>
+                <audio voice="slow"> Hey Santiago, ça fait longtemps que tu ne m’as pas rendu visite ! </audio>
             </action>
 
+
             <dialog id="parler">
-                <line keys="nouvelles" description="demander des nouvelles" next-dialog="parler">
-                    <audio>Comment va la santé blablabla?</audio>
-                    <audio voice="low">Oh, je n'ai pas à me plaindre...</audio>
+                <line keys="labyrinthe" description="parler du labyrinthe" next-dialog="parler">
+                    <audio>Excuse moi, j’ai été occupé avec mes pensées ces jours-ci ! j’ai décidé de partir à la recherche de ma soeur dans le labyrinthe !</audio>
+                    <audio voice="slow">Wolaa cette entreprise me paraît bien audacieuse ! M’enfin si tu t’en sens capable, tant mieux ! ça te fera quelque chose en plus à mettre sur ton CV, les employeurs sont de plus en plus exigeants de nos jours... </audio>
+                </line>
+                <line keys="potion" description="demander une potion" next-dialog="parler" condition="grimoire_cherche==false">
+                    <audio>Je me demandais si tu avais quelques potions à me donner pour me faciliter la tâche ? </audio>
+                    <audio voice="slow">Aaaah c’est donc ça, tu viens profiter des qualités de ton vieil ami.. Je suis d’accord pour te faire toutes les potions que tu veux, sauf que j’ai pas de grimoire. Et qu’est-ce qu’un sorcier sans son grimoire je te le demande.. C’est comme Adam sans Eve ou Tristan sans Iseult.. C’est nul quoi ! Je ne peux rien pour toi sans ce grimoire.. Je n’ose pas sortir de chez moi pour aller le chercher,  Je me sens si vulnérable...</audio>
+                    <audio>Où est-ce que tu l’as mis ?</audio>
+                    <audio voice="slow">Hum.. Bah.. en fait je me promenais sur la place du village l’autre nuit, et puis... bon c’est vrai que j’avais peut-être un peu abusé sur la bouteille.. Toujours est-il quelqu’un en a profité pour me subtiliser mon précieux grimoire ! Ce gros bouquin si cher à mon coeur.. Je n’ose même pas imaginer son état en ce moment.. Il doit se sentir si perdu, si abandonné..
+                        Quel genre d’être humain pourrait commettre un tel acte ? </audio>
+                    <state-change state="grimoire_cherche" change="set-true"/>
+                </line>
+                <line keys="potion" description="demander une potion" next-dialog="parler" condition="grimoire_cherche==true">
+                    <audio>Je me demandais si tu avais quelques potions à me donner pour me faciliter la tâche ? </audio>
+                    <audio voice="slow">As-tu retrouvé mon cher et tendre grimoire ? </audio>
+                    <audio>Non pas encore ! </audio>
+                    <audio voice="slow">Aaaaaah ce que je suis malheureux ! </audio>
+                </line>
+                <line keys="potion" description="demander une potion" next-dialog="potion" condition="grimoire_cherche==trouve">
+                    <audio>Je me demandais si tu avais quelques potions à me donner pour me faciliter la tâche ? </audio>
+                    <audio voice="slow">As-tu retrouvé mon cher et tendre grimoire ? </audio>
+                    <audio>Absolument ! Et c’était pas de la tarte !</audio>
+                    <audio voice="slow">Je me sens comme un phénix qui renaît de ses cendres ! le bonheur m’enveloppe, je revis ! Aaaah Santiago je ne te remercierai jamais assez. Bon, voyons quelles potions je peux te préparer... </audio>
+                    <state-change state="grimoire_cherche" change="set-value" value="fini"/>
+                </line>
+                <line keys="potion" description="demander une potion" next-dialog="potion" condition="grimoire_cherche==fini">
+                    <audio>Je me demandais si tu avais quelques potions à me donner pour me faciliter la tâche ? </audio>
+                    <audio voice="slow">Laisse moi regarder dans mon grimoire... </audio>
+                </line>
+                <line keys="partir" description="Je dois partir">
+                    <audio>Au revoir blabla, je dois te laisser !</audio>
+                    <audio voice="slow">Au revoir mon brave Santiago !</audio>
+                </line>
+            </dialog>
+
+            <dialog id="potion">
+                <audio voice="slow">Alors... Laisse-moi te rappeler mon catalogue de potions:
+                    J'ai une potion de résistance au feu, redoutable pour faire la cuisine.
+                    J'ai une potion d'amour, pour te rendre absolument irrésistible.
+                    J'ai une potion de vision nocturne, practique pour réduire la facture d'électricité.
+                    J'ai une potion de lenteur, parfait pour se détendre.
+                </audio>
+                <line keys="feu" description="Potion de résistance au feu">
+                    <audio>Je veux bien la potion de résistance au feu !</audio>
+                    <audio voice="slow">C'est comme si c'était fait !</audio>
+                    <state-change state="potion" change="set-value" value="feu"/>
+                </line>
+                <line keys="amour" description="Potion aphrodisiaque">
+                    <audio>Je veux bien la potion aphrodisiaque</audio>
+                    <audio voice="slow">C'est comme si c'était fait !</audio>
+                    <state-change state="potion" change="set-value" value="aphro"/>
+                </line>
+                <line keys="vision" description="Potion de vision nocturne">
+                    <audio>Je veux bien la potion de vision nocturne !</audio>
+                    <audio voice="slow">C'est comme si c'était fait !</audio>
+                    <state-change state="potion" change="set-value" value="vision"/>
+                </line>
+                <line keys="lenteur" description="Potion de lenteur">
+                    <audio>Je veux bien la potion de lenteur !</audio>
+                    <audio voice="slow">C'est comme si c'était fait !</audio>
+                    <state-change state="potion" change="set-value" value="lenteur"/>
+                </line>
+                <line keys="partir" description="Je dois partir">
+                    <audio>Au revoir blabla, je dois te laisser !</audio>
+                    <audio voice="slow">Au revoir mon brave Santiago !</audio>
                 </line>
             </dialog>
 
@@ -587,14 +649,23 @@
 
             <action keys="chemin" description="Revenir sur le chemin" next-scene="chemin">
                 <audio> OK, revenons sur le chemin. </audio>
+                <state-change state="potion_aphro_bue" change="set-false"/>
             </action>
 
             <action keys="taverne" description="Entrer dans la taverne" next-scene="taverne">
                 <audio> OK, allons boire un verre à la taverne. </audio>
+                <state-change state="potion_aphro_bue" change="set-false"/>
             </action>
 
             <action keys="marchand" description="Entrer chez le marchand" next-scene="marchand">
                 <audio> OK, allons voir ce que le marchand a en stock. </audio>
+                <state-change state="potion_aphro_bue" change="set-false"/>
+            </action>
+
+            <action keys="potion" description="Boire la potion" condition="potion==aphro">
+                <audio> Essayons voir cette fameuse potion d'amour... Berk, ça a vraiment un gout dégoutant !</audio>
+                <state-change state="potion" change="set-false"/>
+                <state-change state="potion_aphro_bue" change="set-true"/>
             </action>
 
             <action keys="parler" description="Parler à Pablito" next-dialog="parler" condition="potion_aphro_bue == false">
@@ -620,7 +691,7 @@
                     <audio> Dis, ma soeur est dans le labyrinthe. Est-ce que tu peux m'aider à la sauver ? </audio>
                     <audio voice="higher"> Le labyrinthe ? Oh mon dieu ! Tu ne veux tout de même pas aller là-dedans ! Hors de question que je te suive ! </audio>
                 </line>
-                <line keys="grimoire" description="Chercher grimoire" condition="livre_regarde == false" next-dialog="livre">
+                <line keys="livre" description="Chercher grimoire" condition="grimoire_cherche == true">
                     <audio> Je suis à la recherche du grimoire de blablabla. Tu as une idée d'où je pourrais le trouver ? </audio>
                     <audio voice="higher"> Je ne suis pas sûr mais l'autre jour j'ai aperçu blablabla en ville... Il a passer la soirée à boire du vin à la taverne. Mais si il a oublié son grimoire. Tu devrais peut-être aller leur demander.</audio>
                 </line>
@@ -760,6 +831,10 @@
                 <line keys="menu" description="Proposer un plat" condition="cuistot_intro == true" next-dialog="menu">
                     <audio>Au sujet du menu de ce soir, j'ai bien une proposition... </audio>
                 </line>
+                <line keys="livre" description="Chercher grimoire" condition="grimoire_cherche==true" next-dialog="cuisinier">
+                    <audio>Dis, je suis à la recherche du grimoire de blabla. Tu ne l'aurais pas vu ? Il parait qu'il était ici l'autre soir ?</audio>
+                    <audio voice="pretentious">Ah oui, je me souviens. Oh, le pauvre... il n'était pas beau à voir. Je crois que c'est le marchand qui a mis la main sur son bouquin. Cet escroc va surement essayer de le revendre...</audio>
+                </line>
                 <line keys="partir">
                     <audio>OK, a bientôt cuistot !</audio>
                 </line>
@@ -843,7 +918,7 @@
                 <audio voice="high">Une bague de marriage de cent-vingt huit carrats.</audio>
                 <audio voice="high" condition="guide_achete == false"> Un guide touristique collector du labyrinthe.</audio>
                 <audio voice="high">Une lance ayant appartenu à Attila le Hun lui-même.</audio>
-                <audio voice="high" condition="grimoire_trouve == false">Un livre de recettes amusantes à peine utilisé.</audio>
+                <audio voice="high" condition="grimoire_cherche == true">Un livre de recettes amusantes à peine utilisé.</audio>
                 <audio voice="high">Une paire de bottes en cuir de louttre.</audio>
                 <audio voice="high">Alors, qu'est-ce qui vous ferait plaisir ?</audio>
 
@@ -929,25 +1004,29 @@
                     <audio>Hé bien, il pourrait vous changer en grenouille par exemple.</audio>
                     <audio voice="high">Euh... Vraiment ? Humm je suppose que ça ne serait pas très bon pour les affaires... OK, prenez votre fichu livre !</audio>
                     <audio>Génial! J'ai récupéré le grimoire de blablabla!</audio>
-                    <state-change change="set-true" state="grimoire_trouve"/>
+                    <state-change change="set-value" state="grimoire_cherche" value="trouve"/>
+                    <state-change change="set-value" state="livre_regarde" value="trouve"/>
                 </line>
                 <line keys="clients" description="Faire fuir les clients">
                     <audio>Oh, je l'ai déjà vu jeter des boules de feux pour faire fuir tous les clients dans un supermarché qui lui déplaisait !</audio>
                     <audio voice="high">Euh... Vraiment ? Humm je suppose que ça ne serait pas très bon pour les affaires... OK, prenez votre fichu livre !</audio>
                     <audio>Génial! J'ai récupéré le grimoire de blablabla!</audio>
-                    <state-change change="set-true" state="grimoire_trouve"/>
+                    <state-change change="set-value" state="grimoire_cherche" value="trouve"/>
+                    <state-change change="set-value" state="livre_regarde" value="trouve"/>
                 </line>
                 <line keys="disparaitre" description="Faire disparaitre tout votre stock">
                     <audio>Oh, je l'ai déjà vu faire disparaitre tous les produits d'un supermarché qui lui déplaisait !</audio>
                     <audio voice="high">Euh... Vraiment ? Humm je suppose que ça ne serait pas très bon pour les affaires... OK, prenez votre fichu livre !</audio>
                     <audio>Génial! J'ai récupéré le grimoire de blablabla!</audio>
-                    <state-change change="set-true" state="grimoire_trouve"/>
+                    <state-change change="set-value" state="grimoire_cherche" value="trouve"/>
+                    <state-change change="set-value" state="livre_regarde" value="trouve"/>
                 </line>
                 <line keys="impots" description="Augmenter vos impots locaux">
                     <audio>Hé bien, il pourrait hypnotiser le maire de blablabla et faire augmenter d'un coup vos impots locaux!</audio>
                     <audio voice="high">Euh... Vraiment ? Humm je suppose que ça ne serait pas très bon pour les affaires... OK, prenez votre fichu livre !</audio>
                     <audio>Génial! J'ai récupéré le grimoire de blablabla!</audio>
-                    <state-change change="set-true" state="grimoire_trouve"/>
+                    <state-change change="set-value" state="grimoire_cherche" value="trouve"/>
+                    <state-change change="set-value" state="livre_regarde" value="trouve"/>
                 </line>
             </dialog>
 
