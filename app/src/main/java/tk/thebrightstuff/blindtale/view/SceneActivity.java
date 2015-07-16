@@ -38,6 +38,8 @@ public class SceneActivity extends Activity implements Controller.TaleView, tk.t
     private final static LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 
+    public static Scene sceneToLaunch;
+
     private PowerManager.WakeLock mWakeLock;
 
     private final static String TAG = "SceneActivity";
@@ -59,13 +61,14 @@ public class SceneActivity extends Activity implements Controller.TaleView, tk.t
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         setContentView(R.layout.activity_scene);
-        findViewById(R.id.button_pause).setOnClickListener(new View.OnClickListener() {
+        /*findViewById(R.id.button_pause).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.i(TAG, "Pause clicked");
                 controller.pauseAction.doAction();
             }
-        });
+        });*/
+        findViewById(R.id.button_pause).setEnabled(false);
         findViewById(R.id.button_skip).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -97,10 +100,10 @@ public class SceneActivity extends Activity implements Controller.TaleView, tk.t
         this.mWakeLock.acquire();
 
         Intent intent = getIntent();
-        Scene scene = (Scene) intent.getExtras().getSerializable(MainActivity.SCENE);
+        //Scene scene = (Scene) intent.getExtras().getSerializable(MainActivity.SCENE);
         Map state = (Map) intent.getExtras().getSerializable(MainActivity.STATE);
 
-        controller = new Controller(scene, state, this);
+        controller = new Controller(sceneToLaunch, state, this);
         speech.setSpeechListener(controller);
         controller.startScene();
     }
@@ -244,8 +247,8 @@ public class SceneActivity extends Activity implements Controller.TaleView, tk.t
             @Override
             public void run() {
                 String str = StringUtils.capitalize(getResources().getString(pauseResume ? R.string.pause : R.string.resume));
-                ((Button) findViewById(R.id.button_pause)).setText(str);
-                findViewById(R.id.button_pause).setEnabled(enabled);
+                //((Button) findViewById(R.id.button_pause)).setText(str);
+                //findViewById(R.id.button_pause).setEnabled(enabled);
                 findViewById(R.id.button_skip).setEnabled(enabled);
             }
         });

@@ -55,6 +55,7 @@ public class AudioTextAdapter implements AudioAdapter, Serializable {
 
     public AudioTextAdapter(Audio audio, Tale.Voices voices){
         this.audio = audio;
+        this.voices = voices;
     }
 
     public String toString(){

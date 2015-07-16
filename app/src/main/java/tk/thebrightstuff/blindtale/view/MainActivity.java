@@ -157,7 +157,8 @@ public class MainActivity extends Activity {
     private void launchTale(Scene scene, HashMap<String,String> state){
         Intent intent = new Intent(this, InitializationActivity.class);
         Bundle b = new Bundle();
-        b.putSerializable(SCENE, scene);
+        //b.putSerializable(SCENE, scene);
+        SceneActivity.sceneToLaunch = scene;
         b.putSerializable(STATE, state);
         intent.putExtras(b);
         Log.v(TAG, "Starting tale " + scene.tale.toString()+" ("+scene.tale.getLang().toString()+")");

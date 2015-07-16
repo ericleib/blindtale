@@ -103,7 +103,7 @@ public class Controller implements SpeechListener, AudioAdapter.CompletionListen
     }
 
     private void addActions(List<? extends Action> actionList) {
-        currentActions.put(view.getNString(PAUSE), pauseAction);
+        //currentActions.put(view.getNString(PAUSE), pauseAction);
         currentActions.put(view.getNString(SKIP), skipAction);
         currentActions.put(view.getNString(REPEAT), repeatAction);
         currentActions.put(view.getNString(QUIT), quitAction);
@@ -243,6 +243,7 @@ public class Controller implements SpeechListener, AudioAdapter.CompletionListen
                 if(audio.getText()!=null){
                     view.setText(audio.getText());
                 }
+                view.updatePause(true, true);
                 currentAudio.setCompletionListener(this);
                 currentAudio.play();
             }catch(Exception e){
@@ -301,6 +302,7 @@ public class Controller implements SpeechListener, AudioAdapter.CompletionListen
                 startDialog();
 
             }else{  // We go back to the current scene but skipping audio
+                endScene();
                 startScene(true);
             }
 

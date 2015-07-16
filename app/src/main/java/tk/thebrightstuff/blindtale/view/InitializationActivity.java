@@ -43,7 +43,8 @@ public class InitializationActivity extends Activity implements Callback<String>
         setContentView(R.layout.activity_init);
 
         bundle = getIntent().getExtras();
-        Tale tale = ((Scene) bundle.getSerializable(MainActivity.SCENE)).tale;
+        //Tale tale = ((Scene) bundle.getSerializable(MainActivity.SCENE)).tale;
+        Tale tale = SceneActivity.sceneToLaunch.tale;
 
         Locale.setDefault(tale.getLang());
         Configuration config = new Configuration();
