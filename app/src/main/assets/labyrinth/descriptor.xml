@@ -26,16 +26,17 @@
                 Santiago habitait aux abord du petit village de Poulgasse avec sa mère et sa petite soeur Téha.
             </audio>
             <audio voice="low">
-                Depuis plus de dix ans, Poulgasse était harcelé par une créature puissante et maléfique mi-homme, mi-vache qu'on appelait El Vacoumano.
-                Chaque année, El Vacoumano emportait des jeunes filles et garçons au plus profond de son labyrinthe qu'il avait construit non loin du village.
+                Depuis plus de dix ans, Poulgasse était harcelé par une créature puissante et maléfique, mi-homme, mi-vache qu'on appelait El Vacoumano.
+                Chaque année, El Vacoumano capturait des jeunes filles et garçons à son gout, et les emmenait au plus profond de son labyrinthe.
             </audio>
             <audio voice="low">
-                Rares étaient ceux qui avaient pu sortir vivants du labyrinthe.
+                Rares étaient ceux qui avaient pu sortir vivants de ce labyrinthe, que là bête avait construit non loin du village.
                 Santiago ne s'était jamais vraiment senti concerné par cette menace en jeune homme insouciant qu'il était.
             </audio>
             <audio voice="low">
-                Mais cette année, le destin cessa d'être clément envers le jeune homme et vint le frapper au coeur de son foyer.
-                El Vacoumano décida de jeter son dévolu sur Téha, la tendre et innocente petite soeur de Santiago, et l'emporta dans son labyrinthe.
+                Mais cette année, le destin jusque-là clément envers le jeune homme, vint le frapper au coeur de son foyer.
+                El Vacoumano jeta son dévolu sur Téha, la tendre et innocente petite soeur de Santiago.
+                Le monstre la captura dans son sommeil, et l'emporta dans son labyrinthe.
             </audio>
             <audio voice="low">
                 Santiago était bien conscient des maigres chances qu'il avait de revoir sa petite soeur en vie.
@@ -43,7 +44,7 @@
             </audio>
             <audio voice="low">
                 Aussi, après d'interminables tergiversations et quelques verres de vin, il décida d'agir.
-                Il entrerait dans le labyrinthe et arracherait sa soeur aux griffes de El Vacoumano !
+                Il entrerait dans le labyrinthe de Delgarrondo et arracherait sa soeur aux griffes de El Vacoumano !
             </audio>
 
             <audio voice="low">
@@ -123,6 +124,7 @@
                 <line keys="malade" description="Je suis malade" next-dialog="malade">
                     <audio> Non, je crois que je n'ai pas digéré ton cassoulet. Hier soir, j'ai passé les heures qui ont suivies aux toilettes! J'avais jamais vu un effet aussi instantané..</audio>
                     <audio voice="higher">Oh, je suis désolé que tu sois malade...</audio>
+                    <state-change state="cassoulet_parlé" change="set-true"/>
                 </line>
                 <line keys="argent" description="Demander de l'argent" next-dialog="parler_mere">
                     <audio> Tu peux me dépanner d'un peu d'argent de poche ?</audio>
@@ -236,7 +238,7 @@
                     <audio>Toi tu en es revenu !</audio>
                     <audio voice="angry_slow">Oui bon.. certes. Mais disons que... je ne suis pas allé très loin.. En plus je n’étais pas un otage. J’étais.. simple touriste. </audio>
                 </line>
-                <line keys="malade" description="Je suis malade" next-dialog="parler">
+                <line keys="malade" description="Je suis malade" next-dialog="parler" condition="cassoulet_parlé==true">
                     <audio>Bof l’ambiance est tendue à la maison, Ma mère a fait un cassoulet spécial hier soir et c’est plutôt mal passé... Du coup elle est vexée que je ne l'ai pas digéré ! </audio>
                     <audio voice="angry_slow">Elle doit tenir ça de sa mère. Cette chère Véra rendait les meilleurs plats immangeables ! Je ne sais pas ce qui passe par la tête des femmes parfois !</audio>
                 </line>
@@ -256,6 +258,18 @@
             </dialog>
 
             <dialog id="parler_arme">
+                <line keys="nouvelles" description="Donner des nouvelles" next-dialog="parler_arme">
+                    <audio>Mon dieu grand-père c'est terrible, ma soeur est prisonnière de ce monstre... Mais j’ai décidé de partir à sa recherche dans le labyrinthe ! Comme tu y es déjà allé, est-ce que tu aurais des conseils à me donner ?</audio>
+                    <audio voice="angry_slow">Aaaaah la jeunesse ! Vous seriez prêt à vous jeter dans n’importe quelle aventure ! Le meilleur conseil que j’ai à te donner est de ne pas t’aventurer dans ces parages ! J’y ai vu des choses qu’aucun humain ne souhaiterai voir... J’y ai survécu par miracle mais sache que les ronflements de El Vacoumano me hantent chaque minute de ma misérable vie ! Réfléchis bien avant de t’aventurer dans cet endroit maudit! </audio>
+                    <audio>C’est tout réfléchi, je dois sauver Téha ! Elle a besoin de moi !</audio>
+                    <audio voice="angry_slow">Peut-être, mais seulement dans l’hypothèse où elle est toujours en vie.. Nul ne sait ce que El Vacoumano fait de ses victimes.. Aucun otage n’est revenu. C’est là la seule certitude que nous ayons, j’en ai bien peur.  </audio>
+                    <audio>Toi tu en es revenu !</audio>
+                    <audio voice="angry_slow">Oui bon.. certes. Mais disons que... je ne suis pas allé très loin.. En plus je n’étais pas un otage. J’étais.. simple touriste. </audio>
+                </line>
+                <line keys="malade" description="Je suis malade" next-dialog="parler_arme" condition="cassoulet_parlé==true">
+                    <audio>Bof l’ambiance est tendue à la maison, Ma mère a fait un cassoulet spécial hier soir et c’est plutôt mal passé... Du coup elle est vexée que je ne l'ai pas digéré ! </audio>
+                    <audio voice="angry_slow">Elle doit tenir ça de sa mère. Cette chère Véra rendait les meilleurs plats immangeables ! Je ne sais pas ce qui passe par la tête des femmes parfois !</audio>
+                </line>
                 <line keys="arme" description="Demander une arme" next-dialog="parler_arme">
                     <audio>Oui, tu es sûre que tu ne veux pas me donner ta vieille épée ? </audio>
                     <audio voice="angry_slow">Je ne changerai pas d’avis ! Tu es bien trop jeune ! C'est bien trop dangereux...</audio>
@@ -339,7 +353,7 @@
                 </audio>
             </action>
 
-            <action keys="grand-pere" description="Aller chez le grand-père" next-scene="maison_grand_pere">
+            <action keys="grand-pere" description="Chez mon grand-père" next-scene="maison_grand_pere">
                 <audio>
                     OK, allons voir mon grand-père !
                 </audio>
@@ -561,11 +575,7 @@
 
 
             <dialog id="parler">
-                <line keys="entrer" description="Demander à entrer" next-dialog="entrer">
-                    <audio>Pourquoi ne puis-je pas entrer dans le labyrinthe?</audio>
-                    <audio voice="angry_fast">Ce sont les ordres! C'est beaucoup trop dangereux pour un gamin comme toi.</audio>
-                </line>
-                <line keys="santé" next-dialog="parler">
+                <line keys="nouvelles" description="Comment vas-tu ?" next-dialog="parler">
                     <audio>Et sinon la santé ça va?</audio>
                     <audio voice="angry_fast">Non, ce travail est incroyablement difficile.</audio>
                     <audio>Vraiment? Garder l'entrée d'un labyrinthe, ça ne doit pas être très stressant...</audio>
@@ -582,7 +592,11 @@
                     <audio voice="angry_fast">Ah ah ah! Tu es mignon gamin, mais franchement tu ne fais pas le poids. J'en ai étrippé beaucoup des allumés qui voulaient rentrer dans le labyrinthe. Rentre chez ta mère !</audio>
                     <audio>Malheureusement vous avez probablement raison... Je n'ai plus beaucoup de souvenirs de mes cours de judo...</audio>
                 </line>
-                <line keys="revenir" description="Je repasserai">
+                <line keys="entrer" description="Demander à entrer" next-dialog="entrer">
+                    <audio>Pourquoi ne puis-je pas entrer dans le labyrinthe?</audio>
+                    <audio voice="angry_fast">Ce sont les ordres! C'est beaucoup trop dangereux pour un gamin comme toi.</audio>
+                </line>
+                <line keys="partir" description="Je repasserai">
                     <audio>Tant pis, je repasserai, je ne suis pas encore prêt...</audio>
                     <audio voice="angry_fast">C'est ça gamin ! Crois-moi, tu es bien plus heureux en dehors de ce labyrinthe</audio>
                 </line>
@@ -614,18 +628,18 @@
                         Et surtout, il faudrait tu emportes avec toi tout le matériel nécessaire à la survie dans un monde si hostile !
                     </audio>
                 </line>
-                <line keys="revenir" description="Je repasserai">
+                <line keys="partir" description="Je repasserai">
                     <audio>Tant pis, je repasserai, je ne suis pas encore prêt...</audio>
                     <audio voice="angry_fast">C'est ça gamin ! Crois-moi, tu es bien plus heureux en dehors de ce labyrinthe</audio>
                 </line>
             </dialog>
 
             <dialog id="conditions">
-                <line keys="pret" description="Je suis pret" next-dialog="test_arme">
-                    <audio>Je crois que je suis pret!</audio>
+                <line keys="prêt" description="Je suis prêt" next-dialog="test_arme">
+                    <audio>Je crois que je suis prêt!</audio>
                     <audio voice="angry_fast">Ah oui? voyons-voir ça... Es-tu armé ?</audio>
                 </line>
-                <line keys="revenir" description="Je repasserai">
+                <line keys="partir" description="Je repasserai">
                     <audio>Tant pis, je repasserai, je ne suis pas encore prêt...</audio>
                     <audio voice="angry_fast">C'est ça gamin ! Crois-moi, tu es bien plus heureux en dehors de ce labyrinthe</audio>
                 </line>
@@ -690,10 +704,29 @@
                 <state-change state="potion_aphro_bue" change="set-false"/>
             </action>
 
+            <action keys="potion" description="Boire la potion" condition="potion==feu">
+                <audio> Essayons voir cette fameuse potion de résistance au feu...</audio>
+                <audio>Berk, ça a vraiment un gout dégoutant !</audio>
+                <state-change state="potion" change="set-false"/>
+            </action>
+
             <action keys="potion" description="Boire la potion" condition="potion==aphro">
-                <audio> Essayons voir cette fameuse potion d'amour... Berk, ça a vraiment un gout dégoutant !</audio>
+                <audio> Essayons voir cette fameuse potion d'amour...</audio>
+                <audio>Berk, ça a vraiment un gout dégoutant !</audio>
                 <state-change state="potion" change="set-false"/>
                 <state-change state="potion_aphro_bue" change="set-true"/>
+            </action>
+
+            <action keys="potion" description="Boire la potion" condition="potion==lenteur">
+                <audio> Essayons voir cette fameuse potion de lenteur...</audio>
+                <audio>Berk, ça a vraiment un gout dégoutant !</audio>
+                <state-change state="potion" change="set-false"/>
+            </action>
+
+            <action keys="potion" description="Boire la potion" condition="potion==vision">
+                <audio> Essayons voir cette fameuse potion de vision nocturne...</audio>
+                <audio>Berk, ça a vraiment un gout dégoutant !</audio>
+                <state-change state="potion" change="set-false"/>
             </action>
 
             <action keys="parler" description="Parler à Pablito" next-dialog="parler" condition="potion_aphro_bue == false">
@@ -729,7 +762,7 @@
                     <audio> Je suis à la recherche du grimoire de ce vieux Nogueira. Tu as une idée de où je pourrais le trouver ? </audio>
                     <audio voice="higher"> Je ne suis pas sûr mais l'autre jour j'ai aperçu Nogueira en ville... Il a passer la soirée à boire du vin à la taverne du Dragon bourré. Tu devrais peut-être aller leur demander là-dedans.</audio>
                 </line>
-                <line keys="partir">
+                <line keys="partir" description="Je dois y aller">
                     <audio> Bon ciao Pablito, je dois y aller ! </audio>
                     <audio voice="higher"> A la prochaine Santiago ! </audio>
                 </line>
@@ -939,7 +972,7 @@
                 <state-change state="boutique_décrite" change="set-true"/>
             </action>
 
-            <action keys="parler" description="Parler au marchand" next-dialog="produits">
+            <action keys="parler" description="Parler au marchand" next-dialog="produits" condition="grimoire_cherché != false">
                 <audio> Alors qu'est-ce que vous avez en stock aujourd'hui ? </audio>
                 <audio voice="high">Ah, aujourd'hui j'ai une sélection remarquable de produits:</audio>
                 <audio voice="high">Un magnifique piano à queue en promotion.</audio>
@@ -948,6 +981,20 @@
                 <audio voice="high" condition="guide_acheté == false"> Un guide touristique collector du labyrinthe de Delgarrondo.</audio>
                 <audio voice="high">Une lance ayant appartenu à Attila le Hun lui-même.</audio>
                 <audio voice="high" condition="grimoire_cherché == true">Un livre de recettes amusantes à peine utilisé.</audio>
+                <audio voice="high">Une paire de bottes en cuir de louttre.</audio>
+                <audio voice="high">Alors, qu'est-ce qui vous ferait plaisir ?</audio>
+
+                <state-change state="marchand_bonjour" change="set-true"/>
+            </action>
+
+            <action keys="parler" description="Parler au marchand" next-dialog="produits_bis" condition="grimoire_cherché == false">
+                <audio> Alors qu'est-ce que vous avez en stock aujourd'hui ? </audio>
+                <audio voice="high">Ah, aujourd'hui j'ai une sélection remarquable de produits:</audio>
+                <audio voice="high">Un magnifique piano à queue en promotion.</audio>
+                <audio voice="high">Une ceinture de chasteté en acier trempé.</audio>
+                <audio voice="high">Une bague de marriage de cent-vingt huit carrats.</audio>
+                <audio voice="high" condition="guide_acheté == false"> Un guide touristique collector du labyrinthe de Delgarrondo.</audio>
+                <audio voice="high">Une lance ayant appartenu à Attila le Hun lui-même.</audio>
                 <audio voice="high">Une paire de bottes en cuir de louttre.</audio>
                 <audio voice="high">Alors, qu'est-ce qui vous ferait plaisir ?</audio>
 
@@ -994,6 +1041,43 @@
                 <line keys="livre,recette" description="Acheter le livre" next-dialog="livre" condition="livre_regardé == true">
                     <audio>Au sujet de ce livre...</audio>
                     <state-change state="marchand_objet" change="set-value" value="livre"/>
+                </line>
+                <line keys="botte" description="Acheter les bottes" next-dialog="acheter">
+                    <audio>Au sujet de ces bottes...</audio>
+                    <audio voice="high">Ah oui... Très bel article... Mais probablement au dessus de vos moyens ! A moins que vous n'ayez quelque chose de spécial à me proposer...?</audio>
+                    <state-change state="marchand_objet" change="set-value" value="bottes"/>
+                </line>
+                <line keys="partir" description="Pas intéressé">
+                    <audio>Je crois que rien ne m'intéresse, désolé</audio>
+                    <audio voice="high">Quelle dommage... Revenez quand vous voulez !</audio>
+                </line>
+            </dialog>
+
+            <dialog id="produits_bis">
+                <line keys="piano" description="Acheter le piano" next-dialog="acheter">
+                    <audio>Au sujet de ce piano...</audio>
+                    <audio voice="high">Ah oui... Très bel article... Mais probablement au dessus de vos moyens ! A moins que vous n'ayez quelque chose de spécial à me proposer...?</audio>
+                    <state-change state="marchand_objet" change="set-value" value="piano"/>
+                </line>
+                <line keys="ceinture" description="Acheter la ceinture" next-dialog="acheter">
+                    <audio>Au sujet de cette ceinture de chasteté...</audio>
+                    <audio voice="high">Ah oui... Très bel article... Mais probablement au dessus de vos moyens ! A moins que vous n'ayez quelque chose de spécial à me proposer...?</audio>
+                    <state-change state="marchand_objet" change="set-value" value="ceinture"/>
+                </line>
+                <line keys="bague" description="Acheter la bague" next-dialog="acheter">
+                    <audio>Au sujet de cette bague...</audio>
+                    <audio voice="high">Ah oui... Très bel article... Mais probablement au dessus de vos moyens ! A moins que vous n'ayez quelque chose de spécial à me proposer...?</audio>
+                    <state-change state="marchand_objet" change="set-value" value="bague"/>
+                </line>
+                <line keys="guide" description="Acheter le guide" next-dialog="acheter">
+                    <audio>Au sujet de ce guide...</audio>
+                    <audio voice="high">Ah oui... Très bel article... Mais probablement au dessus de vos moyens ! A moins que vous n'ayez quelque chose de spécial à me proposer...?</audio>
+                    <state-change state="marchand_objet" change="set-value" value="guide"/>
+                </line>
+                <line keys="lance" description="Acheter la lance" next-dialog="acheter">
+                    <audio>Au sujet de cette lance...</audio>
+                    <audio voice="high">Ah oui... Très bel article... Mais probablement au dessus de vos moyens ! A moins que vous n'ayez quelque chose de spécial à me proposer...?</audio>
+                    <state-change state="marchand_objet" change="set-value" value="lance"/>
                 </line>
                 <line keys="botte" description="Acheter les bottes" next-dialog="acheter">
                     <audio>Au sujet de ces bottes...</audio>
@@ -1059,7 +1143,7 @@
                     <audio>Si vous ne me donnez pas ce livre tout de suite, je vous chante l'intégrale de Francis Cabrel sur-le-champ</audio>
                     <audio voice="high">Hum, c'est dûr, mais heureusement mon audition est exécrable, donc je devrais pouvoir supporter ça.</audio>
                 </line>
-                <line keys="revenir" description="Revenir avec du renfort">
+                <line keys="partir" description="Revenir avec du renfort">
                     <audio>Je reviendrai avec quelques copains rugbymen... On verra si vous faites toujours le fier.</audio>
                     <audio voice="high">C'est ça, c'est ça. Vous n'êtes pas le premier à faire ce genre de menace vous savez !</audio>
                 </line>
@@ -1087,8 +1171,8 @@
                     <state-change change="set-value" state="grimoire_cherché" value="trouvé"/>
                     <state-change change="set-value" state="livre_regardé" value="trouvé"/>
                 </line>
-                <line keys="impots" description="Augmenter vos impots locaux">
-                    <audio>Hé bien, il pourrait hypnotiser le maire de Poulgasse et faire augmenter d'un coup vos impots locaux!</audio>
+                <line keys="impôts" description="Augmenter vos impôts locaux">
+                    <audio>Hé bien, il pourrait hypnotiser le maire de Poulgasse et faire augmenter d'un coup vos impôts locaux!</audio>
                     <audio voice="high">Euh... Vraiment ? Humm je suppose que ça ne serait pas très bon pour les affaires... OK, prenez votre fichu livre !</audio>
                     <audio>Génial! J'ai récupéré le grimoire de Nogueira!</audio>
                     <state-change change="set-value" state="grimoire_cherché" value="trouvé"/>
