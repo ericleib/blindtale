@@ -30,7 +30,7 @@
                 Chaque année, El Vacoumano capturait des jeunes filles et garçons à son gout, et les emmenait au plus profond de son labyrinthe.
             </audio>
             <audio voice="low">
-                Rares étaient ceux qui avaient pu sortir vivants de ce labyrinthe, que là bête avait construit non loin du village.
+                Rares étaient ceux qui avaient pu sortir vivants de ce labyrinthe, que la bête avait construit non loin du village.
                 Santtiago ne s'était jamais vraiment senti concerné par cette menace en jeune homme insouciant qu'il était.
             </audio>
             <audio voice="low">
@@ -48,7 +48,7 @@
             </audio>
 
             <audio voice="low">
-                Bonne chance, Santtiago. Nous savons que tu peux réussir !
+                Bonne chance, Santtiago ! Nous savons que tu peux réussir !
             </audio>
 
             <action keys="commencer" description="Commencer" do-immediately-condition="true" next-scene="maison_heros"/>
