@@ -59,7 +59,7 @@ public class SphinxSpeechAdapter implements SpeechAdapter, RecognitionListener {
                     }
 
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    //e.printStackTrace();
                     return e;
                 }
                 return null;

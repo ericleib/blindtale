@@ -84,7 +84,7 @@ public class InitializationActivity extends Activity implements Callback<String>
             Log.i(TAG, data);
             cpt--;
         }else{
-            Log.e(TAG, e.toString());
+            Log.e(TAG, e.toString(), e);
             findViewById(R.id.wait).setVisibility(View.INVISIBLE);
             TextView tv = (TextView) findViewById(R.id.init);
             tv.setText("An error occurred during initialization...");
