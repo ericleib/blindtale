@@ -98,7 +98,7 @@ public class AudioTextAdapter implements AudioAdapter, Serializable {
     @Override
     public void skip() {
         tts.stop();
-        listener.completed();
+        //listener.completed();
     }
 
     @Override
