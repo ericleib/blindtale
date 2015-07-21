@@ -62,7 +62,7 @@ public class SphinxSpeechAdapter implements SpeechAdapter, RecognitionListener {
                             System.out.println("Adding search: \"" + e.getKey() + "\"");
                             e.getValue().add(context.getResources().getString(R.string.repeat));
                             //tale.getKeywords().add(getResources().getString(R.string.pause));
-                            e.getValue().add(context.getString(R.string.skip));
+                            //e.getValue().add(context.getString(R.string.skip));
                             e.getValue().add(context.getString(R.string.quit));
                             File keywordFile = writeKeywordFile(e.getKey(), e.getValue(), context);
                             recognizer.addKeywordSearch(e.getKey(), keywordFile);
@@ -122,7 +122,7 @@ public class SphinxSpeechAdapter implements SpeechAdapter, RecognitionListener {
         FileOutputStream os = context.openFileOutput("sphinx-temp-file-"+searchName+".txt", Context.MODE_PRIVATE);
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(os));
         for(String keyword : keywords){
-            bw.write(keyword+" /1.0/");
+            bw.write(keyword+" /1e-13/");
             bw.newLine();
         }
         bw.close();
