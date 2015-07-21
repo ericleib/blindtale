@@ -6,7 +6,7 @@ package tk.thebrightstuff.blindtale.speech;
  */
 public interface SpeechAdapter {
     void destroy();
-    void startListening();
+    void startListening(String code);
     void stopListening();
     boolean isAvailable();
     void setSpeechListener(SpeechListener listener);

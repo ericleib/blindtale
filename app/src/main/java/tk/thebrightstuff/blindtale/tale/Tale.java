@@ -45,9 +45,9 @@ public class Tale implements Serializable, SpeechResource {
     public Scene getScene() { return sceneMap.get(getEntryScene()); }
     public Scene getScene(String id) { return sceneMap.get(id); }
 
-    private final Set<String> keywords = new HashSet<>();
+    private final Map<String, Set<String>> keywords = new HashMap<>();
     @Override
-    public Set<String> getKeywords() { return keywords; }
+    public Map<String, Set<String>> getKeywords() { return keywords; }
 
 
     @Validate
@@ -62,8 +62,9 @@ public class Tale implements Serializable, SpeechResource {
             throw new Exception("Entry scene could not be found: "+entryScene);
 
         for(Scene s : scenes) {
+            keywords.put(s.getId(), new HashSet<String>());
             for (Action a : s.getActionList()){
-                keywords.addAll(Arrays.asList(a.getSeparatedKeys()));
+                keywords.get(s.getId()).addAll(Arrays.asList(a.getSeparatedKeys()));
                 if(a.getNextScene()!=null){
                     if(sceneMap.containsKey(a.getNextScene()))
                         a.nextSceneObj = sceneMap.get(a.getNextScene());
@@ -72,8 +73,9 @@ public class Tale implements Serializable, SpeechResource {
                 }
             }
             for (Dialog d : s.getDialogList()){
+                keywords.put(s.getId()+"-"+d.getId(), new HashSet<String>());
                 for(Line l : d.getLineList()){
-                    keywords.addAll(Arrays.asList(l.getSeparatedKeys()));
+                    keywords.get(s.getId()+"-"+d.getId()).addAll(Arrays.asList(l.getSeparatedKeys()));
                     if(l.getNextScene()!=null){
                         if(sceneMap.containsKey(l.getNextScene()))
                             l.nextSceneObj = sceneMap.get(l.getNextScene());

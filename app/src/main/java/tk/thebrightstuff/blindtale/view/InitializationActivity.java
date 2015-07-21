@@ -51,10 +51,6 @@ public class InitializationActivity extends Activity implements Callback<String>
         config.locale = tale.getLang();
         getBaseContext().getResources().updateConfiguration(config,
                 getBaseContext().getResources().getDisplayMetrics());
-        tale.getKeywords().add(getResources().getString(R.string.repeat));
-        tale.getKeywords().add(getResources().getString(R.string.pause));
-        tale.getKeywords().add(getResources().getString(R.string.skip));
-        tale.getKeywords().add(getResources().getString(R.string.quit));
 
         cpt = 0;
 

@@ -11,12 +11,14 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import edu.cmu.pocketsphinx.Assets;
 import edu.cmu.pocketsphinx.Hypothesis;
 import edu.cmu.pocketsphinx.RecognitionListener;
 import edu.cmu.pocketsphinx.SpeechRecognizer;
+import tk.thebrightstuff.blindtale.R;
 import tk.thebrightstuff.blindtale.utils.Callback;
 
 import static edu.cmu.pocketsphinx.SpeechRecognizerSetup.defaultSetup;
@@ -27,10 +29,9 @@ import static edu.cmu.pocketsphinx.SpeechRecognizerSetup.defaultSetup;
  */
 public class SphinxSpeechAdapter implements SpeechAdapter, RecognitionListener {
 
-    private static final String SEARCH = "search";
     private static SpeechRecognizer recognizer;
     private static RecognitionListener recognitionListener;
-    private static File keywordFile;
+    private String currentSearchCode;
 
     public static void initialize(final Context context, final SpeechResource resource, final Callback<String> callback) {
 
@@ -52,10 +53,20 @@ public class SphinxSpeechAdapter implements SpeechAdapter, RecognitionListener {
                 try {
 
                     if(recognizer==null) {   // Avoid multiple initializations
-                        keywordFile = writeKeywordFile(resource.getKeywords(), context);
                         Assets assets = new Assets(context);
                         File assetDir = assets.syncAssets();
                         setupRecognizer(assetDir, data, dict);
+
+                        // Create keyword-activation search.
+                        for(Map.Entry<String,Set<String>> e : resource.getKeywords().entrySet()){
+                            System.out.println("Adding search: \"" + e.getKey() + "\"");
+                            e.getValue().add(context.getResources().getString(R.string.repeat));
+                            //tale.getKeywords().add(getResources().getString(R.string.pause));
+                            e.getValue().add(context.getString(R.string.skip));
+                            e.getValue().add(context.getString(R.string.quit));
+                            File keywordFile = writeKeywordFile(e.getKey(), e.getValue(), context);
+                            recognizer.addKeywordSearch(e.getKey(), keywordFile);
+                        }
                     }
 
                 } catch (Exception e) {
@@ -97,9 +108,6 @@ public class SphinxSpeechAdapter implements SpeechAdapter, RecognitionListener {
 
                 .getRecognizer();
 
-        // Create keyword-activation search.
-        recognizer.addKeywordSearch(SEARCH, keywordFile);
-
     }
 
     public static void cleanup(){
@@ -110,15 +118,15 @@ public class SphinxSpeechAdapter implements SpeechAdapter, RecognitionListener {
     }
 
 
-    private static File writeKeywordFile(Set<String> keywords, Context context) throws Exception {
-        FileOutputStream os = context.openFileOutput("sphinx-temp-file.txt", Context.MODE_PRIVATE);
+    private static File writeKeywordFile(String searchName, Set<String> keywords, Context context) throws Exception {
+        FileOutputStream os = context.openFileOutput("sphinx-temp-file-"+searchName+".txt", Context.MODE_PRIVATE);
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(os));
         for(String keyword : keywords){
             bw.write(keyword+" /1.0/");
             bw.newLine();
         }
         bw.close();
-        File tmpFile = new File(context.getFilesDir(), "sphinx-temp-file.txt");
+        File tmpFile = new File(context.getFilesDir(), "sphinx-temp-file-"+searchName+".txt");
         if(!tmpFile.exists())
             throw new Exception("Temp file does not exist...");
         return tmpFile;
@@ -151,10 +159,12 @@ public class SphinxSpeechAdapter implements SpeechAdapter, RecognitionListener {
     }
 
     @Override
-    public void startListening() {
+    public void startListening(String code) {
         if(isAvailable()){
+            currentSearchCode = code;
             recognizer.cancel();
-            recognizer.startListening(SEARCH);
+            System.out.println("Starting search: \"" + code + "\"");
+            recognizer.startListening(code);
             listener.onReadyForSpeech();
         }
     }
@@ -204,11 +214,11 @@ public class SphinxSpeechAdapter implements SpeechAdapter, RecognitionListener {
     @Override
     public void onError(Exception e) {
         listener.onError(e.getLocalizedMessage());
-        startListening();
+        startListening(currentSearchCode);
     }
 
     @Override
     public void onTimeout() {
-        startListening();
+        startListening(currentSearchCode);
     }
 }
