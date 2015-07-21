@@ -38,6 +38,7 @@ public class Controller implements SpeechListener, AudioAdapter.CompletionListen
 
     private AudioAdapter currentAudio;
 
+    private String currentSpeechCode;
 
     public Controller(Scene scene, Map<String,String> state, TaleView view){
         this.scene = scene;
@@ -65,6 +66,8 @@ public class Controller implements SpeechListener, AudioAdapter.CompletionListen
         view.getLog().info(TAG, "Starting scene: " + scene.getId());
         view.clean();   // Reset UI components
 
+        currentSpeechCode = scene.getId();
+
         String title = scene.getTitle()==null? getTale().getTitle() : scene.getTitle();
         view.setTitle(title);
 
@@ -87,6 +90,8 @@ public class Controller implements SpeechListener, AudioAdapter.CompletionListen
     private void startDialog(){ // From a dialog or action
         view.getLog().info(TAG, "Starting dialog: " + dialog.getId());
         view.clean();   // Reset UI components
+
+        currentSpeechCode = scene.getId()+"-"+dialog.getId();
 
         addActions(dialog.getLineList());
 
@@ -316,7 +321,7 @@ public class Controller implements SpeechListener, AudioAdapter.CompletionListen
     private void startSpeechRecognition() {
         if(view.getSpeechAdapter().isAvailable()){
             view.getLog().info(TAG, "Starting speech recognition");
-            view.getSpeechAdapter().startListening();
+            view.getSpeechAdapter().startListening(currentSpeechCode);
         }
     }
 
@@ -353,7 +358,7 @@ public class Controller implements SpeechListener, AudioAdapter.CompletionListen
         }
 
         view.getLog().info(TAG, "Did not recognize a usable match: starting to listen again!");
-        view.getSpeechAdapter().startListening();
+        startSpeechRecognition();
 
     }
 
@@ -381,7 +386,7 @@ public class Controller implements SpeechListener, AudioAdapter.CompletionListen
     public void onError(String errorMessage) {
         view.getLog().error(TAG, "Failed speech recognition: " + errorMessage, null);
         view.setSpeechProgress(STATUS_ERROR);
-        view.getSpeechAdapter().startListening();
+        //view.getSpeechAdapter().startListening();
     }
 
     @Override

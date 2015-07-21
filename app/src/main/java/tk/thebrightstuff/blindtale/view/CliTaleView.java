@@ -132,7 +132,7 @@ public class CliTaleView implements Controller.TaleView, SpeechAdapter, Log, Aud
     }
 
     @Override
-    public void startListening() {
+    public void startListening(String code) {
         for(String s:buttons)
             System.out.println("=> "+s+"?");
         speechListener.onReadyForSpeech();

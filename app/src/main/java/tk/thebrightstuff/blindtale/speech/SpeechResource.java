@@ -1,6 +1,7 @@
 package tk.thebrightstuff.blindtale.speech;
 
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -9,5 +10,5 @@ import java.util.Set;
  */
 public interface SpeechResource {
     Locale getLang();
-    Set<String> getKeywords();
+    Map<String,Set<String>> getKeywords();
 }

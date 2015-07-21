@@ -44,7 +44,7 @@ public class GoogleSpeechAdapter implements SpeechAdapter, RecognitionListener {
     }
 
     @Override
-    public void startListening() {
+    public void startListening(String code) {
         if(isAvailable())
             speech.startListening(speechIntent);
     }

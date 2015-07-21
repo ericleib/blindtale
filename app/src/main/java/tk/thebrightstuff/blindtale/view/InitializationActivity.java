@@ -51,10 +51,6 @@ public class InitializationActivity extends Activity implements Callback<String>
         config.locale = tale.getLang();
         getBaseContext().getResources().updateConfiguration(config,
                 getBaseContext().getResources().getDisplayMetrics());
-        tale.getKeywords().add(getResources().getString(R.string.repeat));
-        tale.getKeywords().add(getResources().getString(R.string.pause));
-        tale.getKeywords().add(getResources().getString(R.string.skip));
-        tale.getKeywords().add(getResources().getString(R.string.quit));
 
         cpt = 0;
 
@@ -84,7 +80,7 @@ public class InitializationActivity extends Activity implements Callback<String>
             Log.i(TAG, data);
             cpt--;
         }else{
-            Log.e(TAG, e.toString());
+            Log.e(TAG, e.toString(), e);
             findViewById(R.id.wait).setVisibility(View.INVISIBLE);
             TextView tv = (TextView) findViewById(R.id.init);
             tv.setText("An error occurred during initialization...");
