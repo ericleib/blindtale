@@ -118,9 +118,9 @@ public class SphinxSpeechAdapter implements SpeechAdapter, RecognitionListener {
             bw.write(keyword+" /1e-13/");
             bw.newLine();
         }
-        bw.write(context.getString(R.string.choices).toLowerCase()+" /1e-1/");
+        bw.write(context.getString(R.string.choices).toLowerCase()+" /1e-8/");
         bw.newLine();
-        bw.write(context.getString(R.string.repeat).toLowerCase()+" /1e-1/");
+        bw.write(context.getString(R.string.repeat).toLowerCase()+" /1e-8/");
         bw.newLine();
         bw.write(context.getString(R.string.quit).toLowerCase() + " /1e-1/");
         bw.newLine();
