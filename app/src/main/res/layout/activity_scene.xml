@@ -13,7 +13,7 @@
 
         <LinearLayout
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <TextView
@@ -29,47 +29,41 @@
                 android:id="@+id/container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/scene_title"
                 android:orientation="vertical">
             </LinearLayout>
-
-            <Button
-                android:id="@+id/button_pause"
-                android:text="@string/pause"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/container" >
-            </Button>
 
             <Button
                 android:id="@+id/button_skip"
                 android:text="@string/skip"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/button_pause" >
+                android:layout_height="wrap_content">
             </Button>
 
             <Button
                 android:id="@+id/button_repeat"
                 android:text="@string/repeat"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/button_skip" >
+                android:layout_height="wrap_content">
+            </Button>
+
+            <Button
+                android:id="@+id/button_choices"
+                android:text="@string/choices"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
             </Button>
 
             <Button
                 android:id="@+id/button_quit"
                 android:text="@string/quit"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/button_repeat" >
+                android:layout_height="wrap_content">
             </Button>
 
             <TextView
                 android:id="@+id/scene_speech_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/button_quit"
                 android:gravity="center"
                 android:layout_marginBottom="10dp" />
 
@@ -79,14 +73,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 style="?android:attr/progressBarStyleHorizontal"
-                android:layout_below="@+id/scene_speech_text"
                 android:layout_marginBottom="10dp"  />
 
             <TextView
                 android:id="@+id/scene_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/progress_bar"
                 android:gravity="start"/>
 
         </LinearLayout>

@@ -23,7 +23,7 @@ public class Controller implements SpeechListener, AudioAdapter.CompletionListen
 
     private final static String TAG = "Controller", SCENE = "scene";
 
-    public final static int A_GAME_BY = 0, REPEAT = 1, PAUSE = 2, SKIP = 3, QUIT = 4 ;
+    public final static int A_GAME_BY = 0, REPEAT = 1, PAUSE = 2, SKIP = 3, QUIT = 4, CHOICES = 5, YOU_SAID = 6 ;
 
     public final static int STATUS_READY = 0, STATUS_LISTENING = 1, STATUS_ANALYSIS = 2, STATUS_ERROR = 3, STATUS_HIDDEN = 4;
 
@@ -36,7 +36,7 @@ public class Controller implements SpeechListener, AudioAdapter.CompletionListen
 
     private Map<String,UIAction> currentActions = new HashMap<>();
 
-    private AudioAdapter currentAudio;
+    private AudioAdapter currentAudio = new DummyAudioAdapter();
 
     private String currentSpeechCode;
 
@@ -111,6 +111,7 @@ public class Controller implements SpeechListener, AudioAdapter.CompletionListen
         //currentActions.put(view.getNString(PAUSE), pauseAction);
         currentActions.put(view.getNString(SKIP), skipAction);
         currentActions.put(view.getNString(REPEAT), repeatAction);
+        currentActions.put(view.getNString(CHOICES), choicesAction);
         currentActions.put(view.getNString(QUIT), quitAction);
         for(Action a: actionList)
             if(a.isConditionValid(state))
@@ -187,11 +188,46 @@ public class Controller implements SpeechListener, AudioAdapter.CompletionListen
             view.updatePause(true, true);
             if(currentAudio.isPlaying())
                 currentAudio.stop();
+            stopSpeechRecognition();
             audioIndex = 0;
             if(isMoreToPlay())
                 playAudioList();
             else
                 completed();
+        }
+    };
+
+    public final UIAction choicesAction = new UIAction(true, null) {
+        @Override
+        public void doAction() {
+            String str = "";
+            for(Map.Entry<String,UIAction> e : currentActions.entrySet())
+                if(e.getValue().action != null)
+                    str += e.getKey() +". ";
+
+            if(!str.equals("")){
+                if(currentAudio.isPlaying())
+                    currentAudio.stop();
+                view.updatePause(true, true);
+                stopSpeechRecognition();
+
+                Audio audio = new Audio();
+                audio.setText(str);
+                AudioAdapter aa = view.getAudioProvider(audio);
+                aa.setCompletionListener(new AudioAdapter.CompletionListener() {
+                    @Override
+                    public void completed() {
+                        view.updatePause(false, true);
+                        startSpeechRecognition();
+                    }
+                });
+
+                try {
+                    aa.play();
+                } catch (AudioAdapter.AudioException e) {
+                    view.getLog().error(TAG, "Error playing choices! ", e);
+                }
+            }
         }
     };
 
@@ -229,14 +265,18 @@ public class Controller implements SpeechListener, AudioAdapter.CompletionListen
     private List<Audio> audioList;
     private Action nextAction;
     private void playAudioList(List<Audio> audioList, Action action) {
-        view.getLog().info(TAG, "Start playing");
-        this.audioIndex = 0;
-        this.audioList = audioList;
         this.nextAction = action;
-        if(isMoreToPlay())
+        if(this.audioList==null)
+            this.audioList = audioList;
+        if(audioList.size()>0){
+            view.getLog().info(TAG, "Start playing");
+            this.audioIndex = 0;
+            this.audioList = audioList;
             playAudioList();
-        else
+        }else{
+            view.getLog().info(TAG, "Nothing to play");
             completed();
+        }
     }
 
     private void playAudioList(){
@@ -271,17 +311,20 @@ public class Controller implements SpeechListener, AudioAdapter.CompletionListen
      */
     @Override
     public void completed() {
-        view.getLog().info(TAG, "Finished playing");
 
         if(isMoreToPlay()){
 
+            view.getLog().info(TAG, "Playing next audio");
             playAudioList();
 
         }else{
 
+            view.getLog().info(TAG, "Finished playing");
+
             view.updatePause(false, true);  // Update Pause/Resume buttons
 
             if(nextAction==null){ // No next action: simply go on
+                view.getLog().info(TAG, "=> No next action");
                 if(scene.isEnd())
                     showCredits();
                 else{
@@ -297,16 +340,19 @@ public class Controller implements SpeechListener, AudioAdapter.CompletionListen
                 }
 
             }else if(nextAction.getNextScene()!=null){  // We move to a new scene
+                view.getLog().info(TAG, "=> New scene");
                 endScene();
                 scene = nextAction.nextSceneObj;
                 startScene();
 
             }else if(nextAction.getNextDialog()!=null){  // We start a new dialog
+                view.getLog().info(TAG, "=> New dialog");
                 endScene();
                 dialog = nextAction.nextDialogObj;
                 startDialog();
 
             }else{  // We go back to the current scene but skipping audio
+                view.getLog().info(TAG, "=> Back to scene");
                 endScene();
                 startScene(true);
             }
@@ -339,7 +385,7 @@ public class Controller implements SpeechListener, AudioAdapter.CompletionListen
 
         view.setSpeechProgress(STATUS_ANALYSIS);
 
-        view.showMessage("You said: " + matches.get(0), false);
+        view.showMessage(view.getIString(YOU_SAID) + " " + matches.get(0), false);
 
         for(String match : matches){
             view.getLog().info(TAG, "Match: " + match);
@@ -428,5 +474,28 @@ public class Controller implements SpeechListener, AudioAdapter.CompletionListen
             this.action = action;
         }
         public abstract void doAction();
+    }
+
+    private class DummyAudioAdapter implements AudioAdapter {
+        @Override
+        public void play() throws AudioException { }
+        @Override
+        public void pause() { }
+        @Override
+        public void stop() { }
+        @Override
+        public void repeat() throws AudioException { }
+        @Override
+        public void resume() { }
+        @Override
+        public void skip() { }
+        @Override
+        public void destroy() { }
+        @Override
+        public boolean isPlaying() { return false; }
+        @Override
+        public void setCompletionListener(CompletionListener listener) { }
+        @Override
+        public String getText() { return ""; }
     }
 }

@@ -27,12 +27,14 @@
     <string name="error_speech_timeout">No speech input</string>
     <string name="error_default">Didn\'t understand, please try again</string>
 
-    <string name="pause">pause</string>
-    <string name="resume">resume</string>
-    <string name="skip">skip</string>
-    <string name="repeat">repeat</string>
-    <string name="quit">quit</string>
+    <string name="pause">Pause</string>
+    <string name="resume">Resume</string>
+    <string name="skip">Skip</string>
+    <string name="repeat">Repeat</string>
+    <string name="choices">Choices</string>
+    <string name="quit">Quit</string>
 
     <string name="aGameBy">A game by:</string>
 
+    <string name="you_said">You said:</string>
 </resources>
