@@ -68,7 +68,7 @@ public class SceneActivity extends Activity implements Controller.TaleView, tk.t
                 controller.pauseAction.doAction();
             }
         });*/
-        findViewById(R.id.button_pause).setEnabled(false);
+        //findViewById(R.id.button_pause).setEnabled(false);
         findViewById(R.id.button_skip).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -81,6 +81,13 @@ public class SceneActivity extends Activity implements Controller.TaleView, tk.t
             public void onClick(View v) {
                 Log.i(TAG, "Repeat clicked");
                 controller.repeatAction.doAction();
+            }
+        });
+        findViewById(R.id.button_choices).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i(TAG, "Choices clicked");
+                controller.choicesAction.doAction();
             }
         });
         findViewById(R.id.button_quit).setOnClickListener(new View.OnClickListener() {
@@ -246,10 +253,11 @@ public class SceneActivity extends Activity implements Controller.TaleView, tk.t
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                String str = StringUtils.capitalize(getResources().getString(pauseResume ? R.string.pause : R.string.resume));
+                //String str = StringUtils.capitalize(getResources().getString(pauseResume ? R.string.pause : R.string.resume));
                 //((Button) findViewById(R.id.button_pause)).setText(str);
                 //findViewById(R.id.button_pause).setEnabled(enabled);
                 findViewById(R.id.button_skip).setEnabled(enabled);
+                findViewById(R.id.button_choices).setEnabled(!enabled);
             }
         });
 
@@ -267,18 +275,20 @@ public class SceneActivity extends Activity implements Controller.TaleView, tk.t
     @Override
     public String getNString(int ref){
         Log.v(TAG, "Removing accents from "+getIString(ref)+" ("+ref+")");
-        return StringUtils.removeAccents(getIString(ref));
+        return StringUtils.removeAccents(getIString(ref)).toLowerCase();
     }
 
 
     @Override
     public String getIString(int ref){
         switch(ref){
-            case Controller.A_GAME_BY: return getResources().getString(R.string.aGameBy);
-            case Controller.PAUSE: return getResources().getString(R.string.pause);
-            case Controller.QUIT: return getResources().getString(R.string.quit);
-            case Controller.REPEAT: return getResources().getString(R.string.repeat);
-            case Controller.SKIP: return getResources().getString(R.string.skip);
+            case Controller.A_GAME_BY: return getString(R.string.aGameBy);
+            case Controller.YOU_SAID: return getString(R.string.you_said);
+            case Controller.PAUSE: return getString(R.string.pause);
+            case Controller.CHOICES: return getString(R.string.choices);
+            case Controller.QUIT: return getString(R.string.quit);
+            case Controller.REPEAT: return getString(R.string.repeat);
+            case Controller.SKIP: return getString(R.string.skip);
         }
         return null;
     }

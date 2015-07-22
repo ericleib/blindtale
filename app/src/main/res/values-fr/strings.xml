@@ -16,12 +16,13 @@
     <string name="error_server">Erreur du serveur</string>
     <string name="error_speech_timeout">Pas de commande</string>
     <string name="exit">Quitter</string>
-    <string name="pause">pause</string>
+    <string name="pause">Pause</string>
     <string name="play">Commencer</string>
-    <string name="quit">quitter</string>
-    <string name="repeat">répéter</string>
-    <string name="resume">reprendre</string>
-    <string name="skip">passer</string>
+    <string name="choices">Choix</string>
+    <string name="quit">Quitter</string>
+    <string name="repeat">Répéter</string>
+    <string name="resume">Reprendre</string>
+    <string name="skip">Passer</string>
     <string name="speech_end">Analyse...</string>
     <string name="speech_listening">Ecoute...</string>
     <string name="speech_ready">Parlez maintenant!</string>
@@ -29,4 +30,5 @@
     <string name="speech_error">Erreur de la reconnaissance vocale !</string>
     <string name="title_activity_scene">Scène</string>
     <string name="aGameBy">Un jeu de:</string>
+    <string name="you_said">Vous avez dit:</string>
 </resources>

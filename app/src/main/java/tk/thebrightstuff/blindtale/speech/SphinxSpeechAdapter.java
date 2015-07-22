@@ -57,10 +57,6 @@ public class SphinxSpeechAdapter implements SpeechAdapter, RecognitionListener {
                         // Create keyword-activation search.
                         for(Map.Entry<String,Set<String>> e : resource.getKeywords().entrySet()){
                             System.out.println("Adding search: \"" + e.getKey() + "\"");
-                            e.getValue().add(context.getResources().getString(R.string.repeat));
-                            //tale.getKeywords().add(getResources().getString(R.string.pause));
-                            //e.getValue().add(context.getString(R.string.skip));
-                            e.getValue().add(context.getString(R.string.quit));
                             File keywordFile = writeKeywordFile(e.getKey(), e.getValue(), context);
                             recognizer.addKeywordSearch(e.getKey(), keywordFile);
                         }
@@ -122,6 +118,12 @@ public class SphinxSpeechAdapter implements SpeechAdapter, RecognitionListener {
             bw.write(keyword+" /1e-13/");
             bw.newLine();
         }
+        bw.write(context.getString(R.string.choices).toLowerCase()+" /1e-1/");
+        bw.newLine();
+        bw.write(context.getString(R.string.repeat).toLowerCase()+" /1e-1/");
+        bw.newLine();
+        bw.write(context.getString(R.string.quit).toLowerCase() + " /1e-1/");
+        bw.newLine();
         bw.close();
         File tmpFile = new File(context.getFilesDir(), "sphinx-temp-file-"+searchName+".txt");
         if(!tmpFile.exists())
@@ -160,7 +162,7 @@ public class SphinxSpeechAdapter implements SpeechAdapter, RecognitionListener {
         if(isAvailable()){
             currentSearchCode = code;
             recognizer.cancel();
-            System.out.println("Starting search: \"" + code + "\"");
+            //System.out.println("Starting search: \"" + code + "\"");
             recognizer.startListening(code);
             listener.onReadyForSpeech();
         }

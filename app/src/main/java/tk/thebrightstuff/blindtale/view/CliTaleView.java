@@ -84,7 +84,7 @@ public class CliTaleView implements Controller.TaleView, SpeechAdapter, Log, Aud
 
     }
 
-    private final static String[] strings = {"A game by","repeat","pause","skip","quit"};
+    private final static String[] strings = {"A game by","repeat","pause","skip","quit","choices","you said:"};
     @Override
     public String getIString(int ref) {
         return  strings[ref];

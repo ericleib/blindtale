@@ -21,6 +21,7 @@ import tk.thebrightstuff.blindtale.utils.Callback;
 public class AudioTextAdapter implements AudioAdapter, Serializable {
 
 
+    public static boolean stopped;
 
     public static void initialize(Context context, final SpeechResource resource, final Callback<String> callback){
         AudioTextAdapter.tts = new TextToSpeech(context, new TextToSpeech.OnInitListener() {
@@ -31,8 +32,9 @@ public class AudioTextAdapter implements AudioAdapter, Serializable {
                     tts.setOnUtteranceCompletedListener(new OnUtteranceCompletedListener(){
                         @Override
                         public void onUtteranceCompleted(String utteranceId) {
-                            System.out.println("Utterance completed");
-                            listener.completed();
+                            System.out.println("Utterance completed: "+(stopped? "STOPPED" : "FINISHED"));
+                            if(!stopped)
+                                listener.completed();
                         }
                     });
                     callback.callback("Text to speech engine correctly initialized", null);
@@ -72,10 +74,12 @@ public class AudioTextAdapter implements AudioAdapter, Serializable {
         tts.setPitch(voice.getPitch());
         tts.setSpeechRate(voice.getRate());
         tts.speak(audio.getText().trim(), TextToSpeech.QUEUE_FLUSH, params);
+        stopped = false;
     }
 
     @Override
     public void stop() {
+        stopped = true;
         tts.stop();
     }
 
