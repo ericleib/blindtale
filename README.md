@@ -2,6 +2,10 @@
 
 A hand-free audiogame engine for Android
 
+## News
+
+20/07/2015: The Blind Tale prototype is available for testing. Join the [Google+ community](https://plus.google.com/u/0/communities/107881179654079140043) to become an Alpha-tester. Don't forget to fill the [questionaire](https://docs.google.com/forms/d/1Sf4jZqqKNSoMgpaNIoXeMzZmvW5tSxjWZJwXmgtvXB8/viewform?usp=send_form) afterwards...
+
 ## Interactive story-telling
 
 **Tales** are a collection of **Scenes**. A scene has various **Audio** segments that tell a story and various **Actions** that affect the story in various ways. Audio segments can consist of sound **files** (e.g. mp3, midi,...), or **text** (which is read using Android's **Text-To-Speech** capabilities). A scene can have any number of actions, which may trigger any number of events:
